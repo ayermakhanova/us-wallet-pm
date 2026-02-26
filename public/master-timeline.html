@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>US Wallet Program — Master Timeline</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f8fafc; color: #1e293b; }
+  .header { background: #0f172a; color: white; padding: 24px 32px; }
+  .header h1 { font-size: 22px; font-weight: 700; }
+  .header p { font-size: 13px; color: #94a3b8; margin-top: 4px; }
+  .header .meta { display: flex; gap: 24px; margin-top: 12px; flex-wrap: wrap; }
+  .header .meta span { font-size: 11px; color: #cbd5e1; display: flex; align-items: center; gap: 6px; }
+  .header .meta .dot { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
+  .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
+  .section { margin-bottom: 32px; }
+  .section-title { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 12px; padding-left: 4px; }
+  .gantt { background: white; border: 1px solid #e2e8f0; border-radius: 12px; overflow-x: auto; }
+  .gantt-inner { min-width: 1100px; }
+  .gantt-header { display: flex; border-bottom: 1px solid #e2e8f0; background: #f8fafc; }
+  .gantt-label-col { width: 260px; min-width: 260px; padding: 10px 16px; font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; border-right: 1px solid #e2e8f0; }
+  .gantt-months { flex: 1; display: flex; }
+  .gantt-month { flex: 1; text-align: center; padding: 10px 4px; font-size: 11px; font-weight: 500; color: #64748b; border-right: 1px solid #f1f5f9; position: relative; }
+  .gantt-month:last-child { border-right: none; }
+  .gantt-month.current { background: #eff6ff; color: #2563eb; font-weight: 700; }
+  .gantt-row { display: flex; border-bottom: 1px solid #f1f5f9; transition: background 0.15s; }
+  .gantt-row:last-child { border-bottom: none; }
+  .gantt-row:hover { background: #f8fafc; }
+  .gantt-row-label { width: 260px; min-width: 260px; padding: 8px 16px; border-right: 1px solid #e2e8f0; display: flex; align-items: center; gap: 8px; }
+  .gantt-row-label .name { font-size: 13px; font-weight: 500; }
+  .gantt-row-label .sub { font-size: 10px; color: #94a3b8; }
+  .gantt-row-chart { flex: 1; position: relative; display: flex; align-items: center; padding: 6px 0; }
+  .gantt-grid-line { position: absolute; top: 0; bottom: 0; border-left: 1px solid #f1f5f9; }
+  .gantt-bar { position: absolute; height: 22px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 6px; transition: opacity 0.15s; }
+  .gantt-bar:hover { opacity: 0.85; }
+  .gantt-milestone { position: absolute; width: 14px; height: 14px; transform: rotate(45deg); border-radius: 2px; }
+  .gantt-today { position: absolute; top: 0; bottom: 0; width: 2px; background: #ef4444; z-index: 5; opacity: 0.7; }
+  .group-header { display: flex; border-bottom: 1px solid #e2e8f0; background: #f1f5f9; }
+  .group-header td { padding: 6px 16px; font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.04em; }
+  .legend { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 16px; padding: 0 4px; }
+  .legend span { font-size: 11px; color: #64748b; display: flex; align-items: center; gap: 5px; }
+  .legend .swatch { width: 14px; height: 10px; border-radius: 2px; display: inline-block; }
+  .legend .diamond { width: 8px; height: 8px; transform: rotate(45deg); display: inline-block; border-radius: 1px; }
+  .print-btn { position: fixed; bottom: 24px; right: 24px; background: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(37,99,235,0.3); z-index: 50; }
+  .print-btn:hover { background: #1d4ed8; }
+  @media print {
+    body { background: white; }
+    .header { padding: 16px 20px; }
+    .container { padding: 16px; }
+    .print-btn { display: none; }
+    .gantt { break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>US Wallet Program — Master Timeline</h1>
+  <p>Consolidated view of project phases, vendor integrations, and key milestones</p>
+  <div class="meta">
+    <span><span class="dot" style="background:#3b82f6"></span> Planning & Governance</span>
+    <span><span class="dot" style="background:#6366f1"></span> Build & Integration</span>
+    <span><span class="dot" style="background:#f59e0b"></span> Testing & Validation</span>
+    <span><span class="dot" style="background:#14b8a6"></span> Operations & Training</span>
+    <span><span class="dot" style="background:#a855f7"></span> Launch & Marketing</span>
+    <span><span class="dot" style="background:#22c55e"></span> Pilot / Rollout</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- ═══════ SECTION 1: HIGH-LEVEL PROJECT PHASES ═══════ -->
+  <div class="section">
+    <div class="section-title">Project Phases</div>
+    <div class="gantt">
+      <div class="gantt-inner" id="phases-gantt"></div>
+    </div>
+  </div>
+
+  <!-- ═══════ SECTION 2: DETAILED VENDOR / INTEGRATION TIMELINE ═══════ -->
+  <div class="section">
+    <div class="section-title">Vendor & Integration Timeline</div>
+    <div class="gantt">
+      <div class="gantt-inner" id="vendor-gantt"></div>
+    </div>
+    <div class="legend">
+      <span><span class="swatch" style="background:#6366f1"></span> Helix Platform</span>
+      <span><span class="swatch" style="background:#2563eb"></span> VISA DPS / Card</span>
+      <span><span class="swatch" style="background:#0891b2"></span> mRDC / Ensenta</span>
+      <span><span class="swatch" style="background:#16a34a"></span> Compliance / KYC</span>
+      <span><span class="swatch" style="background:#f59e0b"></span> Alpha Testing</span>
+      <span><span class="swatch" style="background:#ef4444"></span> Beta & GA</span>
+      <span><span class="diamond" style="background:#1e293b"></span> Milestone</span>
+      <span style="color:#ef4444; font-weight:600;">| Today</span>
+    </div>
+  </div>
+
+</div>
+
+<button class="print-btn" onclick="window.print()">Print / Save PDF</button>
+
+<script>
+// ═══════ DATA ═══════
+
+// Months for the high-level phases (Oct 2025 → Oct 2026 = 13 months)
+const phaseMonths = [
+  "Oct 25","Nov 25","Dec 25","Jan 26","Feb 26","Mar 26","Apr 26","May 26","Jun 26","Jul 26","Aug 26","Sep 26","Oct 26"
+];
+
+const phases = [
+  { name: "Planning & Governance", start: 0, end: 12, color: "#3b82f6" },
+  { name: "Build & Integration", start: 2, end: 8, color: "#6366f1" },
+  { name: "Testing & Validation", start: 4, end: 9, color: "#f59e0b" },
+  { name: "Operations & Training", start: 5, end: 9, color: "#14b8a6" },
+  { name: "Launch Readiness & Marketing", start: 5, end: 10, color: "#a855f7" },
+  { name: "Pilot Launch", start: 8, end: 10, color: "#22c55e" },
+  { name: "Full Roll Out", start: 11, end: 11, color: "#ef4444", milestone: true },
+];
+
+// Vendor timeline: Month 1 = Feb 2026, Month 9 = Oct 2026
+const vendorMonths = [
+  "Feb 26","Mar 26","Apr 26","May 26","Jun 26","Jul 26","Aug 26","Sep 26","Oct 26"
+];
+
+const vendorGroups = [
+  { group: "Helix Platform Setup", items: [
+    { name: "Helix Sandbox Credentials", start: 0, end: 0, color: "#6366f1" },
+    { name: "Client Sandbox / Product Build", start: 0, end: 2, color: "#6366f1" },
+    { name: "Helix Prod Document Collection", start: 0, end: 1, color: "#6366f1" },
+    { name: "Production Readiness Meeting", start: 0, end: 1, color: "#6366f1" },
+    { name: "Helix University — Level 1", start: 0, end: 2, color: "#6366f1" },
+    { name: "Helix University — Level 2", start: 2, end: 4, color: "#6366f1" },
+    { name: "Helix Prod Credentials", start: 2, end: 2, color: "#f97316", milestone: true },
+  ]},
+  { group: "VISA DPS & Card Issuance", items: [
+    { name: "VDPS Project Requirements", start: 0, end: 0, color: "#2563eb" },
+    { name: "VDPS Build", start: 1, end: 1, color: "#2563eb" },
+    { name: "VISA DPS Certification & Install", start: 2, end: 3, color: "#2563eb" },
+    { name: "Card Design Approvals & Production", start: 1, end: 3, color: "#2563eb" },
+  ]},
+  { group: "mRDC / Ensenta", items: [
+    { name: "mRDC Kick-off", start: 0, end: 0, color: "#0891b2" },
+    { name: "mRDC Certification & Integration", start: 1, end: 3, color: "#0891b2" },
+    { name: "mRDC Implementation", start: 4, end: 5, color: "#0891b2" },
+  ]},
+  { group: "Compliance & KYC", items: [
+    { name: "Client Socure Certification", start: 2, end: 4, color: "#16a34a" },
+    { name: "Bank Req's — Alpha", start: 0, end: 2, color: "#16a34a" },
+    { name: "Bank Req's — Beta", start: 3, end: 5, color: "#16a34a" },
+    { name: "Bank Req's — GA", start: 6, end: 7, color: "#16a34a" },
+  ]},
+  { group: "Alpha Phase", items: [
+    { name: "Alpha — Socure / Customer Onboarding", start: 3, end: 5, color: "#f59e0b" },
+    { name: "Alpha — ACH Deposits", start: 3, end: 5, color: "#f59e0b" },
+    { name: "Centrix DTS Implementation", start: 3, end: 5, color: "#f59e0b" },
+    { name: "Alpha — Debit Card", start: 4, end: 5, color: "#f59e0b" },
+    { name: "Mobile Wallet Imp (Manual)", start: 4, end: 5, color: "#f59e0b" },
+    { name: "Alpha — Disputes", start: 5, end: 5, color: "#f59e0b" },
+    { name: "Alpha — mRDC", start: 5, end: 5, color: "#f59e0b" },
+    { name: "Alpha Testing Complete", start: 5, end: 5, color: "#1e293b", milestone: true },
+  ]},
+  { group: "Beta & GA Launch", items: [
+    { name: "Mobile Wallet Testing (Manual)", start: 6, end: 6, color: "#ef4444" },
+    { name: "Client Beta", start: 6, end: 7, color: "#ef4444" },
+    { name: "Mobile Wallet — In-App & Digital Issuance", start: 6, end: 8, color: "#ef4444" },
+    { name: "Beta Testing Complete", start: 7, end: 7, color: "#1e293b", milestone: true },
+    { name: "GA Launch", start: 8, end: 8, color: "#22c55e", milestone: true },
+  ]},
+];
+
+// ═══════ RENDERING ═══════
+
+function currentMonthIndex(monthLabels) {
+  const now = new Date();
+  const y = now.getFullYear() % 100;
+  const m = now.toLocaleString('en', { month: 'short' });
+  const label = m + " " + y;
+  return monthLabels.indexOf(label);
+}
+
+function renderGantt(containerId, monthLabels, rows, groups) {
+  const container = document.getElementById(containerId);
+  const total = monthLabels.length;
+  const todayIdx = currentMonthIndex(monthLabels);
+
+  // Header
+  let html = '<div class="gantt-header"><div class="gantt-label-col">Activity</div><div class="gantt-months">';
+  monthLabels.forEach((m, i) => {
+    const cls = i === todayIdx ? ' current' : '';
+    html += '<div class="gantt-month' + cls + '">' + m + '</div>';
+  });
+  html += '</div></div>';
+
+  function renderRow(item) {
+    const colW = 100 / total;
+    const left = item.start * colW;
+    const width = (item.end - item.start + 1) * colW;
+
+    let rowHtml = '<div class="gantt-row"><div class="gantt-row-label"><div><div class="name">' + item.name + '</div></div></div>';
+    rowHtml += '<div class="gantt-row-chart">';
+
+    // Grid lines
+    for (let i = 1; i < total; i++) {
+      rowHtml += '<div class="gantt-grid-line" style="left:' + (i * colW) + '%"></div>';
+    }
+
+    // Today line
+    if (todayIdx >= 0) {
+      rowHtml += '<div class="gantt-today" style="left:' + ((todayIdx + 0.5) * colW) + '%"></div>';
+    }
+
+    if (item.milestone) {
+      const cx = (item.start + 0.5) * colW;
+      rowHtml += '<div class="gantt-milestone" style="left:calc(' + cx + '% - 7px);background:' + item.color + '"></div>';
+    } else {
+      const label = width > 8 ? item.name : '';
+      rowHtml += '<div class="gantt-bar" style="left:' + left + '%;width:' + width + '%;background:' + item.color + '">' + label + '</div>';
+    }
+
+    rowHtml += '</div></div>';
+    return rowHtml;
+  }
+
+  if (groups) {
+    groups.forEach(g => {
+      html += '<div class="group-header"><td colspan="2">' + g.group + '</td></div>';
+      g.items.forEach(item => { html += renderRow(item); });
+    });
+  } else if (rows) {
+    rows.forEach(item => { html += renderRow(item); });
+  }
+
+  container.innerHTML = html;
+}
+
+// Render both charts
+renderGantt('phases-gantt', phaseMonths, phases, null);
+renderGantt('vendor-gantt', vendorMonths, null, vendorGroups);
+</script>
+
+</body>
+</html>
