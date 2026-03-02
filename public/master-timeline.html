@@ -33,11 +33,19 @@
   .gantt-row-label .sub { font-size: 10px; color: #94a3b8; }
   .gantt-row-chart { flex: 1; position: relative; display: flex; align-items: center; padding: 5px 0; }
   .gantt-grid-line { position: absolute; top: 0; bottom: 0; border-left: 1px solid #f1f5f9; }
-  .gantt-bar { position: absolute; height: 20px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 6px; transition: opacity 0.15s; }
-  .gantt-bar:hover { opacity: 0.85; }
+  .gantt-bar { position: absolute; height: 20px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; color: white; white-space: nowrap; overflow: visible; text-overflow: ellipsis; padding: 0 8px; cursor: grab; user-select: none; }
+  .gantt-bar:hover { opacity: 0.9; box-shadow: 0 0 0 2px rgba(59,130,246,0.4); }
+  .gantt-bar.dragging { opacity: 0.7; cursor: grabbing; z-index: 10; }
   .gantt-bar.blocked { background-image: repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(255,255,255,0.25) 4px, rgba(255,255,255,0.25) 8px) !important; }
   .gantt-bar.at-risk { border: 2px dashed rgba(255,255,255,0.6); }
-  .gantt-milestone { position: absolute; width: 12px; height: 12px; transform: rotate(45deg); border-radius: 2px; }
+  .gantt-bar .handle { position: absolute; top: 0; bottom: 0; width: 7px; cursor: col-resize; z-index: 2; }
+  .gantt-bar .handle:hover { background: rgba(255,255,255,0.35); }
+  .gantt-bar .handle-l { left: 0; border-radius: 4px 0 0 4px; }
+  .gantt-bar .handle-r { right: 0; border-radius: 0 4px 4px 0; }
+  .gantt-bar .bar-label { pointer-events: none; overflow: hidden; text-overflow: ellipsis; }
+  .gantt-milestone { position: absolute; width: 12px; height: 12px; transform: rotate(45deg); border-radius: 2px; cursor: grab; user-select: none; z-index: 3; }
+  .gantt-milestone:hover { box-shadow: 0 0 0 3px rgba(59,130,246,0.4); }
+  .gantt-milestone.dragging { opacity: 0.7; cursor: grabbing; }
   .gantt-today { position: absolute; top: 0; bottom: 0; width: 2px; background: #ef4444; z-index: 5; opacity: 0.7; }
   .gantt-contract-line { position: absolute; top: 0; bottom: 0; width: 2px; border-left: 2px dashed #f97316; z-index: 4; opacity: 0.6; }
   .group-header { display: flex; border-bottom: 1px solid #e2e8f0; background: #f1f5f9; }
@@ -53,6 +61,7 @@
   .legend span { font-size: 11px; color: #64748b; display: flex; align-items: center; gap: 5px; }
   .legend .swatch { width: 14px; height: 10px; border-radius: 2px; display: inline-block; }
   .legend .diamond { width: 8px; height: 8px; transform: rotate(45deg); display: inline-block; border-radius: 1px; }
+  .drag-tooltip { position: fixed; background: #1e293b; color: white; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 500; pointer-events: none; z-index: 200; white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
   .print-btn { position: fixed; bottom: 24px; right: 24px; background: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(37,99,235,0.3); z-index: 50; }
   .print-btn:hover { background: #1d4ed8; }
   @media print {
@@ -60,11 +69,13 @@
     .header { padding: 12px 16px; }
     .container { padding: 12px; }
     .print-btn { display: none; }
+    .drag-tooltip { display: none; }
     .gantt { break-inside: avoid; border-radius: 4px; }
     .gantt-row-label .name, .group-header-label .gh-name { font-size: 9px; }
     .gantt-row-label .sub, .group-header-label .gh-owner { font-size: 8px; }
     .gantt-row-label, .gantt-label-col, .group-header-label { width: 240px; min-width: 240px; }
-    .gantt-bar { height: 16px; font-size: 7px; }
+    .gantt-bar { height: 16px; font-size: 7px; cursor: default; }
+    .gantt-bar .handle { display: none; }
     .gantt-row { min-height: auto; }
     .gantt-row-label { padding: 4px 8px; }
     .section { margin-bottom: 16px; }
@@ -75,7 +86,7 @@
 
 <div class="header">
   <h1>US Wallet Program — Master Timeline</h1>
-  <p>Consolidated view of project phases, workstream timelines, and key milestones</p>
+  <p>Consolidated view of project phases, workstream timelines, and key milestones &mdash; <em>drag bars to adjust dates</em></p>
   <div class="meta">
     <span><span class="dot" style="background:#3b82f6"></span> Planning</span>
     <span><span class="dot" style="background:#f97316"></span> Contract</span>
@@ -92,37 +103,25 @@
 </div>
 
 <div class="container">
-
-  <!-- ═══════ SECTION 1: HIGH-LEVEL PROJECT PHASES ═══════ -->
   <div class="section">
     <div class="section-title">Project Phases</div>
-    <div class="gantt">
-      <div class="gantt-inner" id="phases-gantt"></div>
-    </div>
+    <div class="gantt"><div class="gantt-inner" id="phases-gantt"></div></div>
   </div>
-
-  <!-- ═══════ SECTION 2: PROGRAM WORKSTREAMS ═══════ -->
   <div class="section">
     <div class="section-title">Program Workstreams</div>
-    <div class="gantt">
-      <div class="gantt-inner" id="workstreams-gantt"></div>
-    </div>
+    <div class="gantt"><div class="gantt-inner" id="workstreams-gantt"></div></div>
     <div class="legend">
       <span><span class="swatch status-on-track" style="border-radius:2px"></span> On Track</span>
       <span><span class="swatch status-at-risk" style="border-radius:2px"></span> At Risk</span>
       <span><span class="swatch status-blocked" style="border-radius:2px"></span> Blocked</span>
       <span><span class="diamond" style="background:#1e293b"></span> Milestone</span>
       <span style="color:#ef4444; font-weight:600;">| Today</span>
-      <span style="color:#f97316; font-weight:600;">┆ Helix Contract (Expected)</span>
+      <span style="color:#f97316; font-weight:600;">&#x2506; Helix Contract (Expected)</span>
     </div>
   </div>
-
-  <!-- ═══════ SECTION 3: VENDOR & INTEGRATION TIMELINE (HELIX) ═══════ -->
   <div class="section">
     <div class="section-title">Vendor & Integration Timeline (Helix / Q2)</div>
-    <div class="gantt">
-      <div class="gantt-inner" id="vendor-gantt"></div>
-    </div>
+    <div class="gantt"><div class="gantt-inner" id="vendor-gantt"></div></div>
     <div class="legend">
       <span><span class="swatch" style="background:#6366f1"></span> Helix Platform</span>
       <span><span class="swatch" style="background:#2563eb"></span> VISA DPS / Card</span>
@@ -133,23 +132,18 @@
       <span><span class="diamond" style="background:#1e293b"></span> Milestone</span>
     </div>
   </div>
-
 </div>
 
+<div class="drag-tooltip" id="drag-tooltip" style="display:none"></div>
 <button class="print-btn" onclick="window.print()">Print / Save PDF</button>
 
 <script>
 // ═══════ DATA ═══════
-
-// 13-month span: Oct 2025 → Oct 2026
-// Index: 0=Oct25, 1=Nov25, 2=Dec25, 3=Jan26, 4=Feb26, 5=Mar26, 6=Apr26, 7=May26, 8=Jun26, 9=Jul26, 10=Aug26, 11=Sep26, 12=Oct26
 const months = [
   "Oct 25","Nov 25","Dec 25","Jan 26","Feb 26","Mar 26","Apr 26","May 26","Jun 26","Jul 26","Aug 26","Sep 26","Oct 26"
 ];
+const CONTRACT_IDX = 5;
 
-const CONTRACT_IDX = 5; // Mar 26 — Helix contract expected
-
-// ─── Section 1: High-level project phases (corrected) ───
 const phases = [
   { name: "Planning & Governance",        start: 0,  end: 12, color: "#3b82f6" },
   { name: "Contract Negotiation (Helix)", start: 0,  end: 5,  color: "#f97316" },
@@ -161,264 +155,332 @@ const phases = [
   { name: "Full Roll Out (Target)",       start: 12, end: 12, color: "#ef4444", milestone: true },
 ];
 
-// ─── Section 2: 14 Workstreams with sub-milestones ───
 const workstreamGroups = [
-  // ── 1. Vendor Management & Program Commercials ──
   { group: "Vendor Mgmt & Program Commercials", owner: "Fahad Rehman", status: "at-risk", items: [
-    { name: "Vendor Evaluation & Selection",    start: 0, end: 2, color: "#ef4444" },
-    { name: "Helix Contract Negotiation",       start: 2, end: 5, color: "#ef4444" },
-    { name: "TAB Bank Partnership Agreement",   start: 3, end: 5, color: "#ef4444" },
-    { name: "Contract Execution",               start: 5, end: 5, color: "#1e293b", milestone: true },
-    { name: "Vendor Onboarding & Kick-off",     start: 5, end: 7, color: "#ef4444" },
+    { name: "Vendor Evaluation & Selection", start: 0, end: 2, color: "#ef4444" },
+    { name: "Helix Contract Negotiation", start: 2, end: 5, color: "#ef4444" },
+    { name: "TAB Bank Partnership Agreement", start: 3, end: 5, color: "#ef4444" },
+    { name: "Contract Execution", start: 5, end: 5, color: "#1e293b", milestone: true },
+    { name: "Vendor Onboarding & Kick-off", start: 5, end: 7, color: "#ef4444" },
   ]},
-
-  // ── 2. Product ──
   { group: "Product", owner: "Matias Stephens, Arevik Sargsyan", status: "on-track", items: [
-    { name: "Product Requirements & User Journeys", start: 1, end: 4,  color: "#0891b2" },
-    { name: "Wireframes & Figma Prototypes",        start: 3, end: 6,  color: "#0891b2" },
-    { name: "PRD Sign-off",                         start: 6, end: 6,  color: "#1e293b", milestone: true },
-    { name: "Feature Specs for Development",        start: 6, end: 8,  color: "#0891b2" },
-    { name: "UAT Acceptance Criteria",              start: 9, end: 10, color: "#0891b2" },
+    { name: "Product Requirements & User Journeys", start: 1, end: 4, color: "#0891b2" },
+    { name: "Wireframes & Figma Prototypes", start: 3, end: 6, color: "#0891b2" },
+    { name: "PRD Sign-off", start: 6, end: 6, color: "#1e293b", milestone: true },
+    { name: "Feature Specs for Development", start: 6, end: 8, color: "#0891b2" },
+    { name: "UAT Acceptance Criteria", start: 9, end: 10, color: "#0891b2" },
   ]},
-
-  // ── 3. Compliance & Legal ──
   { group: "Compliance & Legal", owner: "Alex Ketter, Kenan Haskovic", status: "on-track", items: [
-    { name: "Regulatory Assessment",              start: 0, end: 3,  color: "#dc2626" },
-    { name: "Compliance Program & Policy Design",  start: 3, end: 6,  color: "#dc2626" },
-    { name: "Privacy Policy & Terms of Service",   start: 4, end: 7,  color: "#dc2626" },
-    { name: "TAB Bank Compliance Documentation",   start: 5, end: 8,  color: "#dc2626" },
-    { name: "Regulatory Approval",                 start: 9, end: 9,  color: "#1e293b", milestone: true },
-    { name: "Ongoing Monitoring Framework",        start: 9, end: 11, color: "#dc2626" },
+    { name: "Regulatory Assessment", start: 0, end: 3, color: "#dc2626" },
+    { name: "Compliance Program & Policy Design", start: 3, end: 6, color: "#dc2626" },
+    { name: "Privacy Policy & Terms of Service", start: 4, end: 7, color: "#dc2626" },
+    { name: "TAB Bank Compliance Documentation", start: 5, end: 8, color: "#dc2626" },
+    { name: "Regulatory Approval", start: 9, end: 9, color: "#1e293b", milestone: true },
+    { name: "Ongoing Monitoring Framework", start: 9, end: 11, color: "#dc2626" },
   ]},
-
-  // ── 4. Card Design ──
   { group: "Card Design", owner: "Rigved Sathe, Juan Alexander Bas...", status: "on-track", items: [
-    { name: "Brand & Card Artwork Design",          start: 3, end: 5, color: "#7c3aed" },
-    { name: "Card Design Approval (VISA + TAB)",    start: 5, end: 7, color: "#7c3aed" },
-    { name: "Card Artwork Production-Ready",        start: 7, end: 7, color: "#1e293b", milestone: true },
+    { name: "Brand & Card Artwork Design", start: 3, end: 5, color: "#7c3aed" },
+    { name: "Card Design Approval (VISA + TAB)", start: 5, end: 7, color: "#7c3aed" },
+    { name: "Card Artwork Production-Ready", start: 7, end: 7, color: "#1e293b", milestone: true },
   ]},
-
-  // ── 5. KYC/eKYC ──
   { group: "KYC/eKYC", owner: "Fahad Rehman", status: "on-track", items: [
-    { name: "KYC Vendor Evaluation",          start: 4, end: 5, color: "#16a34a" },
-    { name: "Onboarding Flow Design",         start: 5, end: 6, color: "#16a34a" },
+    { name: "KYC Vendor Evaluation", start: 4, end: 5, color: "#16a34a" },
+    { name: "Onboarding Flow Design", start: 5, end: 6, color: "#16a34a" },
     { name: "eKYC Integration & Development", start: 6, end: 8, color: "#16a34a" },
-    { name: "Onboarding Flow Testing",        start: 8, end: 9, color: "#16a34a" },
-    { name: "KYC Go-Live Ready",              start: 9, end: 9, color: "#1e293b", milestone: true },
+    { name: "Onboarding Flow Testing", start: 8, end: 9, color: "#16a34a" },
+    { name: "KYC Go-Live Ready", start: 9, end: 9, color: "#1e293b", milestone: true },
   ]},
-
-  // ── 6. Rev. Management ──
   { group: "Rev. Management", owner: "Alonzo Venegas", status: "on-track", items: [
-    { name: "Fee Structure Analysis",     start: 4, end: 5, color: "#ea580c" },
-    { name: "Revenue Model Definition",   start: 5, end: 6, color: "#ea580c" },
-    { name: "Pricing Approval",           start: 6, end: 7, color: "#ea580c" },
+    { name: "Fee Structure Analysis", start: 4, end: 5, color: "#ea580c" },
+    { name: "Revenue Model Definition", start: 5, end: 6, color: "#ea580c" },
+    { name: "Pricing Approval", start: 6, end: 7, color: "#ea580c" },
     { name: "Fee Configuration Complete", start: 7, end: 7, color: "#1e293b", milestone: true },
   ]},
-
-  // ── 7. Finance & Accounting ──
   { group: "Finance & Accounting", owner: "Scott Penderis", status: "on-track", items: [
-    { name: "Budget Planning & Forecasting",     start: 3,  end: 5,  color: "#0284c7" },
-    { name: "Ledger & Accounting Setup",         start: 5,  end: 8,  color: "#0284c7" },
-    { name: "Reconciliation Process Design",     start: 8,  end: 10, color: "#0284c7" },
-    { name: "Financial Reporting Framework",     start: 10, end: 12, color: "#0284c7" },
-    { name: "Launch Financial Readiness",        start: 12, end: 12, color: "#1e293b", milestone: true },
+    { name: "Budget Planning & Forecasting", start: 3, end: 5, color: "#0284c7" },
+    { name: "Ledger & Accounting Setup", start: 5, end: 8, color: "#0284c7" },
+    { name: "Reconciliation Process Design", start: 8, end: 10, color: "#0284c7" },
+    { name: "Financial Reporting Framework", start: 10, end: 12, color: "#0284c7" },
+    { name: "Launch Financial Readiness", start: 12, end: 12, color: "#1e293b", milestone: true },
   ]},
-
-  // ── 8. Security & Privacy ──
   { group: "Security & Privacy", owner: "Andres Porras Garcia, Aaron Toren", status: "on-track", items: [
-    { name: "Security Assessment",              start: 3,  end: 5,  color: "#475569" },
-    { name: "Privacy Impact Assessment",        start: 5,  end: 5,  color: "#475569" },
-    { name: "Security Controls Implementation", start: 6,  end: 9,  color: "#475569" },
-    { name: "Penetration Testing",              start: 9,  end: 10, color: "#475569" },
-    { name: "Security Sign-off",                start: 10, end: 10, color: "#1e293b", milestone: true },
+    { name: "Security Assessment", start: 3, end: 5, color: "#475569" },
+    { name: "Privacy Impact Assessment", start: 5, end: 5, color: "#475569" },
+    { name: "Security Controls Implementation", start: 6, end: 9, color: "#475569" },
+    { name: "Penetration Testing", start: 9, end: 10, color: "#475569" },
+    { name: "Security Sign-off", start: 10, end: 10, color: "#1e293b", milestone: true },
   ]},
-
-  // ── 9. Marketing ──
   { group: "Marketing", owner: "Hillary Bontempi", status: "on-track", items: [
-    { name: "Marketing Strategy & Positioning",  start: 9,  end: 10, color: "#a855f7" },
-    { name: "Brand Assets & Collateral",         start: 10, end: 11, color: "#a855f7" },
-    { name: "Launch Campaign Planning",          start: 11, end: 12, color: "#a855f7" },
-    { name: "Go-to-Market Launch",               start: 12, end: 12, color: "#1e293b", milestone: true },
+    { name: "Marketing Strategy & Positioning", start: 9, end: 10, color: "#a855f7" },
+    { name: "Brand Assets & Collateral", start: 10, end: 11, color: "#a855f7" },
+    { name: "Launch Campaign Planning", start: 11, end: 12, color: "#a855f7" },
+    { name: "Go-to-Market Launch", start: 12, end: 12, color: "#1e293b", milestone: true },
   ]},
-
-  // ── 10. FE/BE Development ──
   { group: "FE/BE Development", owner: "Hardik Joshi", status: "blocked", items: [
-    { name: "Helix Sandbox Setup & Credentials",    start: 5,  end: 6,  color: "#6366f1" },
-    { name: "Core Banking API Integration",         start: 6,  end: 8,  color: "#6366f1" },
-    { name: "Card Issuance & VISA DPS Integration", start: 7,  end: 9,  color: "#6366f1" },
-    { name: "mRDC / Ensenta (Check Deposit)",       start: 7,  end: 9,  color: "#6366f1" },
-    { name: "Mobile App / OneApp Development",      start: 7,  end: 10, color: "#6366f1" },
-    { name: "Integration Testing",                  start: 10, end: 11, color: "#6366f1" },
+    { name: "Helix Sandbox Setup & Credentials", start: 5, end: 6, color: "#6366f1" },
+    { name: "Core Banking API Integration", start: 6, end: 8, color: "#6366f1" },
+    { name: "Card Issuance & VISA DPS Integration", start: 7, end: 9, color: "#6366f1" },
+    { name: "mRDC / Ensenta (Check Deposit)", start: 7, end: 9, color: "#6366f1" },
+    { name: "Mobile App / OneApp Development", start: 7, end: 10, color: "#6366f1" },
+    { name: "Integration Testing", start: 10, end: 11, color: "#6366f1" },
   ]},
-
-  // ── 11. Card Fulfillment / Inventory ──
   { group: "Card Fulfillment / Inventory", owner: "Cristian Castaneda", status: "on-track", items: [
-    { name: "Card Manufacturer Setup (CPI)",  start: 6,  end: 7,  color: "#65a30d" },
-    { name: "Inventory Management System",    start: 7,  end: 9,  color: "#65a30d" },
-    { name: "Card Production Test Run",       start: 9,  end: 10, color: "#65a30d" },
-    { name: "Fulfillment Go-Live",            start: 10, end: 10, color: "#1e293b", milestone: true },
+    { name: "Card Manufacturer Setup (CPI)", start: 6, end: 7, color: "#65a30d" },
+    { name: "Inventory Management System", start: 7, end: 9, color: "#65a30d" },
+    { name: "Card Production Test Run", start: 9, end: 10, color: "#65a30d" },
+    { name: "Fulfillment Go-Live", start: 10, end: 10, color: "#1e293b", milestone: true },
   ]},
-
-  // ── 12. Fraud ──
   { group: "Fraud", owner: "Taylor Kwan, Rodrigo De la Fuente", status: "on-track", items: [
-    { name: "Fraud Rules Definition",           start: 6,  end: 7,  color: "#f59e0b" },
-    { name: "Monitoring System Setup",           start: 7,  end: 9,  color: "#f59e0b" },
-    { name: "Transaction Monitoring Testing",    start: 9,  end: 10, color: "#f59e0b" },
-    { name: "Fraud System Go-Live",              start: 10, end: 10, color: "#1e293b", milestone: true },
+    { name: "Fraud Rules Definition", start: 6, end: 7, color: "#f59e0b" },
+    { name: "Monitoring System Setup", start: 7, end: 9, color: "#f59e0b" },
+    { name: "Transaction Monitoring Testing", start: 9, end: 10, color: "#f59e0b" },
+    { name: "Fraud System Go-Live", start: 10, end: 10, color: "#1e293b", milestone: true },
   ]},
-
-  // ── 13. Customer Care & Support ──
   { group: "Customer Care & Support", owner: "Abby Ninel Valencu..., Danika Keblar", status: "on-track", items: [
-    { name: "Support Workflow Design",       start: 7,  end: 8,  color: "#db2777" },
-    { name: "Knowledge Base & FAQ Creation", start: 8,  end: 9,  color: "#db2777" },
-    { name: "Agent Training Program",        start: 9,  end: 10, color: "#db2777" },
-    { name: "Support Tools Integration",     start: 10, end: 11, color: "#db2777" },
-    { name: "Support Readiness",             start: 11, end: 11, color: "#1e293b", milestone: true },
+    { name: "Support Workflow Design", start: 7, end: 8, color: "#db2777" },
+    { name: "Knowledge Base & FAQ Creation", start: 8, end: 9, color: "#db2777" },
+    { name: "Agent Training Program", start: 9, end: 10, color: "#db2777" },
+    { name: "Support Tools Integration", start: 10, end: 11, color: "#db2777" },
+    { name: "Support Readiness", start: 11, end: 11, color: "#1e293b", milestone: true },
   ]},
-
-  // ── 14. Data & Reporting (BI) ──
   { group: "Data & Reporting (BI)", owner: "Korey McGee", status: "on-track", items: [
-    { name: "Data Model Design",       start: 7,  end: 8,  color: "#0369a1" },
-    { name: "Dashboard Development",   start: 8,  end: 10, color: "#0369a1" },
-    { name: "Reporting Framework",     start: 10, end: 11, color: "#0369a1" },
-    { name: "Analytics Go-Live",       start: 11, end: 11, color: "#1e293b", milestone: true },
+    { name: "Data Model Design", start: 7, end: 8, color: "#0369a1" },
+    { name: "Dashboard Development", start: 8, end: 10, color: "#0369a1" },
+    { name: "Reporting Framework", start: 10, end: 11, color: "#0369a1" },
+    { name: "Analytics Go-Live", start: 11, end: 11, color: "#1e293b", milestone: true },
   ]},
 ];
 
-// ─── Section 3: Vendor & Integration Timeline (Helix) ───
-// Uses same 13-month span; all dates shifted +1 month from original (contract Mar 26 instead of Feb 26)
 const vendorGroups = [
   { group: "Helix Platform Setup", items: [
-    { name: "Helix Sandbox Credentials",       start: 5,  end: 5,  color: "#6366f1" },
-    { name: "Client Sandbox / Product Build",  start: 5,  end: 7,  color: "#6366f1" },
-    { name: "Helix Prod Document Collection",  start: 5,  end: 6,  color: "#6366f1" },
-    { name: "Production Readiness Meeting",    start: 5,  end: 6,  color: "#6366f1" },
-    { name: "Helix University — Level 1",      start: 5,  end: 7,  color: "#6366f1" },
-    { name: "Helix University — Level 2",      start: 7,  end: 9,  color: "#6366f1" },
-    { name: "Helix Prod Credentials",          start: 7,  end: 7,  color: "#f97316", milestone: true },
+    { name: "Helix Sandbox Credentials", start: 5, end: 5, color: "#6366f1" },
+    { name: "Client Sandbox / Product Build", start: 5, end: 7, color: "#6366f1" },
+    { name: "Helix Prod Document Collection", start: 5, end: 6, color: "#6366f1" },
+    { name: "Production Readiness Meeting", start: 5, end: 6, color: "#6366f1" },
+    { name: "Helix University — Level 1", start: 5, end: 7, color: "#6366f1" },
+    { name: "Helix University — Level 2", start: 7, end: 9, color: "#6366f1" },
+    { name: "Helix Prod Credentials", start: 7, end: 7, color: "#f97316", milestone: true },
   ]},
   { group: "VISA DPS & Card Issuance", items: [
-    { name: "VDPS Project Requirements",         start: 5,  end: 5,  color: "#2563eb" },
-    { name: "VDPS Build",                        start: 6,  end: 6,  color: "#2563eb" },
-    { name: "VISA DPS Certification & Install",  start: 7,  end: 8,  color: "#2563eb" },
-    { name: "Card Design Approvals & Production", start: 6, end: 8,  color: "#2563eb" },
+    { name: "VDPS Project Requirements", start: 5, end: 5, color: "#2563eb" },
+    { name: "VDPS Build", start: 6, end: 6, color: "#2563eb" },
+    { name: "VISA DPS Certification & Install", start: 7, end: 8, color: "#2563eb" },
+    { name: "Card Design Approvals & Production", start: 6, end: 8, color: "#2563eb" },
   ]},
   { group: "mRDC / Ensenta", items: [
-    { name: "mRDC Kick-off",                    start: 5,  end: 5,  color: "#0891b2" },
-    { name: "mRDC Certification & Integration", start: 6,  end: 8,  color: "#0891b2" },
-    { name: "mRDC Implementation",              start: 9,  end: 10, color: "#0891b2" },
+    { name: "mRDC Kick-off", start: 5, end: 5, color: "#0891b2" },
+    { name: "mRDC Certification & Integration", start: 6, end: 8, color: "#0891b2" },
+    { name: "mRDC Implementation", start: 9, end: 10, color: "#0891b2" },
   ]},
   { group: "Compliance & KYC", items: [
-    { name: "Client Socure Certification",  start: 7,  end: 9,  color: "#16a34a" },
-    { name: "Bank Req's — Alpha",           start: 5,  end: 7,  color: "#16a34a" },
-    { name: "Bank Req's — Beta",            start: 8,  end: 10, color: "#16a34a" },
-    { name: "Bank Req's — GA",              start: 11, end: 12, color: "#16a34a" },
+    { name: "Client Socure Certification", start: 7, end: 9, color: "#16a34a" },
+    { name: "Bank Req's — Alpha", start: 5, end: 7, color: "#16a34a" },
+    { name: "Bank Req's — Beta", start: 8, end: 10, color: "#16a34a" },
+    { name: "Bank Req's — GA", start: 11, end: 12, color: "#16a34a" },
   ]},
   { group: "Alpha Phase", items: [
-    { name: "Alpha — Socure / Customer Onboarding", start: 8,  end: 10, color: "#f59e0b" },
-    { name: "Alpha — ACH Deposits",                 start: 8,  end: 10, color: "#f59e0b" },
-    { name: "Centrix DTS Implementation",            start: 8,  end: 10, color: "#f59e0b" },
-    { name: "Alpha — Debit Card",                    start: 9,  end: 10, color: "#f59e0b" },
-    { name: "Mobile Wallet Imp (Manual)",            start: 9,  end: 10, color: "#f59e0b" },
-    { name: "Alpha — Disputes",                      start: 10, end: 10, color: "#f59e0b" },
-    { name: "Alpha — mRDC",                          start: 10, end: 10, color: "#f59e0b" },
-    { name: "Alpha Testing Complete",                start: 10, end: 10, color: "#1e293b", milestone: true },
+    { name: "Alpha — Socure / Customer Onboarding", start: 8, end: 10, color: "#f59e0b" },
+    { name: "Alpha — ACH Deposits", start: 8, end: 10, color: "#f59e0b" },
+    { name: "Centrix DTS Implementation", start: 8, end: 10, color: "#f59e0b" },
+    { name: "Alpha — Debit Card", start: 9, end: 10, color: "#f59e0b" },
+    { name: "Mobile Wallet Imp (Manual)", start: 9, end: 10, color: "#f59e0b" },
+    { name: "Alpha — Disputes", start: 10, end: 10, color: "#f59e0b" },
+    { name: "Alpha — mRDC", start: 10, end: 10, color: "#f59e0b" },
+    { name: "Alpha Testing Complete", start: 10, end: 10, color: "#1e293b", milestone: true },
   ]},
   { group: "Beta & GA Launch", items: [
-    { name: "Mobile Wallet Testing (Manual)",                start: 11, end: 11, color: "#ef4444" },
-    { name: "Client Beta",                                   start: 11, end: 12, color: "#ef4444" },
-    { name: "Mobile Wallet — In-App & Digital Issuance",     start: 11, end: 12, color: "#ef4444" },
-    { name: "Beta Testing Complete",                         start: 12, end: 12, color: "#1e293b", milestone: true },
-    { name: "GA Launch",                                     start: 12, end: 12, color: "#22c55e", milestone: true },
+    { name: "Mobile Wallet Testing (Manual)", start: 11, end: 11, color: "#ef4444" },
+    { name: "Client Beta", start: 11, end: 12, color: "#ef4444" },
+    { name: "Mobile Wallet — In-App & Digital Issuance", start: 11, end: 12, color: "#ef4444" },
+    { name: "Beta Testing Complete", start: 12, end: 12, color: "#1e293b", milestone: true },
+    { name: "GA Launch", start: 12, end: 12, color: "#22c55e", milestone: true },
   ]},
 ];
 
-// ═══════ RENDERING ═══════
+// ═══════ SECTION REGISTRY (for drag lookups) ═══════
+const sections = {
+  'phases-gantt':      { months: months, rows: phases, groups: null, contractIdx: undefined },
+  'workstreams-gantt': { months: months, rows: null,   groups: workstreamGroups, contractIdx: CONTRACT_IDX },
+  'vendor-gantt':      { months: months, rows: null,   groups: vendorGroups, contractIdx: CONTRACT_IDX },
+};
 
+// ═══════ RENDERING ═══════
 function currentMonthIndex(monthLabels) {
   const now = new Date();
   const y = now.getFullYear() % 100;
   const m = now.toLocaleString('en', { month: 'short' });
-  const label = m + " " + y;
-  return monthLabels.indexOf(label);
+  return monthLabels.indexOf(m + " " + y);
 }
 
-function renderGantt(containerId, monthLabels, rows, groups, contractIdx) {
+function renderGantt(containerId) {
+  const sec = sections[containerId];
   const container = document.getElementById(containerId);
-  const total = monthLabels.length;
-  const todayIdx = currentMonthIndex(monthLabels);
+  const ml = sec.months, total = ml.length, contractIdx = sec.contractIdx;
+  const todayIdx = currentMonthIndex(ml);
   const colW = 100 / total;
 
-  // Header
   let html = '<div class="gantt-header"><div class="gantt-label-col">Activity</div><div class="gantt-months">';
-  monthLabels.forEach((m, i) => {
-    const cls = i === todayIdx ? ' current' : '';
-    html += '<div class="gantt-month' + cls + '">' + m + '</div>';
-  });
+  ml.forEach((m, i) => { html += '<div class="gantt-month' + (i === todayIdx ? ' current' : '') + '">' + m + '</div>'; });
   html += '</div></div>';
 
-  function renderChartArea(item) {
+  function chartHTML(item, dataAttrs) {
     let ch = '';
-    // Grid lines
-    for (let i = 1; i < total; i++) {
-      ch += '<div class="gantt-grid-line" style="left:' + (i * colW) + '%"></div>';
-    }
-    // Contract gate line
-    if (contractIdx !== undefined && contractIdx >= 0) {
+    for (let i = 1; i < total; i++) ch += '<div class="gantt-grid-line" style="left:' + (i * colW) + '%"></div>';
+    if (contractIdx !== undefined && contractIdx >= 0)
       ch += '<div class="gantt-contract-line" style="left:' + ((contractIdx + 0.5) * colW) + '%"></div>';
-    }
-    // Today line
-    if (todayIdx >= 0) {
+    if (todayIdx >= 0)
       ch += '<div class="gantt-today" style="left:' + ((todayIdx + 0.5) * colW) + '%"></div>';
-    }
-    // Bar or milestone
     if (item.milestone) {
       const cx = (item.start + 0.5) * colW;
-      ch += '<div class="gantt-milestone" style="left:calc(' + cx + '% - 6px);background:' + item.color + '"></div>';
+      ch += '<div class="gantt-milestone" ' + dataAttrs + ' style="left:calc(' + cx + '% - 6px);background:' + item.color + '"></div>';
     } else {
-      const left = item.start * colW;
-      const width = (item.end - item.start + 1) * colW;
+      const left = item.start * colW, width = (item.end - item.start + 1) * colW;
       const barCls = item.barClass ? ' ' + item.barClass : '';
-      const label = width > 10 ? item.name : '';
-      ch += '<div class="gantt-bar' + barCls + '" style="left:' + left + '%;width:' + width + '%;background:' + item.color + '">' + label + '</div>';
+      ch += '<div class="gantt-bar' + barCls + '" ' + dataAttrs + ' style="left:' + left + '%;width:' + width + '%;background:' + item.color + '">'
+        + '<div class="handle handle-l"></div>'
+        + '<span class="bar-label">' + (width > 10 ? item.name : '') + '</span>'
+        + '<div class="handle handle-r"></div>'
+        + '</div>';
     }
     return ch;
   }
 
-  function renderRow(item) {
-    let rowHtml = '<div class="gantt-row"><div class="gantt-row-label"><div><div class="name">' + item.name + '</div></div></div>';
-    rowHtml += '<div class="gantt-row-chart">';
-    rowHtml += renderChartArea(item);
-    rowHtml += '</div></div>';
-    return rowHtml;
+  let itemCounter = 0;
+  function renderRow(item, groupIdx) {
+    const da = 'data-section="' + containerId + '" data-group="' + groupIdx + '" data-idx="' + (itemCounter++) + '"';
+    let r = '<div class="gantt-row"><div class="gantt-row-label"><div><div class="name">' + item.name + '</div></div></div>';
+    r += '<div class="gantt-row-chart">' + chartHTML(item, da) + '</div></div>';
+    return r;
   }
 
-  if (groups) {
-    groups.forEach(g => {
-      // Group header with status dot and owner
-      const statusCls = g.status ? ' status-' + g.status : '';
-      const statusDot = g.status ? '<span class="status-dot' + statusCls + '"></span>' : '';
-      const ownerHtml = g.owner ? ' <span class="gh-owner">— ' + g.owner + '</span>' : '';
-
-      html += '<div class="group-header"><div class="group-header-label">'
-        + statusDot
-        + '<div><span class="gh-name">' + g.group + '</span>' + ownerHtml + '</div>'
-        + '</div><div class="group-header-chart"></div></div>';
-
-      g.items.forEach(item => { html += renderRow(item); });
+  if (sec.groups) {
+    sec.groups.forEach((g, gi) => {
+      const sc = g.status ? ' status-' + g.status : '';
+      const sd = g.status ? '<span class="status-dot' + sc + '"></span>' : '';
+      const ow = g.owner ? ' <span class="gh-owner">— ' + g.owner + '</span>' : '';
+      html += '<div class="group-header"><div class="group-header-label">' + sd + '<div><span class="gh-name">' + g.group + '</span>' + ow + '</div></div><div class="group-header-chart"></div></div>';
+      itemCounter = 0;
+      g.items.forEach(item => { html += renderRow(item, gi); });
     });
-  } else if (rows) {
-    rows.forEach(item => { html += renderRow(item); });
+  } else if (sec.rows) {
+    sec.rows.forEach(item => { html += renderRow(item, -1); });
   }
-
   container.innerHTML = html;
 }
 
-// Render all three sections
-renderGantt('phases-gantt', months, phases, null);
-renderGantt('workstreams-gantt', months, null, workstreamGroups, CONTRACT_IDX);
-renderGantt('vendor-gantt', months, null, vendorGroups, CONTRACT_IDX);
-</script>
+// Initial render
+Object.keys(sections).forEach(id => renderGantt(id));
 
+// ═══════ DRAG SYSTEM ═══════
+const tooltip = document.getElementById('drag-tooltip');
+let drag = null; // active drag state
+
+function getItem(sectionId, groupIdx, itemIdx) {
+  const sec = sections[sectionId];
+  if (sec.groups && groupIdx >= 0) return sec.groups[groupIdx].items[itemIdx];
+  if (sec.rows) return sec.rows[itemIdx];
+  return null;
+}
+
+function monthFromX(mouseX, chartEl, total) {
+  const rect = chartEl.getBoundingClientRect();
+  const pct = (mouseX - rect.left) / rect.width;
+  return Math.round(Math.max(0, Math.min(total - 1, pct * total)));
+}
+
+document.addEventListener('mousedown', function(e) {
+  // Find target: bar handle, bar body, or milestone
+  const handleL = e.target.closest('.handle-l');
+  const handleR = e.target.closest('.handle-r');
+  const bar = e.target.closest('.gantt-bar');
+  const ms = e.target.closest('.gantt-milestone');
+  const el = bar || ms;
+  if (!el) return;
+
+  const sectionId = el.dataset.section;
+  const groupIdx = parseInt(el.dataset.group);
+  const itemIdx = parseInt(el.dataset.idx);
+  const item = getItem(sectionId, groupIdx, itemIdx);
+  if (!item) return;
+
+  const chartEl = el.closest('.gantt-row-chart');
+  const total = sections[sectionId].months.length;
+
+  let type = 'move';
+  if (handleL) type = 'resize-l';
+  else if (handleR) type = 'resize-r';
+  else if (ms) type = 'milestone';
+
+  e.preventDefault();
+  el.classList.add('dragging');
+
+  drag = {
+    el, chartEl, sectionId, groupIdx, itemIdx, item, type, total,
+    origStart: item.start, origEnd: item.end,
+    startX: e.clientX,
+  };
+});
+
+document.addEventListener('mousemove', function(e) {
+  if (!drag) return;
+  const { el, chartEl, item, type, total, origStart, origEnd, startX } = drag;
+  const rect = chartEl.getBoundingClientRect();
+  const colPx = rect.width / total;
+  const dx = e.clientX - startX;
+  const dm = Math.round(dx / colPx);
+  const colW = 100 / total;
+  const ml = sections[drag.sectionId].months;
+
+  let newStart = origStart, newEnd = origEnd;
+
+  if (type === 'move' || type === 'milestone') {
+    const dur = origEnd - origStart;
+    newStart = Math.max(0, Math.min(total - 1 - dur, origStart + dm));
+    newEnd = newStart + dur;
+  } else if (type === 'resize-l') {
+    newStart = Math.max(0, Math.min(origEnd, origStart + dm));
+    newEnd = origEnd;
+  } else if (type === 'resize-r') {
+    newStart = origStart;
+    newEnd = Math.max(origStart, Math.min(total - 1, origEnd + dm));
+  }
+
+  // Live preview
+  if (item.milestone || type === 'milestone') {
+    const cx = (newStart + 0.5) * colW;
+    el.style.left = 'calc(' + cx + '% - 6px)';
+  } else {
+    el.style.left = (newStart * colW) + '%';
+    el.style.width = ((newEnd - newStart + 1) * colW) + '%';
+  }
+
+  // Tooltip
+  const txt = item.milestone ? ml[newStart] : ml[newStart] + ' → ' + ml[newEnd];
+  tooltip.textContent = item.name + ': ' + txt;
+  tooltip.style.display = 'block';
+  tooltip.style.left = (e.clientX + 12) + 'px';
+  tooltip.style.top = (e.clientY - 28) + 'px';
+
+  drag.newStart = newStart;
+  drag.newEnd = newEnd;
+});
+
+document.addEventListener('mouseup', function() {
+  if (!drag) return;
+  const { el, sectionId, item } = drag;
+  el.classList.remove('dragging');
+  tooltip.style.display = 'none';
+
+  // Commit changes to data
+  if (drag.newStart !== undefined) {
+    item.start = drag.newStart;
+    item.end = drag.newEnd;
+  }
+
+  // Re-render to clean up
+  renderGantt(sectionId);
+  drag = null;
+});
+</script>
 </body>
 </html>
