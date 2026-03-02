@@ -10,16 +10,17 @@
   .header { background: #0f172a; color: white; padding: 24px 32px; }
   .header h1 { font-size: 22px; font-weight: 700; }
   .header p { font-size: 13px; color: #94a3b8; margin-top: 4px; }
-  .header .meta { display: flex; gap: 24px; margin-top: 12px; flex-wrap: wrap; }
+  .header .meta { display: flex; gap: 20px; margin-top: 12px; flex-wrap: wrap; align-items: center; }
   .header .meta span { font-size: 11px; color: #cbd5e1; display: flex; align-items: center; gap: 6px; }
   .header .meta .dot { width: 10px; height: 10px; border-radius: 3px; display: inline-block; }
-  .container { max-width: 1400px; margin: 0 auto; padding: 24px; }
+  .header .meta .sep { color: #475569; font-size: 14px; margin: 0 4px; }
+  .container { max-width: 1500px; margin: 0 auto; padding: 24px; }
   .section { margin-bottom: 32px; }
   .section-title { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 12px; padding-left: 4px; }
   .gantt { background: white; border: 1px solid #e2e8f0; border-radius: 12px; overflow-x: auto; }
-  .gantt-inner { min-width: 1100px; }
+  .gantt-inner { min-width: 1200px; }
   .gantt-header { display: flex; border-bottom: 1px solid #e2e8f0; background: #f8fafc; }
-  .gantt-label-col { width: 260px; min-width: 260px; padding: 10px 16px; font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; border-right: 1px solid #e2e8f0; }
+  .gantt-label-col { width: 320px; min-width: 320px; padding: 10px 16px; font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; border-right: 1px solid #e2e8f0; }
   .gantt-months { flex: 1; display: flex; }
   .gantt-month { flex: 1; text-align: center; padding: 10px 4px; font-size: 11px; font-weight: 500; color: #64748b; border-right: 1px solid #f1f5f9; position: relative; }
   .gantt-month:last-child { border-right: none; }
@@ -27,17 +28,27 @@
   .gantt-row { display: flex; border-bottom: 1px solid #f1f5f9; transition: background 0.15s; }
   .gantt-row:last-child { border-bottom: none; }
   .gantt-row:hover { background: #f8fafc; }
-  .gantt-row-label { width: 260px; min-width: 260px; padding: 8px 16px; border-right: 1px solid #e2e8f0; display: flex; align-items: center; gap: 8px; }
-  .gantt-row-label .name { font-size: 13px; font-weight: 500; }
+  .gantt-row-label { width: 320px; min-width: 320px; padding: 7px 16px; border-right: 1px solid #e2e8f0; display: flex; align-items: center; gap: 8px; }
+  .gantt-row-label .name { font-size: 12px; font-weight: 500; }
   .gantt-row-label .sub { font-size: 10px; color: #94a3b8; }
-  .gantt-row-chart { flex: 1; position: relative; display: flex; align-items: center; padding: 6px 0; }
+  .gantt-row-chart { flex: 1; position: relative; display: flex; align-items: center; padding: 5px 0; }
   .gantt-grid-line { position: absolute; top: 0; bottom: 0; border-left: 1px solid #f1f5f9; }
-  .gantt-bar { position: absolute; height: 22px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 6px; transition: opacity 0.15s; }
+  .gantt-bar { position: absolute; height: 20px; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 600; color: white; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 6px; transition: opacity 0.15s; }
   .gantt-bar:hover { opacity: 0.85; }
-  .gantt-milestone { position: absolute; width: 14px; height: 14px; transform: rotate(45deg); border-radius: 2px; }
+  .gantt-bar.blocked { background-image: repeating-linear-gradient(45deg, transparent, transparent 4px, rgba(255,255,255,0.25) 4px, rgba(255,255,255,0.25) 8px) !important; }
+  .gantt-bar.at-risk { border: 2px dashed rgba(255,255,255,0.6); }
+  .gantt-milestone { position: absolute; width: 12px; height: 12px; transform: rotate(45deg); border-radius: 2px; }
   .gantt-today { position: absolute; top: 0; bottom: 0; width: 2px; background: #ef4444; z-index: 5; opacity: 0.7; }
+  .gantt-contract-line { position: absolute; top: 0; bottom: 0; width: 2px; border-left: 2px dashed #f97316; z-index: 4; opacity: 0.6; }
   .group-header { display: flex; border-bottom: 1px solid #e2e8f0; background: #f1f5f9; }
-  .group-header td { padding: 6px 16px; font-size: 11px; font-weight: 700; color: #475569; text-transform: uppercase; letter-spacing: 0.04em; }
+  .group-header-label { width: 320px; min-width: 320px; padding: 8px 16px; border-right: 1px solid #e2e8f0; display: flex; align-items: center; gap: 8px; }
+  .group-header-label .gh-name { font-size: 12px; font-weight: 700; color: #334155; }
+  .group-header-label .gh-owner { font-size: 10px; color: #64748b; font-weight: 400; }
+  .group-header-chart { flex: 1; position: relative; }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+  .status-on-track { background: #22c55e; }
+  .status-at-risk { background: #f59e0b; }
+  .status-blocked { background: #ef4444; }
   .legend { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 16px; padding: 0 4px; }
   .legend span { font-size: 11px; color: #64748b; display: flex; align-items: center; gap: 5px; }
   .legend .swatch { width: 14px; height: 10px; border-radius: 2px; display: inline-block; }
@@ -45,11 +56,18 @@
   .print-btn { position: fixed; bottom: 24px; right: 24px; background: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(37,99,235,0.3); z-index: 50; }
   .print-btn:hover { background: #1d4ed8; }
   @media print {
-    body { background: white; }
-    .header { padding: 16px 20px; }
-    .container { padding: 16px; }
+    body { background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .header { padding: 12px 16px; }
+    .container { padding: 12px; }
     .print-btn { display: none; }
-    .gantt { break-inside: avoid; }
+    .gantt { break-inside: avoid; border-radius: 4px; }
+    .gantt-row-label .name, .group-header-label .gh-name { font-size: 9px; }
+    .gantt-row-label .sub, .group-header-label .gh-owner { font-size: 8px; }
+    .gantt-row-label, .gantt-label-col, .group-header-label { width: 240px; min-width: 240px; }
+    .gantt-bar { height: 16px; font-size: 7px; }
+    .gantt-row { min-height: auto; }
+    .gantt-row-label { padding: 4px 8px; }
+    .section { margin-bottom: 16px; }
   }
 </style>
 </head>
@@ -57,14 +75,19 @@
 
 <div class="header">
   <h1>US Wallet Program — Master Timeline</h1>
-  <p>Consolidated view of project phases, vendor integrations, and key milestones</p>
+  <p>Consolidated view of project phases, workstream timelines, and key milestones</p>
   <div class="meta">
-    <span><span class="dot" style="background:#3b82f6"></span> Planning & Governance</span>
-    <span><span class="dot" style="background:#6366f1"></span> Build & Integration</span>
-    <span><span class="dot" style="background:#f59e0b"></span> Testing & Validation</span>
-    <span><span class="dot" style="background:#14b8a6"></span> Operations & Training</span>
+    <span><span class="dot" style="background:#3b82f6"></span> Planning</span>
+    <span><span class="dot" style="background:#f97316"></span> Contract</span>
+    <span><span class="dot" style="background:#6366f1"></span> Build</span>
+    <span><span class="dot" style="background:#f59e0b"></span> Testing</span>
+    <span><span class="dot" style="background:#14b8a6"></span> Ops & Training</span>
     <span><span class="dot" style="background:#a855f7"></span> Launch & Marketing</span>
-    <span><span class="dot" style="background:#22c55e"></span> Pilot / Rollout</span>
+    <span><span class="dot" style="background:#22c55e"></span> Pilot</span>
+    <span class="sep">|</span>
+    <span><span class="dot status-on-track"></span> On Track</span>
+    <span><span class="dot status-at-risk"></span> At Risk</span>
+    <span><span class="dot status-blocked"></span> Blocked</span>
   </div>
 </div>
 
@@ -78,21 +101,19 @@
     </div>
   </div>
 
-  <!-- ═══════ SECTION 2: DETAILED VENDOR / INTEGRATION TIMELINE ═══════ -->
+  <!-- ═══════ SECTION 2: PROGRAM WORKSTREAMS ═══════ -->
   <div class="section">
-    <div class="section-title">Vendor & Integration Timeline</div>
+    <div class="section-title">Program Workstreams</div>
     <div class="gantt">
-      <div class="gantt-inner" id="vendor-gantt"></div>
+      <div class="gantt-inner" id="workstreams-gantt"></div>
     </div>
     <div class="legend">
-      <span><span class="swatch" style="background:#6366f1"></span> Helix Platform</span>
-      <span><span class="swatch" style="background:#2563eb"></span> VISA DPS / Card</span>
-      <span><span class="swatch" style="background:#0891b2"></span> mRDC / Ensenta</span>
-      <span><span class="swatch" style="background:#16a34a"></span> Compliance / KYC</span>
-      <span><span class="swatch" style="background:#f59e0b"></span> Alpha Testing</span>
-      <span><span class="swatch" style="background:#ef4444"></span> Beta & GA</span>
+      <span><span class="swatch status-on-track" style="border-radius:2px"></span> On Track</span>
+      <span><span class="swatch status-at-risk" style="border-radius:2px"></span> At Risk</span>
+      <span><span class="swatch status-blocked" style="border-radius:2px"></span> Blocked</span>
       <span><span class="diamond" style="background:#1e293b"></span> Milestone</span>
       <span style="color:#ef4444; font-weight:600;">| Today</span>
+      <span style="color:#f97316; font-weight:600;">┆ Helix Contract (Expected)</span>
     </div>
   </div>
 
@@ -103,69 +124,147 @@
 <script>
 // ═══════ DATA ═══════
 
-// Months for the high-level phases (Oct 2025 → Oct 2026 = 13 months)
-const phaseMonths = [
+// 13-month span: Oct 2025 → Oct 2026
+// Index: 0=Oct25, 1=Nov25, 2=Dec25, 3=Jan26, 4=Feb26, 5=Mar26, 6=Apr26, 7=May26, 8=Jun26, 9=Jul26, 10=Aug26, 11=Sep26, 12=Oct26
+const months = [
   "Oct 25","Nov 25","Dec 25","Jan 26","Feb 26","Mar 26","Apr 26","May 26","Jun 26","Jul 26","Aug 26","Sep 26","Oct 26"
 ];
 
+const CONTRACT_IDX = 5; // Mar 26 — Helix contract expected
+
+// ─── Section 1: High-level project phases (corrected) ───
 const phases = [
-  { name: "Planning & Governance", start: 0, end: 12, color: "#3b82f6" },
-  { name: "Build & Integration", start: 2, end: 8, color: "#6366f1" },
-  { name: "Testing & Validation", start: 4, end: 9, color: "#f59e0b" },
-  { name: "Operations & Training", start: 5, end: 9, color: "#14b8a6" },
-  { name: "Launch Readiness & Marketing", start: 5, end: 10, color: "#a855f7" },
-  { name: "Pilot Launch", start: 8, end: 10, color: "#22c55e" },
-  { name: "Full Roll Out", start: 11, end: 11, color: "#ef4444", milestone: true },
+  { name: "Planning & Governance",        start: 0,  end: 12, color: "#3b82f6" },
+  { name: "Contract Negotiation (Helix)", start: 0,  end: 5,  color: "#f97316" },
+  { name: "Build & Integration",          start: 5,  end: 10, color: "#6366f1" },
+  { name: "Testing & Validation",         start: 8,  end: 11, color: "#f59e0b" },
+  { name: "Operations & Training",        start: 9,  end: 11, color: "#14b8a6" },
+  { name: "Launch Readiness & Marketing", start: 9,  end: 12, color: "#a855f7" },
+  { name: "Pilot Launch",                 start: 11, end: 12, color: "#22c55e" },
+  { name: "Full Roll Out (Target)",       start: 12, end: 12, color: "#ef4444", milestone: true },
 ];
 
-// Vendor timeline: Month 1 = Feb 2026, Month 9 = Oct 2026
-const vendorMonths = [
-  "Feb 26","Mar 26","Apr 26","May 26","Jun 26","Jul 26","Aug 26","Sep 26","Oct 26"
-];
+// ─── Section 2: 14 Workstreams with sub-milestones ───
+const workstreamGroups = [
+  // ── 1. Vendor Management & Program Commercials ──
+  { group: "Vendor Mgmt & Program Commercials", owner: "Fahad Rehman", status: "at-risk", items: [
+    { name: "Vendor Evaluation & Selection",    start: 0, end: 2, color: "#ef4444" },
+    { name: "Helix Contract Negotiation",       start: 2, end: 5, color: "#ef4444" },
+    { name: "TAB Bank Partnership Agreement",   start: 3, end: 5, color: "#ef4444" },
+    { name: "Contract Execution",               start: 5, end: 5, color: "#1e293b", milestone: true },
+    { name: "Vendor Onboarding & Kick-off",     start: 5, end: 7, color: "#ef4444" },
+  ]},
 
-const vendorGroups = [
-  { group: "Helix Platform Setup", items: [
-    { name: "Helix Sandbox Credentials", start: 0, end: 0, color: "#6366f1" },
-    { name: "Client Sandbox / Product Build", start: 0, end: 2, color: "#6366f1" },
-    { name: "Helix Prod Document Collection", start: 0, end: 1, color: "#6366f1" },
-    { name: "Production Readiness Meeting", start: 0, end: 1, color: "#6366f1" },
-    { name: "Helix University — Level 1", start: 0, end: 2, color: "#6366f1" },
-    { name: "Helix University — Level 2", start: 2, end: 4, color: "#6366f1" },
-    { name: "Helix Prod Credentials", start: 2, end: 2, color: "#f97316", milestone: true },
+  // ── 2. Product ──
+  { group: "Product", owner: "Matias Stephens, Arevik Sargsyan", status: "on-track", items: [
+    { name: "Product Requirements & User Journeys", start: 1, end: 4,  color: "#0891b2" },
+    { name: "Wireframes & Figma Prototypes",        start: 3, end: 6,  color: "#0891b2" },
+    { name: "PRD Sign-off",                         start: 6, end: 6,  color: "#1e293b", milestone: true },
+    { name: "Feature Specs for Development",        start: 6, end: 8,  color: "#0891b2" },
+    { name: "UAT Acceptance Criteria",              start: 9, end: 10, color: "#0891b2" },
   ]},
-  { group: "VISA DPS & Card Issuance", items: [
-    { name: "VDPS Project Requirements", start: 0, end: 0, color: "#2563eb" },
-    { name: "VDPS Build", start: 1, end: 1, color: "#2563eb" },
-    { name: "VISA DPS Certification & Install", start: 2, end: 3, color: "#2563eb" },
-    { name: "Card Design Approvals & Production", start: 1, end: 3, color: "#2563eb" },
+
+  // ── 3. Compliance & Legal ──
+  { group: "Compliance & Legal", owner: "Alex Ketter, Kenan Haskovic", status: "on-track", items: [
+    { name: "Regulatory Assessment",              start: 0, end: 3,  color: "#dc2626" },
+    { name: "Compliance Program & Policy Design",  start: 3, end: 6,  color: "#dc2626" },
+    { name: "Privacy Policy & Terms of Service",   start: 4, end: 7,  color: "#dc2626" },
+    { name: "TAB Bank Compliance Documentation",   start: 5, end: 8,  color: "#dc2626" },
+    { name: "Regulatory Approval",                 start: 9, end: 9,  color: "#1e293b", milestone: true },
+    { name: "Ongoing Monitoring Framework",        start: 9, end: 11, color: "#dc2626" },
   ]},
-  { group: "mRDC / Ensenta", items: [
-    { name: "mRDC Kick-off", start: 0, end: 0, color: "#0891b2" },
-    { name: "mRDC Certification & Integration", start: 1, end: 3, color: "#0891b2" },
-    { name: "mRDC Implementation", start: 4, end: 5, color: "#0891b2" },
+
+  // ── 4. Card Design ──
+  { group: "Card Design", owner: "Rigved Sathe, Juan Alexander Bas...", status: "on-track", items: [
+    { name: "Brand & Card Artwork Design",          start: 3, end: 5, color: "#7c3aed" },
+    { name: "Card Design Approval (VISA + TAB)",    start: 5, end: 7, color: "#7c3aed" },
+    { name: "Card Artwork Production-Ready",        start: 7, end: 7, color: "#1e293b", milestone: true },
   ]},
-  { group: "Compliance & KYC", items: [
-    { name: "Client Socure Certification", start: 2, end: 4, color: "#16a34a" },
-    { name: "Bank Req's — Alpha", start: 0, end: 2, color: "#16a34a" },
-    { name: "Bank Req's — Beta", start: 3, end: 5, color: "#16a34a" },
-    { name: "Bank Req's — GA", start: 6, end: 7, color: "#16a34a" },
+
+  // ── 5. KYC/eKYC ──
+  { group: "KYC/eKYC", owner: "Fahad Rehman", status: "on-track", items: [
+    { name: "KYC Vendor Evaluation",          start: 4, end: 5, color: "#16a34a" },
+    { name: "Onboarding Flow Design",         start: 5, end: 6, color: "#16a34a" },
+    { name: "eKYC Integration & Development", start: 6, end: 8, color: "#16a34a" },
+    { name: "Onboarding Flow Testing",        start: 8, end: 9, color: "#16a34a" },
+    { name: "KYC Go-Live Ready",              start: 9, end: 9, color: "#1e293b", milestone: true },
   ]},
-  { group: "Alpha Phase", items: [
-    { name: "Alpha — Socure / Customer Onboarding", start: 3, end: 5, color: "#f59e0b" },
-    { name: "Alpha — ACH Deposits", start: 3, end: 5, color: "#f59e0b" },
-    { name: "Centrix DTS Implementation", start: 3, end: 5, color: "#f59e0b" },
-    { name: "Alpha — Debit Card", start: 4, end: 5, color: "#f59e0b" },
-    { name: "Mobile Wallet Imp (Manual)", start: 4, end: 5, color: "#f59e0b" },
-    { name: "Alpha — Disputes", start: 5, end: 5, color: "#f59e0b" },
-    { name: "Alpha — mRDC", start: 5, end: 5, color: "#f59e0b" },
-    { name: "Alpha Testing Complete", start: 5, end: 5, color: "#1e293b", milestone: true },
+
+  // ── 6. Rev. Management ──
+  { group: "Rev. Management", owner: "Alonzo Venegas", status: "on-track", items: [
+    { name: "Fee Structure Analysis",     start: 4, end: 5, color: "#ea580c" },
+    { name: "Revenue Model Definition",   start: 5, end: 6, color: "#ea580c" },
+    { name: "Pricing Approval",           start: 6, end: 7, color: "#ea580c" },
+    { name: "Fee Configuration Complete", start: 7, end: 7, color: "#1e293b", milestone: true },
   ]},
-  { group: "Beta & GA Launch", items: [
-    { name: "Mobile Wallet Testing (Manual)", start: 6, end: 6, color: "#ef4444" },
-    { name: "Client Beta", start: 6, end: 7, color: "#ef4444" },
-    { name: "Mobile Wallet — In-App & Digital Issuance", start: 6, end: 8, color: "#ef4444" },
-    { name: "Beta Testing Complete", start: 7, end: 7, color: "#1e293b", milestone: true },
-    { name: "GA Launch", start: 8, end: 8, color: "#22c55e", milestone: true },
+
+  // ── 7. Finance & Accounting ──
+  { group: "Finance & Accounting", owner: "Scott Penderis", status: "on-track", items: [
+    { name: "Budget Planning & Forecasting",     start: 3,  end: 5,  color: "#0284c7" },
+    { name: "Ledger & Accounting Setup",         start: 5,  end: 8,  color: "#0284c7" },
+    { name: "Reconciliation Process Design",     start: 8,  end: 10, color: "#0284c7" },
+    { name: "Financial Reporting Framework",     start: 10, end: 12, color: "#0284c7" },
+    { name: "Launch Financial Readiness",        start: 12, end: 12, color: "#1e293b", milestone: true },
+  ]},
+
+  // ── 8. Security & Privacy ──
+  { group: "Security & Privacy", owner: "Andres Porras Garcia, Aaron Toren", status: "on-track", items: [
+    { name: "Security Assessment",              start: 3,  end: 5,  color: "#475569" },
+    { name: "Privacy Impact Assessment",        start: 5,  end: 5,  color: "#475569" },
+    { name: "Security Controls Implementation", start: 6,  end: 9,  color: "#475569" },
+    { name: "Penetration Testing",              start: 9,  end: 10, color: "#475569" },
+    { name: "Security Sign-off",                start: 10, end: 10, color: "#1e293b", milestone: true },
+  ]},
+
+  // ── 9. Marketing ──
+  { group: "Marketing", owner: "Hillary Bontempi", status: "on-track", items: [
+    { name: "Marketing Strategy & Positioning",  start: 9,  end: 10, color: "#a855f7" },
+    { name: "Brand Assets & Collateral",         start: 10, end: 11, color: "#a855f7" },
+    { name: "Launch Campaign Planning",          start: 11, end: 12, color: "#a855f7" },
+    { name: "Go-to-Market Launch",               start: 12, end: 12, color: "#1e293b", milestone: true },
+  ]},
+
+  // ── 10. FE/BE Development ──
+  { group: "FE/BE Development", owner: "Hardik Joshi", status: "blocked", items: [
+    { name: "Helix Sandbox Setup & Credentials",    start: 5,  end: 6,  color: "#6366f1" },
+    { name: "Core Banking API Integration",         start: 6,  end: 8,  color: "#6366f1" },
+    { name: "Card Issuance & VISA DPS Integration", start: 7,  end: 9,  color: "#6366f1" },
+    { name: "mRDC / Ensenta (Check Deposit)",       start: 7,  end: 9,  color: "#6366f1" },
+    { name: "Mobile App / OneApp Development",      start: 7,  end: 10, color: "#6366f1" },
+    { name: "Integration Testing",                  start: 10, end: 11, color: "#6366f1" },
+  ]},
+
+  // ── 11. Card Fulfillment / Inventory ──
+  { group: "Card Fulfillment / Inventory", owner: "Cristian Castaneda", status: "on-track", items: [
+    { name: "Card Manufacturer Setup (CPI)",  start: 6,  end: 7,  color: "#65a30d" },
+    { name: "Inventory Management System",    start: 7,  end: 9,  color: "#65a30d" },
+    { name: "Card Production Test Run",       start: 9,  end: 10, color: "#65a30d" },
+    { name: "Fulfillment Go-Live",            start: 10, end: 10, color: "#1e293b", milestone: true },
+  ]},
+
+  // ── 12. Fraud ──
+  { group: "Fraud", owner: "Taylor Kwan, Rodrigo De la Fuente", status: "on-track", items: [
+    { name: "Fraud Rules Definition",           start: 6,  end: 7,  color: "#f59e0b" },
+    { name: "Monitoring System Setup",           start: 7,  end: 9,  color: "#f59e0b" },
+    { name: "Transaction Monitoring Testing",    start: 9,  end: 10, color: "#f59e0b" },
+    { name: "Fraud System Go-Live",              start: 10, end: 10, color: "#1e293b", milestone: true },
+  ]},
+
+  // ── 13. Customer Care & Support ──
+  { group: "Customer Care & Support", owner: "Abby Ninel Valencu..., Danika Keblar", status: "on-track", items: [
+    { name: "Support Workflow Design",       start: 7,  end: 8,  color: "#db2777" },
+    { name: "Knowledge Base & FAQ Creation", start: 8,  end: 9,  color: "#db2777" },
+    { name: "Agent Training Program",        start: 9,  end: 10, color: "#db2777" },
+    { name: "Support Tools Integration",     start: 10, end: 11, color: "#db2777" },
+    { name: "Support Readiness",             start: 11, end: 11, color: "#1e293b", milestone: true },
+  ]},
+
+  // ── 14. Data & Reporting (BI) ──
+  { group: "Data & Reporting (BI)", owner: "Korey McGee", status: "on-track", items: [
+    { name: "Data Model Design",       start: 7,  end: 8,  color: "#0369a1" },
+    { name: "Dashboard Development",   start: 8,  end: 10, color: "#0369a1" },
+    { name: "Reporting Framework",     start: 10, end: 11, color: "#0369a1" },
+    { name: "Analytics Go-Live",       start: 11, end: 11, color: "#1e293b", milestone: true },
   ]},
 ];
 
@@ -179,10 +278,11 @@ function currentMonthIndex(monthLabels) {
   return monthLabels.indexOf(label);
 }
 
-function renderGantt(containerId, monthLabels, rows, groups) {
+function renderGantt(containerId, monthLabels, rows, groups, contractIdx) {
   const container = document.getElementById(containerId);
   const total = monthLabels.length;
   const todayIdx = currentMonthIndex(monthLabels);
+  const colW = 100 / total;
 
   // Header
   let html = '<div class="gantt-header"><div class="gantt-label-col">Activity</div><div class="gantt-months">';
@@ -192,39 +292,54 @@ function renderGantt(containerId, monthLabels, rows, groups) {
   });
   html += '</div></div>';
 
-  function renderRow(item) {
-    const colW = 100 / total;
-    const left = item.start * colW;
-    const width = (item.end - item.start + 1) * colW;
-
-    let rowHtml = '<div class="gantt-row"><div class="gantt-row-label"><div><div class="name">' + item.name + '</div></div></div>';
-    rowHtml += '<div class="gantt-row-chart">';
-
+  function renderChartArea(item) {
+    let ch = '';
     // Grid lines
     for (let i = 1; i < total; i++) {
-      rowHtml += '<div class="gantt-grid-line" style="left:' + (i * colW) + '%"></div>';
+      ch += '<div class="gantt-grid-line" style="left:' + (i * colW) + '%"></div>';
     }
-
+    // Contract gate line
+    if (contractIdx !== undefined && contractIdx >= 0) {
+      ch += '<div class="gantt-contract-line" style="left:' + ((contractIdx + 0.5) * colW) + '%"></div>';
+    }
     // Today line
     if (todayIdx >= 0) {
-      rowHtml += '<div class="gantt-today" style="left:' + ((todayIdx + 0.5) * colW) + '%"></div>';
+      ch += '<div class="gantt-today" style="left:' + ((todayIdx + 0.5) * colW) + '%"></div>';
     }
-
+    // Bar or milestone
     if (item.milestone) {
       const cx = (item.start + 0.5) * colW;
-      rowHtml += '<div class="gantt-milestone" style="left:calc(' + cx + '% - 7px);background:' + item.color + '"></div>';
+      ch += '<div class="gantt-milestone" style="left:calc(' + cx + '% - 6px);background:' + item.color + '"></div>';
     } else {
-      const label = width > 8 ? item.name : '';
-      rowHtml += '<div class="gantt-bar" style="left:' + left + '%;width:' + width + '%;background:' + item.color + '">' + label + '</div>';
+      const left = item.start * colW;
+      const width = (item.end - item.start + 1) * colW;
+      const barCls = item.barClass ? ' ' + item.barClass : '';
+      const label = width > 10 ? item.name : '';
+      ch += '<div class="gantt-bar' + barCls + '" style="left:' + left + '%;width:' + width + '%;background:' + item.color + '">' + label + '</div>';
     }
+    return ch;
+  }
 
+  function renderRow(item) {
+    let rowHtml = '<div class="gantt-row"><div class="gantt-row-label"><div><div class="name">' + item.name + '</div></div></div>';
+    rowHtml += '<div class="gantt-row-chart">';
+    rowHtml += renderChartArea(item);
     rowHtml += '</div></div>';
     return rowHtml;
   }
 
   if (groups) {
     groups.forEach(g => {
-      html += '<div class="group-header"><td colspan="2">' + g.group + '</td></div>';
+      // Group header with status dot and owner
+      const statusCls = g.status ? ' status-' + g.status : '';
+      const statusDot = g.status ? '<span class="status-dot' + statusCls + '"></span>' : '';
+      const ownerHtml = g.owner ? ' <span class="gh-owner">— ' + g.owner + '</span>' : '';
+
+      html += '<div class="group-header"><div class="group-header-label">'
+        + statusDot
+        + '<div><span class="gh-name">' + g.group + '</span>' + ownerHtml + '</div>'
+        + '</div><div class="group-header-chart"></div></div>';
+
       g.items.forEach(item => { html += renderRow(item); });
     });
   } else if (rows) {
@@ -234,9 +349,9 @@ function renderGantt(containerId, monthLabels, rows, groups) {
   container.innerHTML = html;
 }
 
-// Render both charts
-renderGantt('phases-gantt', phaseMonths, phases, null);
-renderGantt('vendor-gantt', vendorMonths, null, vendorGroups);
+// Render both sections
+renderGantt('phases-gantt', months, phases, null);
+renderGantt('workstreams-gantt', months, null, workstreamGroups, CONTRACT_IDX);
 </script>
 
 </body>
