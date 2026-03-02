@@ -2,6 +2,7 @@ import { create } from "zustand";
 import type { Epic, Task, Risk, Decision, TeamMember, Status, Priority, ViewType, Filters, Note } from "../types";
 import { initialEpics, initialRisks, initialDecisions, teamMembers as initialTeamMembers } from "../data/initialData";
 import { generateId } from "../lib/utils";
+import { arrayMove } from "@dnd-kit/sortable";
 
 interface AppState {
   epics: Epic[];
@@ -9,6 +10,7 @@ interface AppState {
   decisions: Decision[];
   teamMembers: TeamMember[];
   currentView: ViewType;
+  viewOrder: ViewType[];
   filters: Filters;
   selectedTaskId: string | null;
   sidebarOpen: boolean;
@@ -16,6 +18,7 @@ interface AppState {
 
   // View actions
   setView: (view: ViewType) => void;
+  reorderViews: (activeId: string, overId: string) => void;
   setSidebarOpen: (open: boolean) => void;
   toggleSidebar: () => void;
 
@@ -69,12 +72,20 @@ export const useStore = create<AppState>((set, get) => ({
   decisions: initialDecisions,
   teamMembers: initialTeamMembers,
   currentView: "dashboard",
+  viewOrder: ["dashboard", "list", "kanban", "timeline", "dependencies", "risks", "raci", "decisions", "reports"] as ViewType[],
   filters: defaultFilters,
   selectedTaskId: null,
   sidebarOpen: true,
   expandedEpics: new Set<string>(),
 
   setView: (view) => set({ currentView: view }),
+  reorderViews: (activeId, overId) =>
+    set((s) => {
+      const oldIndex = s.viewOrder.indexOf(activeId as ViewType);
+      const newIndex = s.viewOrder.indexOf(overId as ViewType);
+      if (oldIndex === -1 || newIndex === -1) return s;
+      return { viewOrder: arrayMove(s.viewOrder, oldIndex, newIndex) };
+    }),
   setSidebarOpen: (open) => set({ sidebarOpen: open }),
   toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
 
