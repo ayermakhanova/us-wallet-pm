@@ -64,12 +64,37 @@
   .drag-tooltip { position: fixed; background: #1e293b; color: white; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 500; pointer-events: none; z-index: 200; white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
   .print-btn { position: fixed; bottom: 24px; right: 24px; background: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(37,99,235,0.3); z-index: 50; }
   .print-btn:hover { background: #1d4ed8; }
+  /* CRUD action buttons */
+  .row-actions { opacity: 0; transition: opacity 0.15s; display: inline-flex; gap: 3px; margin-left: auto; flex-shrink: 0; }
+  .gantt-row:hover .row-actions, .group-header:hover .row-actions { opacity: 1; }
+  .row-actions button { background: none; border: 1px solid #cbd5e1; border-radius: 4px; padding: 1px 5px; cursor: pointer; font-size: 11px; color: #64748b; line-height: 1.4; }
+  .row-actions button:hover { background: #f1f5f9; color: #1e293b; }
+  .row-actions button.danger:hover { background: #fee2e2; color: #dc2626; border-color: #fca5a5; }
+  .add-btn { display: inline-flex; align-items: center; gap: 4px; margin: 8px 0 0 12px; padding: 5px 14px; border: 1px dashed #94a3b8; border-radius: 6px; background: white; color: #475569; font-size: 12px; cursor: pointer; font-weight: 500; }
+  .add-btn:hover { border-color: #3b82f6; color: #3b82f6; background: #eff6ff; }
+  .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.4); display: flex; align-items: center; justify-content: center; z-index: 200; }
+  .modal { background: white; border-radius: 12px; padding: 24px; width: 440px; max-width: 95vw; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+  .modal h3 { margin: 0 0 16px; font-size: 16px; font-weight: 700; color: #0f172a; }
+  .modal label { display: block; font-size: 12px; font-weight: 500; color: #475569; margin: 12px 0 4px; }
+  .modal label:first-child { margin-top: 0; }
+  .modal input, .modal select { width: 100%; padding: 8px 10px; border: 1px solid #d1d5db; border-radius: 6px; font-size: 13px; font-family: inherit; }
+  .modal input:focus, .modal select:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
+  .modal input[type="color"] { height: 38px; padding: 4px; cursor: pointer; }
+  .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; }
+  .modal-actions button { padding: 8px 18px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; border: none; font-family: inherit; }
+  .btn-cancel { background: #f1f5f9; color: #475569; }
+  .btn-cancel:hover { background: #e2e8f0; }
+  .btn-save { background: #2563eb; color: white; }
+  .btn-save:hover { background: #1d4ed8; }
   @media print {
     body { background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .header { padding: 12px 16px; }
     .container { padding: 12px; }
     .print-btn { display: none; }
     .drag-tooltip { display: none; }
+    .modal-overlay { display: none !important; }
+    .row-actions { display: none !important; }
+    .add-btn { display: none !important; }
     .gantt { break-inside: avoid; border-radius: 4px; }
     .gantt-row-label .name, .group-header-label .gh-name { font-size: 9px; }
     .gantt-row-label .sub, .group-header-label .gh-owner { font-size: 8px; }
@@ -106,10 +131,12 @@
   <div class="section">
     <div class="section-title">Project Phases</div>
     <div class="gantt"><div class="gantt-inner" id="phases-gantt"></div></div>
+    <button class="add-btn" onclick="openAddItem('phases-gantt', -1)">＋ Add Phase</button>
   </div>
   <div class="section">
     <div class="section-title">Program Workstreams</div>
     <div class="gantt"><div class="gantt-inner" id="workstreams-gantt"></div></div>
+    <button class="add-btn" onclick="openAddGroup('workstreams-gantt')">＋ Add Workstream</button>
     <div class="legend">
       <span><span class="swatch status-on-track" style="border-radius:2px"></span> On Track</span>
       <span><span class="swatch status-at-risk" style="border-radius:2px"></span> At Risk</span>
@@ -122,6 +149,7 @@
   <div class="section">
     <div class="section-title">Vendor & Integration Timeline (Helix / Q2)</div>
     <div class="gantt"><div class="gantt-inner" id="vendor-gantt"></div></div>
+    <button class="add-btn" onclick="openAddGroup('vendor-gantt')">＋ Add Vendor Group</button>
     <div class="legend">
       <span><span class="swatch" style="background:#6366f1"></span> Helix Platform</span>
       <span><span class="swatch" style="background:#2563eb"></span> VISA DPS / Card</span>
@@ -135,6 +163,18 @@
 </div>
 
 <div class="drag-tooltip" id="drag-tooltip" style="display:none"></div>
+
+<div class="modal-overlay" id="modal-overlay" style="display:none">
+  <div class="modal">
+    <h3 id="modal-title"></h3>
+    <form id="modal-form" onsubmit="event.preventDefault(); saveModal();"></form>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+      <button class="btn-save" onclick="saveModal()">Save</button>
+    </div>
+  </div>
+</div>
+
 <button class="print-btn" onclick="window.print()">Print / Save PDF</button>
 
 <script>
@@ -347,8 +387,13 @@ function renderGantt(containerId) {
 
   let itemCounter = 0;
   function renderRow(item, groupIdx) {
-    const da = 'data-section="' + containerId + '" data-group="' + groupIdx + '" data-idx="' + (itemCounter++) + '"';
-    let r = '<div class="gantt-row"><div class="gantt-row-label"><div><div class="name">' + item.name + '</div></div></div>';
+    const idx = itemCounter++;
+    const da = 'data-section="' + containerId + '" data-group="' + groupIdx + '" data-idx="' + idx + '"';
+    const rowActions = '<div class="row-actions">'
+      + '<button onclick="openEditItem(\'' + containerId + '\',' + groupIdx + ',' + idx + ')" title="Edit">✎</button>'
+      + '<button class="danger" onclick="deleteItem(\'' + containerId + '\',' + groupIdx + ',' + idx + ')" title="Delete">✕</button>'
+      + '</div>';
+    let r = '<div class="gantt-row"><div class="gantt-row-label"><div><div class="name">' + item.name + '</div></div>' + rowActions + '</div>';
     r += '<div class="gantt-row-chart">' + chartHTML(item, da) + '</div></div>';
     return r;
   }
@@ -358,7 +403,12 @@ function renderGantt(containerId) {
       const sc = g.status ? ' status-' + g.status : '';
       const sd = g.status ? '<span class="status-dot' + sc + '"></span>' : '';
       const ow = g.owner ? ' <span class="gh-owner">— ' + g.owner + '</span>' : '';
-      html += '<div class="group-header"><div class="group-header-label">' + sd + '<div><span class="gh-name">' + g.group + '</span>' + ow + '</div></div><div class="group-header-chart"></div></div>';
+      const grpActions = '<div class="row-actions">'
+        + '<button onclick="openAddItem(\'' + containerId + '\',' + gi + ')" title="Add item">＋</button>'
+        + '<button onclick="openEditGroup(\'' + containerId + '\',' + gi + ')" title="Edit">✎</button>'
+        + '<button class="danger" onclick="deleteGroup(\'' + containerId + '\',' + gi + ')" title="Delete">✕</button>'
+        + '</div>';
+      html += '<div class="group-header"><div class="group-header-label">' + sd + '<div><span class="gh-name">' + g.group + '</span>' + ow + '</div>' + grpActions + '</div><div class="group-header-chart"></div></div>';
       itemCounter = 0;
       g.items.forEach(item => { html += renderRow(item, gi); });
     });
@@ -481,6 +531,146 @@ document.addEventListener('mouseup', function() {
   renderGantt(sectionId);
   drag = null;
 });
+
+// ═══════ CRUD SYSTEM ═══════
+let modalState = {};
+
+function openModal(title, fields, onSave) {
+  modalState.onSave = onSave;
+  document.getElementById('modal-title').textContent = title;
+  const form = document.getElementById('modal-form');
+  let html = '';
+  fields.forEach(function(f) {
+    html += '<label>' + f.label + '</label>';
+    if (f.type === 'select') {
+      html += '<select name="' + f.name + '">';
+      f.options.forEach(function(o) {
+        const sel = (f.value === o) ? ' selected' : '';
+        html += '<option value="' + o + '"' + sel + '>' + o + '</option>';
+      });
+      html += '</select>';
+    } else if (f.type === 'color') {
+      html += '<input type="color" name="' + f.name + '" value="' + (f.value || '#3b82f6') + '">';
+    } else {
+      html += '<input type="text" name="' + f.name + '" value="' + (f.value || '').replace(/"/g, '&quot;') + '"' + (f.required ? ' required' : '') + '>';
+    }
+  });
+  form.innerHTML = html;
+  document.getElementById('modal-overlay').style.display = 'flex';
+  const first = form.querySelector('input[type="text"], select');
+  if (first) setTimeout(function() { first.focus(); }, 50);
+}
+
+function closeModal() {
+  document.getElementById('modal-overlay').style.display = 'none';
+  modalState = {};
+}
+
+function saveModal() {
+  const form = document.getElementById('modal-form');
+  const nameInput = form.querySelector('input[required]');
+  if (nameInput && !nameInput.value.trim()) { nameInput.focus(); return; }
+  const data = Object.fromEntries(new FormData(form));
+  if (modalState.onSave) modalState.onSave(data);
+  closeModal();
+}
+
+// Close on overlay click
+document.getElementById('modal-overlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+// Close on Escape
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape' && document.getElementById('modal-overlay').style.display !== 'none') closeModal();
+});
+
+/* ---- Group CRUD ---- */
+function openAddGroup(sectionId) {
+  const label = sectionId === 'vendor-gantt' ? 'Vendor Group' : 'Workstream';
+  openModal('Add ' + label, [
+    { label: 'Group Name', name: 'group', type: 'text', required: true },
+    { label: 'Owner', name: 'owner', type: 'text' },
+    { label: 'Status', name: 'status', type: 'select', options: ['on-track', 'at-risk', 'blocked'], value: 'on-track' },
+  ], function(data) {
+    sections[sectionId].groups.push({ group: data.group, owner: data.owner || '', status: data.status, items: [] });
+    renderGantt(sectionId);
+  });
+}
+
+function openEditGroup(sectionId, groupIdx) {
+  const g = sections[sectionId].groups[groupIdx];
+  const label = sectionId === 'vendor-gantt' ? 'Vendor Group' : 'Workstream';
+  openModal('Edit ' + label, [
+    { label: 'Group Name', name: 'group', type: 'text', value: g.group, required: true },
+    { label: 'Owner', name: 'owner', type: 'text', value: g.owner || '' },
+    { label: 'Status', name: 'status', type: 'select', options: ['on-track', 'at-risk', 'blocked'], value: g.status || 'on-track' },
+  ], function(data) {
+    Object.assign(g, { group: data.group, owner: data.owner, status: data.status });
+    renderGantt(sectionId);
+  });
+}
+
+function deleteGroup(sectionId, groupIdx) {
+  const name = sections[sectionId].groups[groupIdx].group;
+  if (!confirm('Delete "' + name + '" and all its items?')) return;
+  sections[sectionId].groups.splice(groupIdx, 1);
+  renderGantt(sectionId);
+}
+
+/* ---- Item CRUD ---- */
+function openAddItem(sectionId, groupIdx) {
+  const ml = sections[sectionId].months;
+  openModal('Add Item', [
+    { label: 'Name', name: 'name', type: 'text', required: true },
+    { label: 'Start Month', name: 'start', type: 'select', options: ml, value: ml[5] },
+    { label: 'End Month', name: 'end', type: 'select', options: ml, value: ml[7] },
+    { label: 'Type', name: 'isMilestone', type: 'select', options: ['Bar', 'Milestone'], value: 'Bar' },
+    { label: 'Color', name: 'color', type: 'color', value: '#3b82f6' },
+  ], function(data) {
+    const newItem = {
+      name: data.name,
+      start: ml.indexOf(data.start),
+      end: ml.indexOf(data.end),
+      color: data.color,
+    };
+    if (data.isMilestone === 'Milestone') { newItem.milestone = true; newItem.end = newItem.start; }
+    if (groupIdx >= 0 && sections[sectionId].groups) {
+      sections[sectionId].groups[groupIdx].items.push(newItem);
+    } else if (sections[sectionId].rows) {
+      sections[sectionId].rows.push(newItem);
+    }
+    renderGantt(sectionId);
+  });
+}
+
+function openEditItem(sectionId, groupIdx, itemIdx) {
+  const item = getItem(sectionId, groupIdx, itemIdx);
+  const ml = sections[sectionId].months;
+  openModal('Edit Item', [
+    { label: 'Name', name: 'name', type: 'text', value: item.name, required: true },
+    { label: 'Start Month', name: 'start', type: 'select', options: ml, value: ml[item.start] },
+    { label: 'End Month', name: 'end', type: 'select', options: ml, value: ml[item.end] },
+    { label: 'Type', name: 'isMilestone', type: 'select', options: ['Bar', 'Milestone'], value: item.milestone ? 'Milestone' : 'Bar' },
+    { label: 'Color', name: 'color', type: 'color', value: item.color },
+  ], function(data) {
+    item.name = data.name;
+    item.start = ml.indexOf(data.start);
+    item.end = ml.indexOf(data.end);
+    item.color = data.color;
+    if (data.isMilestone === 'Milestone') { item.milestone = true; item.end = item.start; }
+    else { delete item.milestone; }
+    renderGantt(sectionId);
+  });
+}
+
+function deleteItem(sectionId, groupIdx, itemIdx) {
+  const item = getItem(sectionId, groupIdx, itemIdx);
+  if (!confirm('Delete "' + item.name + '"?')) return;
+  const sec = sections[sectionId];
+  if (groupIdx >= 0 && sec.groups) { sec.groups[groupIdx].items.splice(itemIdx, 1); }
+  else if (sec.rows) { sec.rows.splice(itemIdx, 1); }
+  renderGantt(sectionId);
+}
 </script>
 </body>
 </html>
