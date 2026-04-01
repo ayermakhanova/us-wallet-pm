@@ -2,7 +2,7 @@ export type Status = "Not Started" | "In Progress" | "Blocked" | "Complete" | "B
 export type Priority = "Highest" | "High" | "Medium" | "Low";
 export type RiskLikelihood = "High" | "Medium" | "Low";
 export type RiskImpact = "High" | "Medium" | "Low";
-export type ViewType = "dashboard" | "list" | "kanban" | "timeline" | "dependencies" | "risks" | "raci" | "decisions" | "reports";
+export type ViewType = "dashboard" | "list" | "kanban" | "timeline" | "dependencies" | "risks" | "raci" | "decisions" | "reports" | "master-timeline" | "helix-timeline";
 
 export interface Note {
   id: string;

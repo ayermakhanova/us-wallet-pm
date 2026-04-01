@@ -8,6 +8,7 @@ import { RiskView } from "./components/views/RiskView";
 import { RaciView } from "./components/views/RaciView";
 import { DecisionLog } from "./components/views/DecisionLog";
 import { ReportsView } from "./components/views/ReportsView";
+import { IframeView } from "./components/views/IframeView";
 import { useStore } from "./store/useStore";
 
 function ViewRouter() {
@@ -23,6 +24,8 @@ function ViewRouter() {
     case "raci": return <RaciView />;
     case "decisions": return <DecisionLog />;
     case "reports": return <ReportsView />;
+    case "master-timeline": return <IframeView src={import.meta.env.BASE_URL + "master-timeline.html"} title="Master Timeline" />;
+    case "helix-timeline": return <IframeView src={import.meta.env.BASE_URL + "helix-implementation.html"} title="Helix Implementation Timeline" />;
     default: return <SummaryView />;
   }
 }

@@ -72,7 +72,7 @@ export const useStore = create<AppState>((set, get) => ({
   decisions: initialDecisions,
   teamMembers: initialTeamMembers,
   currentView: "dashboard",
-  viewOrder: ["dashboard", "list", "kanban", "timeline", "dependencies", "risks", "raci", "decisions", "reports"] as ViewType[],
+  viewOrder: ["dashboard", "list", "kanban", "timeline", "dependencies", "risks", "raci", "decisions", "reports", "master-timeline", "helix-timeline"] as ViewType[],
   filters: defaultFilters,
   selectedTaskId: null,
   sidebarOpen: true,

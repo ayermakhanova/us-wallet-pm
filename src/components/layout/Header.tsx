@@ -1,4 +1,4 @@
-import { LayoutDashboard, List, Columns3, Clock, GitBranch, AlertTriangle, Users, BookOpen, FileBarChart, Menu, GripVertical } from "lucide-react";
+import { LayoutDashboard, List, Columns3, Clock, GitBranch, AlertTriangle, Users, BookOpen, FileBarChart, Menu, GripVertical, CalendarRange, Milestone } from "lucide-react";
 import { useStore } from "../../store/useStore";
 import { getProgramStats } from "../../lib/utils";
 import type { ViewType } from "../../types";
@@ -16,6 +16,8 @@ const VIEW_DEFS: Record<ViewType, { label: string; icon: typeof LayoutDashboard 
   raci: { label: "RACI", icon: Users },
   decisions: { label: "Decisions", icon: BookOpen },
   reports: { label: "Reports", icon: FileBarChart },
+  "master-timeline": { label: "Master Timeline", icon: CalendarRange },
+  "helix-timeline": { label: "Helix Timeline", icon: Milestone },
 };
 
 function SortableTab({ id, isActive, onClick }: { id: ViewType; isActive: boolean; onClick: () => void }) {
