@@ -86,6 +86,10 @@
   .btn-cancel:hover { background: #e2e8f0; }
   .btn-save { background: #2563eb; color: white; }
   .btn-save:hover { background: #1d4ed8; }
+  .reset-btn { position: fixed; bottom: 24px; right: 180px; background: #475569; color: white; border: none; padding: 10px 16px; border-radius: 8px; font-size: 12px; font-weight: 500; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 50; }
+  .reset-btn:hover { background: #334155; }
+  .save-indicator { position: fixed; bottom: 70px; right: 24px; background: #22c55e; color: white; padding: 6px 12px; border-radius: 6px; font-size: 11px; font-weight: 500; z-index: 50; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
+  .save-indicator.show { opacity: 1; }
   @media print {
     body { background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .header { padding: 12px 16px; }
@@ -95,6 +99,8 @@
     .modal-overlay { display: none !important; }
     .row-actions { display: none !important; }
     .add-btn { display: none !important; }
+    .reset-btn { display: none !important; }
+    .save-indicator { display: none !important; }
     .gantt { break-inside: avoid; border-radius: 4px; }
     .gantt-row-label .name, .group-header-label .gh-name { font-size: 9px; }
     .gantt-row-label .sub, .group-header-label .gh-owner { font-size: 8px; }
@@ -175,6 +181,8 @@
   </div>
 </div>
 
+<button class="reset-btn" onclick="resetData()">Reset to Defaults</button>
+<div class="save-indicator" id="save-indicator">Changes saved</div>
 <button class="print-btn" onclick="window.print()">Print / Save PDF</button>
 
 <script>
@@ -184,7 +192,7 @@ const months = [
 ];
 const CONTRACT_IDX = 5;
 
-const phases = [
+let phases = [
   { name: "Planning & Governance",        start: 0,  end: 12, color: "#3b82f6" },
   { name: "Contract Negotiation (Helix)", start: 0,  end: 5,  color: "#f97316" },
   { name: "Build & Integration",          start: 5,  end: 10, color: "#6366f1" },
@@ -195,7 +203,7 @@ const phases = [
   { name: "Full Roll Out (Target)",       start: 12, end: 12, color: "#ef4444", milestone: true },
 ];
 
-const workstreamGroups = [
+let workstreamGroups = [
   { group: "Vendor Mgmt & Program Commercials", owner: "Fahad Rehman", status: "at-risk", items: [
     { name: "Vendor Evaluation & Selection", start: 0, end: 2, color: "#ef4444" },
     { name: "Helix Contract Negotiation", start: 2, end: 5, color: "#ef4444" },
@@ -291,7 +299,7 @@ const workstreamGroups = [
   ]},
 ];
 
-const vendorGroups = [
+let vendorGroups = [
   { group: "Helix Platform Setup", items: [
     { name: "Helix Sandbox Credentials", start: 5, end: 5, color: "#6366f1" },
     { name: "Client Sandbox / Product Build", start: 5, end: 7, color: "#6366f1" },
@@ -336,6 +344,38 @@ const vendorGroups = [
     { name: "GA Launch", start: 12, end: 12, color: "#22c55e", milestone: true },
   ]},
 ];
+
+// ═══════ PERSISTENCE (localStorage) ═══════
+const STORAGE_KEY = 'us-wallet-timeline-data';
+
+function saveData() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({ phases: phases, workstreamGroups: workstreamGroups, vendorGroups: vendorGroups }));
+    // Flash "saved" indicator
+    const ind = document.getElementById('save-indicator');
+    if (ind) { ind.classList.add('show'); clearTimeout(ind._t); ind._t = setTimeout(function() { ind.classList.remove('show'); }, 1500); }
+  } catch(e) { /* storage full or unavailable — silently ignore */ }
+}
+
+function loadData() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const saved = JSON.parse(raw);
+    if (saved.phases) phases = saved.phases;
+    if (saved.workstreamGroups) workstreamGroups = saved.workstreamGroups;
+    if (saved.vendorGroups) vendorGroups = saved.vendorGroups;
+  } catch(e) { /* corrupt data — use defaults */ }
+}
+
+function resetData() {
+  if (!confirm('Reset all changes to defaults? This will undo all your edits.')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  location.reload();
+}
+
+// Load saved data (if any) before first render
+loadData();
 
 // ═══════ SECTION REGISTRY (for drag lookups) ═══════
 const sections = {
@@ -416,6 +456,7 @@ function renderGantt(containerId) {
     sec.rows.forEach(item => { html += renderRow(item, -1); });
   }
   container.innerHTML = html;
+  saveData();
 }
 
 // Initial render
