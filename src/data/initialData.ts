@@ -389,7 +389,7 @@ export const initialEpics: Epic[] = [
     target: "Q3 2026",
     startMonth: 6,
     endMonth: 7,
-    owner: "Aizhan Y.",
+    owner: "Fahad Rehman (A), Arevik Sargsyan (A)",
     color: "#64748b",
     tasks: [
       { id: "WS13-M1", epicId: "WS13", name: "Pilot plan (markets, stores, segments, feature flags)", status: "Not Started", priority: "High", owner: "Aizhan Y.", startDate: "2026-06-01", dueDate: "2026-06-15", notes: [{ id: "n-ws13m1", text: "Decide where and how to launch.", author: "Aizhan Y.", date: "2026-02-15" }], tags: ["pilot", "launch"], createdDate: d, updatedDate: d },
