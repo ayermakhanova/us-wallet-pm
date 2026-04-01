@@ -124,7 +124,7 @@ export const initialEpics: Epic[] = [
     target: "Q2 2026",
     startMonth: 2,
     endMonth: 5,
-    owner: "James H.",
+    owner: "Fahad Rehman (A), Martin Behrend (A)",
     color: "#2563eb",
     tasks: [
       { id: "WS1-M1", epicId: "WS1", name: "TAB Bank sponsorship agreement & SLA", status: "Complete", priority: "High", owner: "James H.", startDate: "2026-02-01", dueDate: "2026-02-20", notes: [{ id: "n-ws1m1", text: "Sponsor bank confirmed for DDA and BIN.", author: "James H.", date: "2026-02-18" }], tags: ["legal", "sponsor-bank"], createdDate: d, updatedDate: d, completedDate: "2026-02-18" },
@@ -147,7 +147,7 @@ export const initialEpics: Epic[] = [
     target: "Q2 2026",
     startMonth: 2,
     endMonth: 6,
-    owner: "James H.",
+    owner: "Fahad Rehman (A), Cristian Castaneda",
     color: "#7c3aed",
     tasks: [
       { id: "WS2-M1", epicId: "WS2", name: "BIN sponsorship & network registration", status: "Complete", priority: "High", owner: "James H.", startDate: "2026-02-01", dueDate: "2026-03-01", dependencies: ["WS1-M1"], notes: [{ id: "n-ws2m1", text: "Visa debit BIN under TAB sponsorship.", author: "James H.", date: "2026-02-28" }], tags: ["visa", "sponsor-bank"], createdDate: d, updatedDate: d, completedDate: "2026-02-28" },
@@ -173,7 +173,7 @@ export const initialEpics: Epic[] = [
     target: "Q2 2026",
     startMonth: 2,
     endMonth: 5,
-    owner: "David K.",
+    owner: "Kenan Haskovic (R), Alex Ketter (R)",
     color: "#dc2626",
     tasks: [
       { id: "WS3-M1", epicId: "WS3", name: "TAB document pack finalized (privacy, e-sign, deposit, cardholder)", status: "In Progress", priority: "High", owner: "David K.", startDate: "2026-02-01", dueDate: "2026-03-15", notes: [{ id: "n-ws3m1", text: "TAB templates under review.", author: "David K.", date: "2026-02-20" }], tags: ["compliance", "tab", "docs"], createdDate: d, updatedDate: d },
@@ -195,7 +195,7 @@ export const initialEpics: Epic[] = [
     target: "Q2 2026",
     startMonth: 3,
     endMonth: 6,
-    owner: "Yago",
+    owner: "Arevik Sargsyan (R), Yasamin Ehteshami (A)",
     color: "#0d9488",
     tasks: [
       { id: "WS4-M1", epicId: "WS4", name: "In-store wallet/account onboarding flows designed", status: "Not Started", priority: "High", owner: "Yago", startDate: "2026-03-15", dueDate: "2026-04-10", dependencies: ["WS1-M4", "WS3-M1"], notes: [{ id: "n-ws4m1", text: "Agent flows; FX client.", author: "Yago", date: "2026-02-15" }], tags: ["in-store", "onboarding", "fx"], createdDate: d, updatedDate: d },
@@ -218,7 +218,7 @@ export const initialEpics: Epic[] = [
     target: "Q2 2026",
     startMonth: 3,
     endMonth: 6,
-    owner: "Priya M.",
+    owner: "Matias Stephens (R), Alfredo Piel (A)",
     color: "#0891b2",
     tasks: [
       { id: "WS5-M1", epicId: "WS5", name: "Initial Figma wallet flows presented", status: "Complete", priority: "Medium", owner: "Priya M.", startDate: "2026-02-15", dueDate: "2026-03-05", notes: [{ id: "n-ws5m1", text: "Digital PM session.", author: "Priya M.", date: "2026-03-05" }], tags: ["design", "figma"], createdDate: d, updatedDate: d, completedDate: "2026-03-05" },
@@ -244,7 +244,7 @@ export const initialEpics: Epic[] = [
     target: "Q2 2026",
     startMonth: 3,
     endMonth: 6,
-    owner: "Nicholas",
+    owner: "Manuel Dominguez (R)",
     color: "#4f46e5",
     tasks: [
       { id: "WS6-M1", epicId: "WS6", name: "Ensenta onboarding (commercial + technical)", status: "Not Started", priority: "Medium", owner: "James H.", startDate: "2026-03-15", dueDate: "2026-04-10", dependencies: ["WS10-M2"], notes: [{ id: "n-ws6m1", text: "Access, contacts, credentials.", author: "James H.", date: "2026-02-15" }], tags: ["ensenta", "vendor"], createdDate: d, updatedDate: d },
@@ -266,7 +266,7 @@ export const initialEpics: Epic[] = [
     target: "Q3 2026",
     startMonth: 3,
     endMonth: 7,
-    owner: "Aizhan Y.",
+    owner: "Aidana Yermakhanova (R)",
     color: "#ca8a04",
     tasks: [
       { id: "WS7-M1", epicId: "WS7", name: "Test strategy and end-to-end test plan", status: "Not Started", priority: "High", owner: "Aizhan Y.", startDate: "2026-03-15", dueDate: "2026-04-15", dependencies: ["WS4-M1", "WS5-M3", "WS6-M3"], notes: [{ id: "n-ws7m1", text: "Covers store, digital, bank, card, RDC flows.", author: "Aizhan Y.", date: "2026-02-15" }], tags: ["qa", "strategy"], createdDate: d, updatedDate: d },
@@ -289,7 +289,7 @@ export const initialEpics: Epic[] = [
     target: "Q3 2026",
     startMonth: 4,
     endMonth: 7,
-    owner: "Aizhan Y.",
+    owner: "Abby Valenzuela (R), Sarah Bernhardi (A)",
     color: "#db2777",
     tasks: [
       { id: "WS8-M1", epicId: "WS8", name: "Gather Care requirements for wallet, card, RDC", status: "Not Started", priority: "High", owner: "Aizhan Y.", startDate: "2026-04-01", dueDate: "2026-04-20", dependencies: ["WS4-M2", "WS5-M3", "WS6-M3"], notes: [{ id: "n-ws8m1", text: "Use Care + Card Mgmt docs.", author: "Aizhan Y.", date: "2026-02-15" }], tags: ["care", "requirements"], createdDate: d, updatedDate: d },
@@ -309,7 +309,7 @@ export const initialEpics: Epic[] = [
     target: "Q1 2026",
     startMonth: 2,
     endMonth: 4,
-    owner: "Scott",
+    owner: "Alonzo Venegas (A), Scott Penderis (A)",
     color: "#ea580c",
     tasks: [
       { id: "WS9-M1", epicId: "WS9", name: "Draft fee table (wallet, card, ATM, ACH, RDC, remittance)", status: "Not Started", priority: "High", owner: "Scott", startDate: "2026-02-15", dueDate: "2026-03-15", dependencies: ["WS1-M4"], notes: [{ id: "n-ws9m1", text: "Pay-as-you-go MVP; subscription out of scope.", author: "Scott", date: "2026-02-15" }], tags: ["pricing", "fees"], createdDate: d, updatedDate: d },
@@ -329,7 +329,7 @@ export const initialEpics: Epic[] = [
     target: "Q2 2026",
     startMonth: 2,
     endMonth: 5,
-    owner: "James H.",
+    owner: "Fahad Rehman (A), Cristian Castaneda",
     color: "#65a30d",
     tasks: [
       { id: "WS10-M1", epicId: "WS10", name: "CPI MSA sign-off", status: "Not Started", priority: "High", owner: "James H.", startDate: "2026-03-01", dueDate: "2026-03-31", dependencies: ["WS2-M4"], notes: [{ id: "n-ws10m1", text: "Feeds WS2 card production.", author: "James H.", date: "2026-02-15" }], tags: ["vendor", "cpi", "contract"], createdDate: d, updatedDate: d },
@@ -349,7 +349,7 @@ export const initialEpics: Epic[] = [
     target: "Q2 2026",
     startMonth: 3,
     endMonth: 6,
-    owner: "Nicholas",
+    owner: "Pedro Menendez (R)",
     color: "#16a34a",
     tasks: [
       { id: "WS11-M1", epicId: "WS11", name: "ACH direct deposit via Helix + TAB FedLine (incl. early-pay)", status: "Not Started", priority: "High", owner: "Nicholas", startDate: "2026-03-15", dueDate: "2026-04-30", dependencies: ["WS1-M5", "WS3-M4"], notes: [{ id: "n-ws11m1", text: "Core payroll funding rail.", author: "Nicholas", date: "2026-02-15" }], tags: ["ach", "payroll", "helix"], createdDate: d, updatedDate: d },
@@ -370,7 +370,7 @@ export const initialEpics: Epic[] = [
     target: "Q2 2026",
     startMonth: 4,
     endMonth: 6,
-    owner: "Tom W.",
+    owner: "Korey McGee (C), Aijun Zuo",
     color: "#0284c7",
     tasks: [
       { id: "WS12-M1", epicId: "WS12", name: "Define KPIs & reporting needs", status: "Not Started", priority: "Medium", owner: "Aizhan Y.", startDate: "2026-04-01", dueDate: "2026-04-20", dependencies: ["WS1-M4", "WS3-M4"], notes: [{ id: "n-ws12m1", text: "Product, ops, compliance, finance.", author: "Aizhan Y.", date: "2026-02-15" }], tags: ["kpi", "reporting"], createdDate: d, updatedDate: d },
