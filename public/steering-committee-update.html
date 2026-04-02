@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>US Wallet Program — Steering Committee Update</title>
+<title>US Wallet Program - Steering Committee Update</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
   body { font-family: -apple-system, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif; background: #f2f2f7; color: #1d1d1f; min-height: 100vh; -webkit-font-smoothing: antialiased; }
@@ -135,14 +135,14 @@
 <div class="header">
   <div class="header-top">
     <div>
-      <h1>US Wallet Program — Steering Committee Update</h1>
-      <p>Ria Money Transfer &mdash; Digital Wallet &amp; Banking Product Launch</p>
+      <h1>US Wallet Program - Steering Committee Update</h1>
+      <p>Ria Money Transfer - Digital Wallet &amp; Banking Product Launch</p>
     </div>
     <div class="header-date" id="meeting-date"></div>
   </div>
   <div class="phase-banner">
     <div class="phase-dot"></div>
-    <span>Current Phase: <strong>Month 1 of 8 — Sandbox &amp; Requirements Finalization</strong></span>
+    <span>Current Phase: <strong>Month 1 of 8 - Sandbox &amp; Requirements Finalization</strong></span>
   </div>
 </div>
 
@@ -157,8 +157,9 @@
       <ul>
         <li><span class="chip chip-done">DONE</span> Helix kick-off meeting</li>
         <li><span class="chip chip-done">DONE</span> Sandbox credentials received</li>
+        <li><span class="chip chip-done">DONE</span> Helix contract</li>
         <li><span class="chip chip-progress">IN PROGRESS</span> Requirements finalization (target: end of April)</li>
-        <li><span class="chip chip-progress">IN PROGRESS</span> Write-ups &amp; flow designs (B&amp;M review tonight)</li>
+        <li><span class="chip chip-progress">IN PROGRESS</span> Write-ups &amp; flow designs</li>
       </ul>
     </div>
 
@@ -195,7 +196,7 @@
 
   <!-- ── Timeline Overview ── -->
   <div class="section">
-    <div class="section-title">Helix Implementation Timeline — Where We Are</div>
+    <div class="section-title">Helix Implementation Timeline - Where We Are</div>
     <div style="background:#ffffff;border-radius:16px;padding:22px">
       <div class="timeline-bar">
         <div class="timeline-seg current" style="flex:3;background:#5856d6">Sandbox &amp; Setup</div>
@@ -244,11 +245,11 @@
       <div class="dev-card active">
         <h4><span class="icon" style="background:#3b82f6">1</span> In-Progress Development</h4>
         <ul>
-          <li><strong>Onboarding &amp; KYC:</strong> Dual flows (B&amp;M via FX Online + Digital via OneApp) — write-ups being finalized</li>
+          <li><strong>Onboarding &amp; KYC:</strong> Dual flows (B&amp;M via FX Online + Digital via OneApp) - write-ups being finalized</li>
           <li><strong>Core System Integration:</strong> CoreAPI &#8596; OneApp &#8596; FX Online &#8596; Back Office alignment</li>
           <li><strong>Customer profile:</strong> Defining creation &amp; syncing across systems</li>
           <li><strong>Helix / Core Banking:</strong> Preparing account creation APIs, ACH/ledger interactions (Reserve Programs)</li>
-          <li><strong>Card Program (CPI + Visa DPS):</strong> BIN config &amp; card issuance flow planning — <span class="chip chip-blocked">BLOCKED by CPI</span></li>
+          <li><strong>Card Program (CPI + Visa DPS):</strong> BIN config &amp; card issuance flow planning - <span class="chip chip-blocked">BLOCKED by CPI</span></li>
           <li><strong>Funding Flows (MVP):</strong> Cash deposit (FX Online), ACH (Helix), Card funding (Adyen), RDC (Ensenta)</li>
           <li><strong>System ownership &amp; API interactions:</strong> In progress with Business &amp; Finance teams</li>
         </ul>
@@ -279,9 +280,6 @@
           <li>Finalize API contracts &amp; data models across CoreAPI and partner systems</li>
           <li>Start card issuance flow implementation post-CPI approval</li>
           <li>Complete end-to-end onboarding orchestration logic</li>
-          <li>Obtain and get access to Helix Sandbox</li>
-          <li>Receive event schemas from Helix</li>
-          <li>Start POC integration with Helix</li>
         </ul>
       </div>
     </div>
@@ -302,7 +300,7 @@
       <tbody>
         <tr>
           <td>1</td>
-          <td><strong>Close CPI contract</strong> — blocks all card program development</td>
+          <td><strong>Close CPI contract</strong> - blocks all card program development</td>
           <td>Fahad Rehman</td>
           <td><span class="chip chip-blocked">CRITICAL</span></td>
         </tr>
@@ -349,8 +347,8 @@ const workstreams = [
     owner: "Fahad Rehman",
     status: "on-track",
     progress: [
-      "CPI contract in review (internal review completed) — providing Ria comments & feedback to CPI",
-      "Fund flow and Card Inventory flows review with Helix — completed"
+      "CPI contract in review (internal review completed) - providing Ria comments & feedback to CPI",
+      "Fund flow and Card Inventory flows review with Helix - completed"
     ],
     blockers: [
       "CPI contract finalization"
@@ -358,7 +356,8 @@ const workstreams = [
     next: [
       "Close CPI contract",
       "Finalize consumer agreement documents sent by the bank",
-      "TAB Bank to provide savings account agreement"
+      "TAB Bank to provide savings account agreement",
+      "Customer onboarding flows to be reviewed with Helix"
     ]
   },
   {
@@ -366,9 +365,9 @@ const workstreams = [
     owner: "Matias Stephens, Arevik Sargsyan",
     status: "on-track",
     progress: [
-      "B&M flow final review scheduled for tonight — expected to be finalized",
-      "Digital onboarding flow shared with TAB Bank & Ria Compliance — adding T&C acceptance, KYC failure/retry scenarios",
-      "B&M and Digital flow write-ups to be shared with stakeholders this week",
+      "B&M flow final review scheduled for tonight - expected to be finalized",
+      "Digital onboarding flow shared with TAB Bank & Ria Compliance - adding T&C acceptance, KYC failure/retry scenarios",
+      "Write-up to be shared with stakeholders this week",
       "Receipt requirements to undergo internal review this week, followed by TAB Bank submission"
     ],
     blockers: [],
@@ -383,17 +382,14 @@ const workstreams = [
     owner: "Hardik Joshi, Chaitanya Telukuntla",
     status: "on-track",
     progress: [
-      "Team started initial engagement with Helix Sandbox",
+      "Team has full access to Helix Sandbox",
       "Designing funding flows: Cash (FX Online), ACH (Helix), Card (Adyen), RDC (Ensenta)",
       "CoreAPI orchestration layer design underway"
     ],
     blockers: [
-      "CPI contract — blocks BIN setup, Card API, card testing"
+      "CPI contract - blocks BIN setup, Card API, card testing"
     ],
     next: [
-      "Obtain and get full access to Sandbox",
-      "Receive event schemas from Helix",
-      "Start POC integration",
       "Schedule CoreAPI workshop with Helix"
     ]
   },
@@ -404,7 +400,7 @@ const workstreams = [
     progress: [
       "Card design options to be reviewed by Ria",
       "Debit card project submitted to Visa DPS on 3/26",
-      "Debit card is now setup in Helix sandbox — Ria team can begin card testing"
+      "Debit card is now setup in Helix sandbox - Ria team can begin card testing"
     ],
     blockers: [
       "Waiting for Visa branding requirements from CPI"
@@ -429,25 +425,11 @@ const workstreams = [
     ]
   },
   {
-    name: "KYC / eKYC",
-    owner: "Fahad Rehman",
-    status: "on-track",
-    progress: [
-      "Veriff selected and approved for eKYC",
-      "Digital onboarding flow includes KYC failure / retry scenarios"
-    ],
-    blockers: [],
-    next: [
-      "Integration planning with Veriff",
-      "KYC flow testing in sandbox"
-    ]
-  },
-  {
     name: "Finance & Accounting",
     owner: "Scott Penderis, Sascha Petersdorff",
     status: "on-track",
     progress: [
-      "Funds flow management meeting — first review completed"
+      "Funds flow management meeting - first review completed"
     ],
     blockers: [],
     next: [
@@ -464,7 +446,6 @@ const workstreams = [
     ],
     blockers: [],
     next: [
-      "Set session to bring Alonzo up to speed",
       "Define fee structure"
     ]
   },
@@ -473,7 +454,7 @@ const workstreams = [
     owner: "Abby Ninel Valenzuela, Danika Keblar",
     status: "on-track",
     progress: [
-      "Moving forward with IVR solution development — full scope not yet defined"
+      "Moving forward with IVR solution development - full scope not yet defined"
     ],
     blockers: [],
     next: [
@@ -518,7 +499,7 @@ const workstreams = [
     owner: "Korey McGee, John Patrick Shannon",
     status: "on-track",
     progress: [
-      "TBD — workstream ramping up"
+      "TBD - workstream ramping up"
     ],
     blockers: [],
     next: [
@@ -541,6 +522,18 @@ const workstreams = [
       "Confirm inventory thresholds",
       "Define address change + reissue rules",
       "Set sessions with Cristian to bring him up to speed"
+    ]
+  },
+  {
+    name: "Marketing",
+    owner: "Hillary Bontempi (TBD)",
+    status: "on-track",
+    progress: [
+      "Workstream ramping up"
+    ],
+    blockers: [],
+    next: [
+      "Define marketing strategy and timeline"
     ]
   },
 ];
