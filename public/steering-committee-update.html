@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>US Wallet Program — Steering Committee Update</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f1f5f9; color: #1e293b; }
+
+  /* ── Header ── */
+  .header { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; padding: 28px 40px; }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; }
+  .header h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.02em; }
+  .header p { font-size: 13px; color: #94a3b8; margin-top: 4px; }
+  .header-date { background: rgba(255,255,255,0.1); padding: 6px 14px; border-radius: 20px; font-size: 12px; color: #cbd5e1; font-weight: 500; white-space: nowrap; }
+  .phase-banner { display: inline-flex; align-items: center; gap: 10px; margin-top: 14px; background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.3); padding: 8px 16px; border-radius: 8px; }
+  .phase-banner .phase-dot { width: 10px; height: 10px; border-radius: 50%; background: #818cf8; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .phase-banner span { font-size: 13px; color: #c7d2fe; font-weight: 500; }
+  .phase-banner strong { color: white; }
+
+  /* ── Container ── */
+  .container { max-width: 1500px; margin: 0 auto; padding: 24px; }
+
+  /* ── Summary Cards ── */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-bottom: 28px; }
+  .card { background: white; border-radius: 12px; padding: 20px; border: 1px solid #e2e8f0; position: relative; overflow: hidden; }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; }
+  .card.blue::before { background: #3b82f6; }
+  .card.amber::before { background: #f59e0b; }
+  .card.red::before { background: #ef4444; }
+  .card.green::before { background: #22c55e; }
+  .card.indigo::before { background: #6366f1; }
+  .card h3 { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 10px; }
+  .card .big-num { font-size: 28px; font-weight: 800; color: #0f172a; }
+  .card .big-num small { font-size: 14px; font-weight: 500; color: #64748b; }
+  .card ul { list-style: none; margin-top: 8px; }
+  .card ul li { font-size: 12px; padding: 5px 0; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; gap: 8px; }
+  .card ul li:last-child { border-bottom: none; }
+  .chip { display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 10px; font-weight: 600; }
+  .chip-progress { background: #dbeafe; color: #1d4ed8; }
+  .chip-pending { background: #fef3c7; color: #92400e; }
+  .chip-done { background: #dcfce7; color: #166534; }
+  .chip-blocked { background: #fee2e2; color: #991b1b; }
+  .urgency-box { background: #fef2f2; border: 1px solid #fecaca; border-radius: 8px; padding: 12px; margin-top: 8px; }
+  .urgency-box p { font-size: 12px; color: #991b1b; font-weight: 500; line-height: 1.5; }
+
+  /* ── Section ── */
+  .section { margin-bottom: 28px; }
+  .section-title { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: #64748b; margin-bottom: 14px; padding-left: 4px; display: flex; align-items: center; gap: 8px; }
+  .section-title .count { background: #e2e8f0; color: #475569; padding: 2px 8px; border-radius: 10px; font-size: 11px; }
+
+  /* ── Workstream Table ── */
+  .ws-table { width: 100%; border-collapse: separate; border-spacing: 0; background: white; border-radius: 12px; border: 1px solid #e2e8f0; overflow: hidden; }
+  .ws-table thead th { background: #f8fafc; padding: 10px 14px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: #64748b; text-align: left; border-bottom: 2px solid #e2e8f0; white-space: nowrap; }
+  .ws-table tbody tr { border-bottom: 1px solid #f1f5f9; transition: background 0.15s; }
+  .ws-table tbody tr:last-child { border-bottom: none; }
+  .ws-table tbody tr:hover { background: #f8fafc; }
+  .ws-table td { padding: 12px 14px; font-size: 12px; vertical-align: top; border-bottom: 1px solid #f1f5f9; }
+  .ws-table .ws-name { font-weight: 600; color: #0f172a; font-size: 13px; white-space: nowrap; }
+  .ws-table .ws-owner { color: #475569; font-size: 11px; margin-top: 2px; }
+  .status-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+  .status-on-track { background: #dcfce7; color: #166534; }
+  .status-at-risk { background: #fef3c7; color: #92400e; }
+  .status-blocked { background: #fee2e2; color: #991b1b; }
+  .status-dot { width: 6px; height: 6px; border-radius: 50%; display: inline-block; }
+  .dot-green { background: #22c55e; }
+  .dot-amber { background: #f59e0b; }
+  .dot-red { background: #ef4444; }
+  .ws-table .progress-list { list-style: none; }
+  .ws-table .progress-list li { padding: 2px 0; line-height: 1.5; color: #334155; }
+  .ws-table .progress-list li::before { content: ''; display: inline-block; width: 5px; height: 5px; border-radius: 50%; background: #94a3b8; margin-right: 6px; vertical-align: middle; }
+  .ws-table .blocker-list li::before { background: #ef4444; }
+  .ws-table .next-list li::before { background: #3b82f6; }
+  .ws-table td.blockers { min-width: 160px; }
+  .ws-table td.next-steps { min-width: 180px; }
+  .no-blockers { color: #94a3b8; font-style: italic; font-size: 11px; }
+
+  /* ── Dev Status ── */
+  .dev-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; }
+  .dev-card { background: white; border-radius: 12px; padding: 18px; border: 1px solid #e2e8f0; }
+  .dev-card h4 { font-size: 13px; font-weight: 700; color: #0f172a; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+  .dev-card h4 .icon { width: 20px; height: 20px; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: white; }
+  .dev-card ul { list-style: none; }
+  .dev-card ul li { font-size: 12px; padding: 3px 0; color: #334155; line-height: 1.5; }
+  .dev-card ul li::before { content: ''; display: inline-block; width: 5px; height: 5px; border-radius: 50%; margin-right: 6px; vertical-align: middle; }
+  .dev-card.active ul li::before { background: #3b82f6; }
+  .dev-card.priority ul li::before { background: #f59e0b; }
+  .dev-card.blocker ul li::before { background: #ef4444; }
+  .dev-card.next ul li::before { background: #22c55e; }
+
+  /* ── Mini Timeline ── */
+  .timeline-bar { display: flex; border-radius: 8px; overflow: hidden; height: 36px; margin: 12px 0; border: 1px solid #e2e8f0; }
+  .timeline-seg { display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: white; position: relative; }
+  .timeline-seg.current { box-shadow: inset 0 0 0 2px rgba(255,255,255,0.6); }
+  .timeline-months { display: flex; justify-content: space-between; padding: 0 2px; }
+  .timeline-months span { font-size: 10px; color: #64748b; }
+  .timeline-months span.active { color: #2563eb; font-weight: 700; }
+
+  /* ── Print ── */
+  .print-btn { position: fixed; bottom: 24px; right: 24px; background: #2563eb; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; box-shadow: 0 4px 12px rgba(37,99,235,0.3); z-index: 50; }
+  .print-btn:hover { background: #1d4ed8; }
+
+  @media print {
+    body { background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .header { padding: 12px 16px; }
+    .container { padding: 12px; }
+    .print-btn { display: none; }
+    .cards { grid-template-columns: repeat(4, 1fr); }
+    .ws-table { font-size: 10px; }
+    .ws-table td, .ws-table th { padding: 6px 8px; }
+    .dev-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════ HEADER ═══════ -->
+<div class="header">
+  <div class="header-top">
+    <div>
+      <h1>US Wallet Program — Steering Committee Update</h1>
+      <p>Ria Money Transfer &mdash; Digital Wallet &amp; Banking Product Launch</p>
+    </div>
+    <div class="header-date" id="meeting-date"></div>
+  </div>
+  <div class="phase-banner">
+    <div class="phase-dot"></div>
+    <span>Current Phase: <strong>Month 1 of 8 — Sandbox &amp; Requirements Finalization</strong></span>
+  </div>
+</div>
+
+<!-- ═══════ MAIN CONTENT ═══════ -->
+<div class="container">
+
+  <!-- ── Summary Cards ── -->
+  <div class="cards">
+    <div class="card indigo">
+      <h3>Program Phase</h3>
+      <div class="big-num">Month 1 <small>of 8</small></div>
+      <ul>
+        <li><span class="chip chip-done">DONE</span> Helix kick-off meeting</li>
+        <li><span class="chip chip-done">DONE</span> Sandbox credentials received</li>
+        <li><span class="chip chip-progress">IN PROGRESS</span> Requirements finalization</li>
+        <li><span class="chip chip-progress">IN PROGRESS</span> Write-ups &amp; flow designs</li>
+      </ul>
+    </div>
+
+    <div class="card amber">
+      <h3>Pre-Launch Legal &amp; Commercial</h3>
+      <div class="big-num">4 <small>open items</small></div>
+      <ul>
+        <li><span class="chip chip-progress">IN REVIEW</span> CPI contract (internal review done)</li>
+        <li><span class="chip chip-progress">IN PROGRESS</span> Consumer agreement documents</li>
+        <li><span class="chip chip-pending">PENDING</span> TAB savings account agreement</li>
+        <li><span class="chip chip-progress">IN PROGRESS</span> Receipt requirements (awaiting TAB review)</li>
+      </ul>
+    </div>
+
+    <div class="card red">
+      <h3>Critical Blocker</h3>
+      <div class="big-num" style="color:#dc2626">CPI Contract</div>
+      <div class="urgency-box">
+        <p><strong>Blocks:</strong> BIN setup, Card API integration, end-to-end card testing, and all downstream card issuance flows. Must be resolved to proceed with card program development.</p>
+      </div>
+    </div>
+
+    <div class="card green">
+      <h3>Workstream Health</h3>
+      <div class="big-num">13/13 <small>on track</small></div>
+      <ul>
+        <li><span class="status-dot dot-green"></span> All workstreams reporting On Track</li>
+        <li><span class="status-dot dot-amber"></span> CPI contract is the primary dependency</li>
+        <li><span class="status-dot dot-green"></span> Helix sandbox engagement started</li>
+        <li><span class="status-dot dot-green"></span> Compliance vendors approved (Veriff, HawkAI, Verafin)</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- ── Timeline Overview ── -->
+  <div class="section">
+    <div class="section-title">Helix Implementation Timeline — Where We Are</div>
+    <div style="background:white;border-radius:12px;padding:18px;border:1px solid #e2e8f0">
+      <div class="timeline-bar">
+        <div class="timeline-seg current" style="flex:3;background:#6366f1">Sandbox &amp; Setup</div>
+        <div class="timeline-seg" style="flex:3;background:#f59e0b">Alpha Testing</div>
+        <div class="timeline-seg" style="flex:1;background:#ef4444">Beta</div>
+        <div class="timeline-seg" style="flex:1;background:#22c55e">GA</div>
+      </div>
+      <div class="timeline-months">
+        <span class="active">Mar 26</span><span>Apr 26</span><span>May 26</span><span>Jun 26</span><span>Jul 26</span><span>Aug 26</span><span>Sep 26</span><span>Oct 26</span>
+      </div>
+      <div style="margin-top:14px;display:flex;gap:20px;flex-wrap:wrap">
+        <div style="font-size:11px;color:#475569"><strong style="color:#6366f1">Months 1-3:</strong> Sandbox build, certifications, bank requirements</div>
+        <div style="font-size:11px;color:#475569"><strong style="color:#f59e0b">Months 4-6:</strong> Alpha production testing, mobile wallet</div>
+        <div style="font-size:11px;color:#475569"><strong style="color:#ef4444">Month 7:</strong> Beta (friends &amp; family)</div>
+        <div style="font-size:11px;color:#475569"><strong style="color:#22c55e">Month 8:</strong> General Audience launch</div>
+      </div>
+      <div class="urgency-box" style="margin-top:14px;background:#eff6ff;border-color:#bfdbfe">
+        <p style="color:#1e40af"><strong>Product &amp; Program teams:</strong> All requirements, write-ups, and flow designs must be finalized within the next 2-3 months (by May 2026) to stay on the Helix timeline. Sandbox build and certifications run in parallel.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Workstream Status Table ── -->
+  <div class="section">
+    <div class="section-title">Workstream Updates <span class="count">13 workstreams</span></div>
+    <div style="overflow-x:auto">
+      <table class="ws-table">
+        <thead>
+          <tr>
+            <th style="width:200px">Workstream</th>
+            <th style="width:80px">Status</th>
+            <th style="width:30%">Progress</th>
+            <th class="blockers" style="width:15%">Blockers</th>
+            <th class="next-steps" style="width:25%">Next Steps</th>
+          </tr>
+        </thead>
+        <tbody id="ws-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── Development Status ── -->
+  <div class="section">
+    <div class="section-title">FE/BE Development Deep Dive <span class="count">Hardik Joshi &amp; Chaitanya Telukuntla</span></div>
+    <div class="dev-grid">
+      <div class="dev-card active">
+        <h4><span class="icon" style="background:#3b82f6">1</span> In-Progress Development</h4>
+        <ul>
+          <li><strong>Onboarding &amp; KYC:</strong> Dual flows (B&amp;M via FX Online + Digital via OneApp) — write-ups being finalized</li>
+          <li><strong>Core System Integration:</strong> CoreAPI &#8596; OneApp &#8596; FX Online &#8596; Back Office alignment</li>
+          <li><strong>Customer profile:</strong> Defining creation &amp; syncing across systems</li>
+          <li><strong>Helix / Core Banking:</strong> Preparing account creation APIs, ACH/ledger interactions (Reserve Programs)</li>
+          <li><strong>Card Program (CPI + Visa DPS):</strong> BIN config &amp; card issuance flow planning — <span class="chip chip-blocked">BLOCKED by CPI</span></li>
+          <li><strong>Funding Flows (MVP):</strong> Cash deposit (FX Online), ACH (Helix), Card funding (Adyen), RDC (Ensenta)</li>
+          <li><strong>System ownership &amp; API interactions:</strong> In progress with Business &amp; Finance teams</li>
+        </ul>
+      </div>
+
+      <div class="dev-card priority">
+        <h4><span class="icon" style="background:#f59e0b">2</span> Current Tech Priorities</h4>
+        <ul>
+          <li>Finalize end-to-end onboarding flow logic across all systems</li>
+          <li>Prepare CoreAPI orchestration layer for multi-system communication</li>
+          <li>Workshop to be scheduled with Helix for orchestration alignment</li>
+          <li>Unblock card program setup (CPI) for downstream integrations</li>
+        </ul>
+      </div>
+
+      <div class="dev-card blocker">
+        <h4><span class="icon" style="background:#ef4444">!</span> Technical Blockers</h4>
+        <ul>
+          <li><strong>CPI Contract (Critical):</strong> Blocks BIN setup, Card API integration, end-to-end card testing</li>
+          <li>All card issuance flow implementation is pending CPI approval</li>
+          <li>Downstream Visa DPS integration cannot proceed without CPI</li>
+        </ul>
+      </div>
+
+      <div class="dev-card next">
+        <h4><span class="icon" style="background:#22c55e">&#8594;</span> Next Technical Steps</h4>
+        <ul>
+          <li>Finalize API contracts &amp; data models across CoreAPI and partner systems</li>
+          <li>Start card issuance flow implementation post-CPI approval</li>
+          <li>Complete end-to-end onboarding orchestration logic</li>
+          <li>Obtain and get access to Helix Sandbox</li>
+          <li>Receive event schemas from Helix</li>
+          <li>Start POC integration with Helix</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Key Decisions Needed ── -->
+  <div class="section">
+    <div class="section-title">Key Decisions &amp; Actions Needed from Leadership</div>
+    <div style="background:white;border-radius:12px;padding:20px;border:1px solid #e2e8f0">
+      <table style="width:100%;border-collapse:collapse;font-size:12px">
+        <thead>
+          <tr style="border-bottom:2px solid #e2e8f0">
+            <th style="text-align:left;padding:8px 12px;font-size:11px;color:#64748b;text-transform:uppercase">#</th>
+            <th style="text-align:left;padding:8px 12px;font-size:11px;color:#64748b;text-transform:uppercase">Action Item</th>
+            <th style="text-align:left;padding:8px 12px;font-size:11px;color:#64748b;text-transform:uppercase">Owner</th>
+            <th style="text-align:left;padding:8px 12px;font-size:11px;color:#64748b;text-transform:uppercase">Urgency</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid #f1f5f9">
+            <td style="padding:10px 12px;font-weight:600">1</td>
+            <td style="padding:10px 12px"><strong>Close CPI contract</strong> — blocks all card program development</td>
+            <td style="padding:10px 12px">Fahad Rehman</td>
+            <td style="padding:10px 12px"><span class="chip chip-blocked">CRITICAL</span></td>
+          </tr>
+          <tr style="border-bottom:1px solid #f1f5f9">
+            <td style="padding:10px 12px;font-weight:600">2</td>
+            <td style="padding:10px 12px"><strong>Finalize consumer agreement documents</strong> from TAB Bank</td>
+            <td style="padding:10px 12px">Alex Ketter / Fahad Rehman</td>
+            <td style="padding:10px 12px"><span class="chip chip-pending">HIGH</span></td>
+          </tr>
+          <tr style="border-bottom:1px solid #f1f5f9">
+            <td style="padding:10px 12px;font-weight:600">3</td>
+            <td style="padding:10px 12px"><strong>TAB Bank to provide savings account agreement</strong></td>
+            <td style="padding:10px 12px">TAB Bank</td>
+            <td style="padding:10px 12px"><span class="chip chip-pending">HIGH</span></td>
+          </tr>
+          <tr style="border-bottom:1px solid #f1f5f9">
+            <td style="padding:10px 12px;font-weight:600">4</td>
+            <td style="padding:10px 12px"><strong>Revenue &amp; pricing session</strong> with leadership</td>
+            <td style="padding:10px 12px">Alonzo Venegas</td>
+            <td style="padding:10px 12px"><span class="chip chip-progress">MEDIUM</span></td>
+          </tr>
+          <tr>
+            <td style="padding:10px 12px;font-weight:600">5</td>
+            <td style="padding:10px 12px"><strong>Schedule CoreAPI workshop with Helix</strong> for orchestration alignment</td>
+            <td style="padding:10px 12px">Hardik Joshi / Fahad Rehman</td>
+            <td style="padding:10px 12px"><span class="chip chip-progress">MEDIUM</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<button class="print-btn" onclick="window.print()">Print / Save PDF</button>
+
+<script>
+// ═══════ DATE ═══════
+document.getElementById('meeting-date').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+// ═══════ WORKSTREAM DATA ═══════
+const workstreams = [
+  {
+    name: "Vendor Mgmt & Program Commercials",
+    owner: "Fahad Rehman",
+    status: "on-track",
+    progress: [
+      "CPI contract in review (internal review completed) — providing Ria comments & feedback to CPI",
+      "Fund flow and Card Inventory flows review with Helix — completed"
+    ],
+    blockers: [
+      "CPI contract finalization"
+    ],
+    next: [
+      "Close CPI contract",
+      "Finalize consumer agreement documents sent by the bank",
+      "TAB Bank to provide savings account agreement"
+    ]
+  },
+  {
+    name: "Product",
+    owner: "Matias Stephens, Arevik Sargsyan",
+    status: "on-track",
+    progress: [
+      "Reviewed FX Online onboarding flow with Hector & Yasamin — updating per feedback",
+      "Digital onboarding flow shared with TAB Bank & Ria Compliance — adding T&C acceptance, KYC failure/retry scenarios",
+      "Write-ups for B&M and Digital flows in progress",
+      "Working on receipt requirements for Wallet — awaiting TAB Bank review"
+    ],
+    blockers: [],
+    next: [
+      "BRD for digital flow",
+      "Share updated onboarding flow with TAB Bank & Helix",
+      "Finalize B&M and Digital write-ups"
+    ]
+  },
+  {
+    name: "FE/BE Development",
+    owner: "Hardik Joshi, Chaitanya Telukuntla",
+    status: "on-track",
+    progress: [
+      "Team started initial engagement with Helix Sandbox",
+      "Designing funding flows: Cash (FX Online), ACH (Helix), Card (Adyen), RDC (Ensenta)",
+      "CoreAPI orchestration layer design underway"
+    ],
+    blockers: [
+      "CPI contract — blocks BIN setup, Card API, card testing"
+    ],
+    next: [
+      "Obtain and get full access to Sandbox",
+      "Receive event schemas from Helix",
+      "Start POC integration",
+      "Schedule CoreAPI workshop with Helix"
+    ]
+  },
+  {
+    name: "Card Design",
+    owner: "Rigved Sathe, Juan Alexander Basurto Salhuana",
+    status: "on-track",
+    progress: [
+      "Card design options to be reviewed by Ria",
+      "Debit card project submitted to Visa DPS on 3/26",
+      "Debit card is now setup in Helix sandbox — Ria team can begin card testing"
+    ],
+    blockers: [
+      "Waiting for Visa branding requirements from CPI"
+    ],
+    next: [
+      "Visa DPS to assign Implementation Manager",
+      "Deliver finalized card design for printing"
+    ]
+  },
+  {
+    name: "Compliance & Legal",
+    owner: "Alex Ketter, Kenan Haskovic, Hope Gregg",
+    status: "on-track",
+    progress: [
+      "Veriff, HawkAI, Verafin approved",
+      "Weekly compliance review sessions in progress"
+    ],
+    blockers: [],
+    next: [
+      "CPI contract to be reviewed",
+      "Consumer documents to be finalized"
+    ]
+  },
+  {
+    name: "KYC / eKYC",
+    owner: "Fahad Rehman",
+    status: "on-track",
+    progress: [
+      "Veriff selected and approved for eKYC",
+      "Digital onboarding flow includes KYC failure / retry scenarios"
+    ],
+    blockers: [],
+    next: [
+      "Integration planning with Veriff",
+      "KYC flow testing in sandbox"
+    ]
+  },
+  {
+    name: "Finance & Accounting",
+    owner: "Scott Penderis, Sascha Petersdorff",
+    status: "on-track",
+    progress: [
+      "Funds flow management meeting — first review completed"
+    ],
+    blockers: [],
+    next: [
+      "Define ledger + settlement model",
+      "Confirm reconciliation ownership"
+    ]
+  },
+  {
+    name: "Rev. Management",
+    owner: "Alonzo Venegas",
+    status: "on-track",
+    progress: [
+      "Meeting scheduled to discuss revenue & pricing with leadership"
+    ],
+    blockers: [],
+    next: [
+      "Set session to bring Alonzo up to speed",
+      "Define fee structure"
+    ]
+  },
+  {
+    name: "Customer Care & Support",
+    owner: "Abby Ninel Valenzuela, Danika Keblar",
+    status: "on-track",
+    progress: [
+      "Moving forward with IVR solution development — full scope not yet defined"
+    ],
+    blockers: [],
+    next: [
+      "Validate Zendesk attachment capabilities for dispute evidence",
+      "Define escalation SLAs",
+      "Define Zendesk \u2192 Centrix dispute flow"
+    ]
+  },
+  {
+    name: "Fraud",
+    owner: "Taylor Kwan, Rodrigo De la Fuente, Bivash Sharma",
+    status: "on-track",
+    progress: [
+      "Veriff onboarding clarified with partners",
+      "HawkAI + Verafin approved"
+    ],
+    blockers: [],
+    next: [
+      "Define fraud rules/thresholds",
+      "Define SLAs",
+      "Set review workflows",
+      "Validate integrations"
+    ]
+  },
+  {
+    name: "Security & Privacy",
+    owner: "Andres Porras Garcia, Aaron Toren, Yago Amat Mart\u00ednez",
+    status: "on-track",
+    progress: [
+      "High-level posture reviewed",
+      "Helix claims PCI compliance"
+    ],
+    blockers: [],
+    next: [
+      "Obtain PCI details from Helix",
+      "Validate encryption + logging",
+      "Define role access"
+    ]
+  },
+  {
+    name: "Data & Reporting (BI)",
+    owner: "Korey McGee, John Patrick Shannon",
+    status: "on-track",
+    progress: [
+      "TBD — workstream ramping up"
+    ],
+    blockers: [],
+    next: [
+      "Define KPI set with Fahad",
+      "Define data ownership",
+      "Map event feeds",
+      "Set reporting cadence"
+    ]
+  },
+  {
+    name: "Card Fulfillment / Inventory",
+    owner: "Cristian Castaneda Paez",
+    status: "on-track",
+    progress: [
+      "Card inventory flow review with Helix scheduled this week"
+    ],
+    blockers: [],
+    next: [
+      "Finalize activation process",
+      "Confirm inventory thresholds",
+      "Define address change + reissue rules",
+      "Set sessions with Cristian to bring him up to speed"
+    ]
+  },
+];
+
+// ═══════ RENDER TABLE ═══════
+const tbody = document.getElementById('ws-body');
+workstreams.forEach(function(ws) {
+  const statusCls = ws.status === 'on-track' ? 'status-on-track' : ws.status === 'at-risk' ? 'status-at-risk' : 'status-blocked';
+  const statusDot = ws.status === 'on-track' ? 'dot-green' : ws.status === 'at-risk' ? 'dot-amber' : 'dot-red';
+  const statusLabel = ws.status === 'on-track' ? 'On Track' : ws.status === 'at-risk' ? 'At Risk' : 'Blocked';
+
+  const progressHTML = ws.progress.map(function(p) { return '<li>' + p + '</li>'; }).join('');
+  const blockersHTML = ws.blockers.length > 0
+    ? ws.blockers.map(function(b) { return '<li>' + b + '</li>'; }).join('')
+    : '<span class="no-blockers">None</span>';
+  const nextHTML = ws.next.map(function(n) { return '<li>' + n + '</li>'; }).join('');
+
+  tbody.innerHTML += '<tr>'
+    + '<td><div class="ws-name">' + ws.name + '</div><div class="ws-owner">' + ws.owner + '</div></td>'
+    + '<td><span class="status-badge ' + statusCls + '"><span class="status-dot ' + statusDot + '"></span>' + statusLabel + '</span></td>'
+    + '<td><ul class="progress-list">' + progressHTML + '</ul></td>'
+    + '<td class="blockers"><ul class="progress-list blocker-list">' + blockersHTML + '</ul></td>'
+    + '<td class="next-steps"><ul class="progress-list next-list">' + nextHTML + '</ul></td>'
+    + '</tr>';
+});
+</script>
+</body>
+</html>
