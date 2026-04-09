@@ -62,10 +62,12 @@
   .status-on-track { background: rgba(52,199,89,0.12); color: #248a3d; }
   .status-at-risk { background: rgba(255,149,0,0.12); color: #c93400; }
   .status-blocked { background: rgba(255,59,48,0.12); color: #ff3b30; }
+  .status-not-started { background: rgba(142,142,147,0.12); color: #8e8e93; }
   .status-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; }
   .dot-green { background: #34c759; }
   .dot-amber { background: #ff9500; }
   .dot-red { background: #ff3b30; }
+  .dot-gray { background: #8e8e93; }
   .ws-table .progress-list { list-style: none; }
   .ws-table .progress-list li { padding: 3px 0; line-height: 1.6; color: #3a3a3c; }
   .ws-table .progress-list li::before { content: ''; display: inline-block; width: 4px; height: 4px; border-radius: 50%; background: #c7c7cc; margin-right: 8px; vertical-align: middle; }
@@ -159,21 +161,24 @@
         <li><span class="chip chip-done">DONE</span> Sandbox credentials received</li>
         <li><span class="chip chip-done">DONE</span> Helix contract</li>
         <li><span class="chip chip-done">DONE</span> Helix support portal access received</li>
+        <li><span class="chip chip-done">DONE</span> Helix portal trainings for Ria team</li>
         <li><span class="chip chip-done">DONE</span> Card plastic samples received - matt finish with orange core selected</li>
-        <li><span class="chip chip-progress">IN PROGRESS</span> Helix conducting portal trainings for Ria team</li>
+        <li><span class="chip chip-done">DONE</span> Digital &amp; B&amp;M receipt templates reviewed with bank</li>
+        <li><span class="chip chip-progress">IN REVIEW</span> CPI contract - under review with CPI legal</li>
         <li><span class="chip chip-progress">IN PROGRESS</span> Requirements finalization (target: end of April)</li>
-        <li><span class="chip chip-progress">IN PROGRESS</span> Write-ups &amp; flow designs</li>
+        <li><span class="chip chip-pending">SCHEDULED</span> Pricing &amp; fee structure discussion - April 14</li>
       </ul>
     </div>
 
     <div class="card amber">
       <h3>Pre-Launch Legal &amp; Commercial</h3>
-      <div class="big-num">4 <small>open items</small></div>
+      <div class="big-num">5 <small>open items</small></div>
       <ul>
-        <li><span class="chip chip-progress">IN REVIEW</span> CPI contract (internal review done)</li>
-        <li><span class="chip chip-progress">IN PROGRESS</span> Consumer agreement documents</li>
+        <li><span class="chip chip-progress">IN REVIEW</span> CPI contract - under review with CPI legal team</li>
+        <li><span class="chip chip-progress">IN PROGRESS</span> Consumer agreement documents - waiting for Spanish translation quote</li>
         <li><span class="chip chip-pending">PENDING</span> TAB savings account agreement</li>
-        <li><span class="chip chip-progress">IN PROGRESS</span> Receipt requirements (internal review today, then TAB)</li>
+        <li><span class="chip chip-done">REVIEWED</span> Receipt templates reviewed with bank - awaiting Ria legal &amp; compliance approval</li>
+        <li><span class="chip chip-pending">SCHEDULED</span> Pricing &amp; fee structure session - April 14</li>
       </ul>
     </div>
 
@@ -187,12 +192,12 @@
 
     <div class="card green">
       <h3>Workstream Health</h3>
-      <div class="big-num">13/13 <small>on track</small></div>
+      <div class="big-num">7/13 <small>on track</small></div>
       <ul>
-        <li><span class="status-dot dot-green"></span> All workstreams reporting On Track</li>
+        <li><span class="status-dot dot-green"></span> 7 workstreams on track, 6 not yet started</li>
         <li><span class="status-dot dot-amber"></span> CPI contract is the primary dependency</li>
-        <li><span class="status-dot dot-green"></span> Helix portal access and trainings in progress</li>
-        <li><span class="status-dot dot-green"></span> Compliance vendors approved (Veriff, HawkAI, Verafin)</li>
+        <li><span class="status-dot dot-green"></span> Helix portal trainings completed</li>
+        <li><span class="status-dot dot-green"></span> Pricing &amp; fee structure session scheduled (Apr 14)</li>
       </ul>
     </div>
   </div>
@@ -248,22 +253,19 @@
       <div class="dev-card active">
         <h4><span class="icon" style="background:#3b82f6">1</span> In-Progress Development</h4>
         <ul>
-          <li><strong>Onboarding &amp; KYC:</strong> Dual flows (B&amp;M via FX Online + Digital via OneApp) - write-ups being finalized</li>
+          <li><strong>Provider Call Integrations:</strong> Wrapped up provider calls for account creation and card registration</li>
+          <li><strong>Helix Sandbox:</strong> Team has full access - actively working on integrations</li>
           <li><strong>Core System Integration:</strong> CoreAPI &#8596; OneApp &#8596; FX Online &#8596; Back Office alignment</li>
-          <li><strong>Customer profile:</strong> Defining creation &amp; syncing across systems</li>
-          <li><strong>Helix / Core Banking:</strong> Preparing account creation APIs, ACH/ledger interactions (Reserve Programs)</li>
           <li><strong>Card Program (CPI + Visa DPS):</strong> BIN config &amp; card issuance flow planning - <span class="chip chip-blocked">BLOCKED by CPI</span></li>
-          <li><strong>Funding Flows (MVP):</strong> Cash deposit (FX Online), ACH (Helix), Card funding (Adyen), RDC (Ensenta)</li>
-          <li><strong>System ownership &amp; API interactions:</strong> In progress with Business &amp; Finance teams</li>
         </ul>
       </div>
 
       <div class="dev-card priority">
         <h4><span class="icon" style="background:#f59e0b">2</span> Current Tech Priorities</h4>
         <ul>
-          <li>Finalize end-to-end onboarding flow logic across all systems</li>
+          <li>Complete provider calls for transactions and card management</li>
+          <li>Review all remaining Helix endpoints</li>
           <li>Prepare CoreAPI orchestration layer for multi-system communication</li>
-          <li>Workshop to be scheduled with Helix for orchestration alignment</li>
           <li>Unblock card program setup (CPI) for downstream integrations</li>
         </ul>
       </div>
@@ -280,9 +282,10 @@
       <div class="dev-card next">
         <h4><span class="icon" style="background:#22c55e">&#8594;</span> Next Technical Steps</h4>
         <ul>
-          <li>Finalize API contracts &amp; data models across CoreAPI and partner systems</li>
+          <li>Walkthrough with tech teams scheduled for next week</li>
+          <li>Complete provider calls for remaining endpoints (transactions, card management)</li>
           <li>Start card issuance flow implementation post-CPI approval</li>
-          <li>Complete end-to-end onboarding orchestration logic</li>
+          <li>Finalize API contracts &amp; data models across CoreAPI and partner systems</li>
         </ul>
       </div>
     </div>
@@ -303,32 +306,44 @@
       <tbody>
         <tr>
           <td>1</td>
-          <td><strong>Close CPI contract</strong> - blocks all card program development</td>
+          <td><strong>Close CPI contract</strong> - currently under review with CPI legal, blocks all card program development</td>
           <td>Fahad Rehman</td>
           <td><span class="chip chip-blocked">CRITICAL</span></td>
         </tr>
         <tr>
           <td>2</td>
-          <td><strong>Finalize consumer agreement documents</strong> from TAB Bank</td>
+          <td><strong>Receipt templates</strong> - reviewed with bank, pending Ria legal &amp; compliance approval</td>
           <td>Alex Ketter / Fahad Rehman</td>
           <td><span class="chip chip-pending">HIGH</span></td>
         </tr>
         <tr>
           <td>3</td>
-          <td><strong>TAB Bank to provide savings account agreement</strong></td>
-          <td>TAB Bank</td>
+          <td><strong>Consumer agreement documents</strong> - awaiting Spanish translation quote</td>
+          <td>Alex Ketter / Fahad Rehman</td>
           <td><span class="chip chip-pending">HIGH</span></td>
         </tr>
         <tr>
           <td>4</td>
-          <td><strong>Revenue &amp; pricing session</strong> with leadership</td>
+          <td><strong>Revenue &amp; pricing session</strong> - scheduled for April 14</td>
           <td>Alonzo Venegas</td>
-          <td><span class="chip chip-progress">MEDIUM</span></td>
+          <td><span class="chip chip-pending">SCHEDULED</span></td>
         </tr>
         <tr>
           <td>5</td>
-          <td><strong>Schedule CoreAPI workshop with Helix</strong> for orchestration alignment</td>
-          <td>Hardik Joshi / Fahad Rehman</td>
+          <td><strong>Ensenta meeting</strong> - scheduled for next week</td>
+          <td>Fahad Rehman</td>
+          <td><span class="chip chip-pending">SCHEDULED</span></td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td><strong>Tech walkthrough with development teams</strong> - scheduled for next week</td>
+          <td>Hardik Joshi / Chaitanya Telukuntla</td>
+          <td><span class="chip chip-pending">SCHEDULED</span></td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td><strong>Onboarding flows review</strong> - awaiting feedback from compliance and partners</td>
+          <td>Matias Stephens / Arevik Sargsyan</td>
           <td><span class="chip chip-progress">MEDIUM</span></td>
         </tr>
       </tbody>
@@ -350,18 +365,20 @@ const workstreams = [
     owner: "Fahad Rehman",
     status: "on-track",
     progress: [
-      "CPI contract in review (internal review completed) - providing Ria comments & feedback to CPI",
-      "Fund flow and Card Inventory flows review with Helix - completed",
-      "Helix support portal access received - portal trainings being conducted for Ria team"
+      "CPI contract currently under review with CPI legal team",
+      "Non-personalized card flow shared with Helix this week - currently under review (defines card inventory process scope)",
+      "Fund flow review still in progress",
+      "Helix portal trainings completed",
+      "Waiting for Spanish translation quote for consumer agreement documents"
     ],
     blockers: [
       "CPI contract finalization"
     ],
     next: [
       "Close CPI contract",
-      "Finalize consumer agreement documents sent by the bank",
-      "TAB Bank to provide savings account agreement",
-      "Customer onboarding flows to be reviewed with Helix"
+      "Meeting with Ensenta scheduled for next week",
+      "Finalize consumer agreement documents",
+      "TAB Bank to provide savings account agreement"
     ]
   },
   {
@@ -369,15 +386,13 @@ const workstreams = [
     owner: "Matias Stephens, Arevik Sargsyan",
     status: "on-track",
     progress: [
-      "B&M flow final review scheduled for tonight - expected to be finalized",
-      "Digital onboarding flow shared with TAB Bank & Ria Compliance - adding T&C acceptance, KYC failure/retry scenarios",
-      "Write-up to be shared with stakeholders this week",
-      "Receipt requirements to undergo internal review this week, followed by TAB Bank submission"
+      "Onboarding flows shared with partners (TAB Bank and Helix) for review",
+      "Write-up being reviewed by the digital team",
+      "Receipt templates reviewed with the bank"
     ],
     blockers: [],
     next: [
-      "BRD for digital flow",
-      "Share updated onboarding flow with TAB Bank & Helix",
+      "Receipts to be approved by Ria legal and compliance",
       "Finalize all write-ups, flows, and requirements by end of April 2026"
     ]
   },
@@ -386,15 +401,17 @@ const workstreams = [
     owner: "Hardik Joshi, Chaitanya Telukuntla",
     status: "on-track",
     progress: [
-      "Team has full access to Helix Sandbox",
-      "Designing funding flows: Cash (FX Online), ACH (Helix), Card (Adyen), RDC (Ensenta)",
-      "CoreAPI orchestration layer design underway"
+      "Provider call integrations in progress",
+      "Wrapped up provider calls for account creation and card registration",
+      "Team has full access to Helix Sandbox"
     ],
     blockers: [
       "CPI contract - blocks BIN setup, Card API, card testing"
     ],
     next: [
-      "Schedule CoreAPI workshop with Helix"
+      "Complete provider calls for transactions and card management",
+      "Review all remaining Helix endpoints",
+      "Walkthrough with tech teams scheduled for next week"
     ]
   },
   {
@@ -402,15 +419,16 @@ const workstreams = [
     owner: "Rigved Sathe, Juan Alexander Basurto Salhuana",
     status: "on-track",
     progress: [
-      "Card plastic samples received - various options reviewed",
-      "Agreed to move forward with matt finish and orange core",
+      "Card plastic samples received - matt finish with orange core selected",
+      "Quote requested for 3D logo design",
       "Debit card project submitted to Visa DPS on 3/26",
-      "Debit card is now setup in Helix sandbox - Ria team can begin card testing"
+      "Debit card is now setup in Helix sandbox"
     ],
     blockers: [
       "Waiting for Visa branding requirements from CPI"
     ],
     next: [
+      "3D logo design meeting scheduled",
       "Visa DPS to assign Implementation Manager",
       "Deliver finalized card design for printing"
     ]
@@ -421,25 +439,27 @@ const workstreams = [
     status: "on-track",
     progress: [
       "Veriff, HawkAI, Verafin approved",
-      "Weekly compliance review sessions in progress"
+      "Waiting for onboarding flows feedback"
     ],
     blockers: [],
     next: [
+      "Review and approve onboarding flows",
       "CPI contract to be reviewed",
-      "Consumer documents to be finalized"
+      "Consumer documents to be finalized",
+      "Receipt templates to be approved by legal and compliance"
     ]
   },
   {
     name: "Finance & Accounting",
     owner: "Scott Penderis, Sascha Petersdorff",
-    status: "on-track",
+    status: "not-started",
     progress: [
-      "Funds flow management meeting - first review completed"
+      "Not yet started"
     ],
     blockers: [],
     next: [
-      "Define ledger + settlement model (by end of April)",
-      "Confirm reconciliation ownership (by end of April)"
+      "Define ledger + settlement model",
+      "Confirm reconciliation ownership"
     ]
   },
   {
@@ -447,11 +467,11 @@ const workstreams = [
     owner: "Alonzo Venegas",
     status: "on-track",
     progress: [
-      "Meeting scheduled to discuss revenue & pricing with leadership"
+      "Pricing and fee structure discussion scheduled for April 14"
     ],
     blockers: [],
     next: [
-      "Define fee structure"
+      "Define fee structure and pricing model"
     ]
   },
   {
@@ -459,11 +479,12 @@ const workstreams = [
     owner: "Abby Ninel Valenzuela, Danika Keblar",
     status: "on-track",
     progress: [
-      "Moving forward with IVR solution development - full scope not yet defined"
+      "Identifying next steps and milestones",
+      "Meeting scheduled to define workstream scope"
     ],
     blockers: [],
     next: [
-      "Validate Zendesk attachment capabilities for dispute evidence",
+      "Define next steps and milestones",
       "Define escalation SLAs",
       "Define Zendesk \u2192 Centrix dispute flow"
     ]
@@ -471,10 +492,9 @@ const workstreams = [
   {
     name: "Fraud",
     owner: "Taylor Kwan, Rodrigo De la Fuente, Bivash Sharma",
-    status: "on-track",
+    status: "not-started",
     progress: [
-      "Veriff onboarding clarified with partners",
-      "HawkAI + Verafin approved"
+      "Not yet started"
     ],
     blockers: [],
     next: [
@@ -487,10 +507,9 @@ const workstreams = [
   {
     name: "Security & Privacy",
     owner: "Andres Porras Garcia, Aaron Toren, Yago Amat Mart\u00ednez",
-    status: "on-track",
+    status: "not-started",
     progress: [
-      "High-level posture reviewed",
-      "Helix claims PCI compliance"
+      "Not yet started"
     ],
     blockers: [],
     next: [
@@ -502,9 +521,9 @@ const workstreams = [
   {
     name: "Data & Reporting (BI)",
     owner: "Korey McGee, John Patrick Shannon",
-    status: "on-track",
+    status: "not-started",
     progress: [
-      "TBD - workstream ramping up"
+      "Not yet started"
     ],
     blockers: [],
     next: [
@@ -517,24 +536,23 @@ const workstreams = [
   {
     name: "Card Fulfillment / Inventory",
     owner: "Cristian Castaneda Paez",
-    status: "on-track",
+    status: "not-started",
     progress: [
-      "Card inventory flow review with Helix scheduled this week"
+      "Not yet started"
     ],
     blockers: [],
     next: [
       "Finalize activation process",
       "Confirm inventory thresholds",
-      "Define address change + reissue rules",
-      "Set sessions with Cristian to bring him up to speed"
+      "Define address change + reissue rules"
     ]
   },
   {
     name: "Marketing",
     owner: "Hillary Bontempi (TBD)",
-    status: "on-track",
+    status: "not-started",
     progress: [
-      "Workstream ramping up"
+      "Not yet started"
     ],
     blockers: [],
     next: [
@@ -546,9 +564,8 @@ const workstreams = [
 // ═══════ RENDER TABLE ═══════
 const tbody = document.getElementById('ws-body');
 workstreams.forEach(function(ws) {
-  const statusCls = ws.status === 'on-track' ? 'status-on-track' : ws.status === 'at-risk' ? 'status-at-risk' : 'status-blocked';
-  const statusDot = ws.status === 'on-track' ? 'dot-green' : ws.status === 'at-risk' ? 'dot-amber' : 'dot-red';
-  const statusLabel = ws.status === 'on-track' ? 'On Track' : ws.status === 'at-risk' ? 'At Risk' : 'Blocked';
+  const statusMap = { 'on-track': ['status-on-track','dot-green','On Track'], 'at-risk': ['status-at-risk','dot-amber','At Risk'], 'blocked': ['status-blocked','dot-red','Blocked'], 'not-started': ['status-not-started','dot-gray','Not Started'] };
+  const [statusCls, statusDot, statusLabel] = statusMap[ws.status] || statusMap['on-track'];
 
   const progressHTML = ws.progress.map(function(p) { return '<li>' + p + '</li>'; }).join('');
   const blockersHTML = ws.blockers.length > 0
