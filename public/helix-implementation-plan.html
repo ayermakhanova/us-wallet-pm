@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Helix Implementation Plan - Ria x TAB Bank</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif; background: #f2f2f7; color: #1d1d1f; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+  .header { background: #ffffff; padding: 32px 40px 0; border-bottom: 1px solid rgba(0,0,0,0.06); }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; }
+  .header h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
+  .header p { font-size: 14px; color: #86868b; margin-top: 4px; }
+  .header-date { background: #f2f2f7; padding: 7px 16px; border-radius: 20px; font-size: 12px; color: #86868b; font-weight: 500; white-space: nowrap; }
+  .phase-banner { display: inline-flex; align-items: center; gap: 10px; margin-top: 16px; background: #f2f2f7; padding: 10px 20px; border-radius: 14px; }
+  .phase-dot { width: 8px; height: 8px; border-radius: 50%; background: #34c759; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100% { opacity:1 } 50% { opacity:0.4 } }
+  .phase-banner span { font-size: 13px; color: #86868b; font-weight: 500; }
+  .phase-banner strong { color: #1d1d1f; }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 0; margin-top: 20px; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .tab { padding: 12px 20px; font-size: 13px; font-weight: 600; color: #86868b; cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; transition: all 0.2s; }
+  .tab:hover { color: #1d1d1f; }
+  .tab.active { color: #007aff; border-bottom-color: #007aff; }
+
+  .container { max-width: 1500px; margin: 0 auto; padding: 24px 40px 40px; }
+
+  /* Summary Cards */
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 28px; }
+  .card { background: #fff; border-radius: 16px; padding: 22px; }
+  .card h3 { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 10px; }
+  .card.indigo h3 { color: #5856d6; }
+  .card.blue h3 { color: #007aff; }
+  .card.red h3 { color: #ff3b30; }
+  .card.green h3 { color: #34c759; }
+  .card .big-num { font-size: 34px; font-weight: 700; letter-spacing: -0.02em; }
+  .card .big-num small { font-size: 16px; font-weight: 400; color: #86868b; }
+  .card ul { list-style: none; margin-top: 12px; }
+  .card ul li { font-size: 13px; padding: 5px 0; display: flex; align-items: center; gap: 8px; color: #3a3a3c; }
+
+  /* Chips */
+  .chip { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 6px; font-size: 10px; font-weight: 600; letter-spacing: 0.02em; white-space: nowrap; flex-shrink: 0; }
+  .chip-done { background: rgba(52,199,89,0.12); color: #248a3d; }
+  .chip-progress { background: rgba(0,122,255,0.12); color: #007aff; }
+  .chip-pending { background: rgba(255,149,0,0.12); color: #ff9500; }
+  .chip-not-started { background: rgba(142,142,147,0.12); color: #8e8e93; }
+  .chip-blocked { background: rgba(255,59,48,0.12); color: #ff3b30; }
+
+  /* Status dots */
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+  .dot-green { background: #34c759; }
+  .dot-blue { background: #007aff; }
+  .dot-gray { background: #8e8e93; }
+  .dot-red { background: #ff3b30; }
+  .dot-amber { background: #ff9500; }
+
+  /* Track sections */
+  .track { display: none; }
+  .track.active { display: block; }
+  .section { margin-bottom: 28px; }
+  .section-title { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 14px; display: flex; align-items: center; gap: 12px; }
+  .section-title .count { background: #e5e5ea; color: #636366; padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 500; }
+
+  /* Tables */
+  .impl-table { width: 100%; border-collapse: separate; border-spacing: 0; background: #fff; border-radius: 16px; overflow: hidden; margin-bottom: 20px; }
+  .impl-table thead th { background: #fff; padding: 13px 16px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: #86868b; text-align: left; border-bottom: 1px solid #e5e5ea; white-space: nowrap; }
+  .impl-table tbody tr { transition: background 0.15s; }
+  .impl-table tbody tr:hover { background: #f2f2f7; }
+  .impl-table tbody tr:last-child td { border-bottom: none; }
+  .impl-table td { padding: 12px 16px; font-size: 13px; vertical-align: top; border-bottom: 1px solid rgba(0,0,0,0.04); color: #3a3a3c; line-height: 1.5; }
+  .impl-table td:first-child { white-space: nowrap; color: #86868b; font-size: 12px; }
+  .impl-table .task-name { font-weight: 600; color: #1d1d1f; }
+  .impl-table .comment { font-size: 12px; color: #86868b; margin-top: 3px; line-height: 1.4; }
+
+  /* Phase headers in tables */
+  .phase-row td { background: #f2f2f7; font-weight: 700; color: #1d1d1f; font-size: 13px; letter-spacing: 0.01em; padding: 10px 16px; }
+  .phase-row td .phase-icon { display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 6px; font-size: 10px; color: white; margin-right: 8px; vertical-align: middle; }
+
+  /* Status badge */
+  .status-badge { display: inline-flex; align-items: center; gap: 5px; padding: 3px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+
+  /* Test table */
+  .test-table { width: 100%; border-collapse: separate; border-spacing: 0; background: #fff; border-radius: 16px; overflow: hidden; }
+  .test-table thead th { background: #fff; padding: 12px 14px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: #86868b; text-align: left; border-bottom: 1px solid #e5e5ea; }
+  .test-table tbody tr:hover { background: #f2f2f7; }
+  .test-table tbody tr:last-child td { border-bottom: none; }
+  .test-table td { padding: 10px 14px; font-size: 13px; vertical-align: top; border-bottom: 1px solid rgba(0,0,0,0.04); color: #3a3a3c; line-height: 1.5; }
+  .test-table .test-num { font-weight: 700; color: #86868b; width: 50px; }
+  .test-table .test-section td { background: #f2f2f7; font-weight: 700; color: #1d1d1f; }
+
+  /* Info box */
+  .info-box { background: rgba(0,122,255,0.06); border-radius: 12px; padding: 14px; margin-bottom: 20px; }
+  .info-box p { font-size: 13px; color: #007aff; line-height: 1.6; }
+
+  /* Print */
+  .print-btn { position: fixed; bottom: 24px; right: 24px; background: #007aff; color: white; border: none; padding: 12px 24px; border-radius: 14px; font-size: 13px; font-weight: 600; cursor: pointer; z-index: 50; transition: opacity 0.2s; }
+  .print-btn:hover { opacity: 0.85; }
+
+  @media print {
+    body { background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .header { padding: 12px 16px 0; }
+    .container { padding: 12px; background: white; }
+    .print-btn { display: none; }
+    .track { display: block !important; page-break-inside: avoid; }
+    .tabs { display: none; }
+    .card { background: #f2f2f7; }
+    .impl-table td, .impl-table th { padding: 6px 8px; font-size: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <h1>Helix Implementation Plan</h1>
+      <p>Ria Money Transfer x TAB Bank x Q2/Helix - Partner Project Plan for Technical Review</p>
+    </div>
+    <div class="header-date" id="meeting-date"></div>
+  </div>
+  <div class="phase-banner">
+    <div class="phase-dot"></div>
+    <span>Current Phase: <strong>Month 2 of 8 - Sandbox Build &amp; Requirements</strong></span>
+  </div>
+  <div class="tabs" id="tabs">
+    <div class="tab active" data-track="overview">Overview</div>
+    <div class="tab" data-track="core">Core Banking</div>
+    <div class="tab" data-track="debit">Debit Card</div>
+    <div class="tab" data-track="ensenta">Ensenta / mRDC</div>
+    <div class="tab" data-track="wallets">Mobile Wallets</div>
+    <div class="tab" data-track="digital">Digital Issuance</div>
+    <div class="tab" data-track="falcon">Falcon Fraud</div>
+    <div class="tab" data-track="testing">Testing Scenarios</div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- ══════ OVERVIEW TAB ══════ -->
+<div class="track active" id="track-overview">
+
+  <div class="cards">
+    <div class="card indigo">
+      <h3>Implementation Tracks</h3>
+      <div class="big-num">7 <small>workstreams</small></div>
+      <ul>
+        <li><span class="status-dot dot-blue"></span> Core Banking (DDA, Savings)</li>
+        <li><span class="status-dot dot-blue"></span> Debit Card (CPI + Visa DPS)</li>
+        <li><span class="status-dot dot-blue"></span> Ensenta / mRDC</li>
+        <li><span class="status-dot dot-blue"></span> Mobile Wallets (Manual + In-App)</li>
+        <li><span class="status-dot dot-blue"></span> Digital Issuance (Single PAN)</li>
+        <li><span class="status-dot dot-blue"></span> Falcon Fraud Text Alerts</li>
+        <li><span class="status-dot dot-blue"></span> Testing (Core + Debit Card)</li>
+      </ul>
+    </div>
+
+    <div class="card green">
+      <h3>Completion Status</h3>
+      <div class="big-num" id="status-count"></div>
+      <ul>
+        <li><span class="chip chip-done">COMPLETED</span> <span id="done-count"></span></li>
+        <li><span class="chip chip-progress">IN PROGRESS</span> <span id="progress-count"></span></li>
+        <li><span class="chip chip-not-started">NOT STARTED</span> <span id="notstarted-count"></span></li>
+      </ul>
+    </div>
+
+    <div class="card red">
+      <h3>Critical Path Items</h3>
+      <div class="big-num" style="font-size:22px; color:#ff3b30">CPI Card Order</div>
+      <ul>
+        <li><span class="chip chip-blocked">16 WEEKS</span> CPI custom card and carrier order</li>
+        <li><span class="chip chip-pending">4 WEEKS</span> Socure certification</li>
+        <li><span class="chip chip-pending">6 WEEKS</span> Alpha testing period</li>
+        <li><span class="chip chip-pending">6 WEEKS</span> Beta testing period</li>
+        <li><span class="chip chip-pending">7-10 DAYS</span> Production environment build</li>
+      </ul>
+    </div>
+
+    <div class="card blue">
+      <h3>Key Dependencies</h3>
+      <div class="big-num" style="font-size:22px">TAB Bank</div>
+      <ul>
+        <li><span class="status-dot dot-amber"></span> TAB Bank requirements (Alpha, Beta, GA)</li>
+        <li><span class="status-dot dot-red"></span> CPI contract finalization</li>
+        <li><span class="status-dot dot-amber"></span> Visa DPS BIN setup &amp; certification</li>
+        <li><span class="status-dot dot-amber"></span> Solutions Blueprint (Helix + TAB)</li>
+        <li><span class="status-dot dot-amber"></span> Bank disclosures for Helix</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Agenda / Recent Meeting Notes -->
+  <div class="section">
+    <div class="section-title">Latest Meeting Notes</div>
+    <div class="info-box">
+      <p><strong>Agenda items from Helix kick-off:</strong> Implementation Project Plan overview, Debit Card updates (BIN range request submitted to Visa DPS, debit card sandbox instance requested), Upcoming meetings: Funds Flow Review, Customer Onboarding Review, Final Implementation Summary Review.</p>
+    </div>
+    <table class="impl-table">
+      <thead><tr><th>Agenda Item</th><th>Owner</th><th>Notes</th><th>Action Items</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="task-name">Implementation Project Plan Overview</td>
+          <td>Helix</td>
+          <td></td>
+          <td></td>
+        </tr>
+        <tr>
+          <td class="task-name">Debit Card Updates</td>
+          <td>Helix</td>
+          <td>1. BIN Range setup request for Ria submitted to Visa DPS<br>2. Request submitted to setup debit card instance in sandbox</td>
+          <td></td>
+        </tr>
+        <tr>
+          <td class="task-name">Upcoming Meetings</td>
+          <td>Ria / TAB Bank / Helix</td>
+          <td>1. Funds Flow Review<br>2. Customer Onboarding Review<br>3. Final Implementation Summary Review</td>
+          <td>Funds Flow Review scheduled for 4/1 @ 3:00pm CST</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- High-level timeline -->
+  <div class="section">
+    <div class="section-title">Implementation Timeline Overview</div>
+    <div style="background:#fff;border-radius:16px;padding:22px">
+      <div style="display:flex;border-radius:12px;overflow:hidden;height:40px;margin:14px 0">
+        <div style="flex:3;background:#5856d6;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:white;outline:2px solid rgba(0,0,0,0.15);outline-offset:-2px;border-radius:12px;position:relative">Sandbox &amp; Setup<span style="position:absolute;bottom:-20px;font-size:9px;letter-spacing:0.08em;color:#34c759;font-weight:700">NOW</span></div>
+        <div style="flex:3;background:rgba(255,149,0,0.35);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:rgba(255,255,255,0.7)">Alpha Testing</div>
+        <div style="flex:1;background:rgba(255,59,48,0.3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:rgba(255,255,255,0.7)">Beta</div>
+        <div style="flex:1;background:rgba(52,199,89,0.3);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:rgba(255,255,255,0.7)">GA</div>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding:24px 4px 0">
+        <span style="font-size:11px;color:#86868b;font-weight:500"><strong style="color:#1d1d1f">Mar 26</strong></span>
+        <span style="font-size:11px;color:#1d1d1f;font-weight:700">Apr 26</span>
+        <span style="font-size:11px;color:#86868b;font-weight:500">May 26</span>
+        <span style="font-size:11px;color:#86868b;font-weight:500">Jun 26</span>
+        <span style="font-size:11px;color:#86868b;font-weight:500">Jul 26</span>
+        <span style="font-size:11px;color:#86868b;font-weight:500">Aug 26</span>
+        <span style="font-size:11px;color:#86868b;font-weight:500">Sep 26</span>
+        <span style="font-size:11px;color:#86868b;font-weight:500">Oct 26</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ CORE BANKING TAB ══════ -->
+<div class="track" id="track-core">
+  <div class="section">
+    <div class="section-title">Q2 Core Banking Implementation <span class="count">DDA, Savings, ACH</span></div>
+    <div class="info-box">
+      <p><strong>Scope:</strong> Full core banking setup including account creation, sandbox build, Socure KYC certification, TAB Bank requirements for each phase (Alpha, Beta, GA), production environment build, and go-live. Sandbox testing runs throughout the entire implementation.</p>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="impl-table" id="core-table"></table>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ DEBIT CARD TAB ══════ -->
+<div class="track" id="track-debit">
+  <div class="section">
+    <div class="section-title">Debit Card Implementation <span class="count">CPI + Visa DPS</span></div>
+    <div class="info-box">
+      <p><strong>Note:</strong> Timeframes will vary based on established BOR (Bank of Record) relationship with VDPS. CPI custom card and carrier order can take <strong>up to 16 weeks</strong> - this is the longest lead-time item in the entire program.</p>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="impl-table" id="debit-table"></table>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ ENSENTA / mRDC TAB ══════ -->
+<div class="track" id="track-ensenta">
+  <div class="section">
+    <div class="section-title">Ensenta mRDC Implementation <span class="count">Mobile Remote Deposit Capture</span></div>
+    <div class="info-box">
+      <p><strong>Scope:</strong> Full mRDC integration including Ensenta certification (6-8 weeks client integration phase), SFTP setup, UAT environment creation, end-to-end testing, and limited production rollout before GA.</p>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="impl-table" id="ensenta-table"></table>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ MOBILE WALLETS TAB ══════ -->
+<div class="track" id="track-wallets">
+  <div class="section">
+    <div class="section-title">Mobile Wallet - Manual Provisioning <span class="count">Apple Pay, Google Pay, Samsung Pay</span></div>
+    <div class="info-box">
+      <p><strong>Prerequisite:</strong> VDPS BIN installation project must be completed. Bank agreements (Apple, Samsung, Google) must be in place. Manual provisioning must be completed before In-App provisioning can begin.</p>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="impl-table" id="manual-prov-table"></table>
+    </div>
+  </div>
+  <div class="section">
+    <div class="section-title">Mobile Wallet - In-App Provisioning <span class="count">Visa DPS SDK Integration</span></div>
+    <div class="info-box">
+      <p><strong>Prerequisite:</strong> Client must have completed the manual provisioning project. Visa Executive Sponsor Bank Agreement Form required (SLA ~15 days). Q2 sandbox connects to Visa DPS sandbox with hardcoded test cards.</p>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="impl-table" id="inapp-prov-table"></table>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ DIGITAL ISSUANCE TAB ══════ -->
+<div class="track" id="track-digital">
+  <div class="section">
+    <div class="section-title">Digital Issuance - Single PAN <span class="count">Instant Card Issuance</span></div>
+    <div class="info-box">
+      <p><strong>Scope:</strong> Enables instant digital card issuance where physical and digital card orders are initiated simultaneously with a single PAN. Review Helix API docs at <code>https://sandbox-api.Helix.io/card/createDigital</code>. The "Is digital only" flag should never be set to true.</p>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="impl-table" id="digital-table"></table>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ FALCON FRAUD TAB ══════ -->
+<div class="track" id="track-falcon">
+  <div class="section">
+    <div class="section-title">Falcon Fraud Text Alerts <span class="count">Visa DPS / Helix</span></div>
+    <div class="info-box">
+      <p><strong>Scope:</strong> Enables real-time fraud text alert notifications for cardholders. Requires coordination between Helix, Visa DPS, and Ria for configuration, testing, and enablement.</p>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="impl-table" id="falcon-table"></table>
+    </div>
+  </div>
+</div>
+
+<!-- ══════ TESTING SCENARIOS TAB ══════ -->
+<div class="track" id="track-testing">
+  <div class="section">
+    <div class="section-title">Core Banking Test Scenarios <span class="count">17 tests</span></div>
+    <div class="info-box">
+      <p><strong>Note:</strong> Subject to change if BOR identifies additional tests required to move into the next phase of the implementation.</p>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="test-table" id="core-test-table"></table>
+    </div>
+  </div>
+  <div class="section" style="margin-top:32px">
+    <div class="section-title">Debit Card Test Scenarios <span class="count">21 tests</span></div>
+    <div style="overflow-x:auto">
+      <table class="test-table" id="debit-test-table"></table>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<button class="print-btn" onclick="window.print()">Print / Save PDF</button>
+
+<script>
+// Date
+document.getElementById('meeting-date').textContent = new Date().toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+// Tab navigation
+document.querySelectorAll('.tab').forEach(function(tab) {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.tab').forEach(function(t) { t.classList.remove('active'); });
+    document.querySelectorAll('.track').forEach(function(t) { t.classList.remove('active'); });
+    tab.classList.add('active');
+    document.getElementById('track-' + tab.dataset.track).classList.add('active');
+  });
+});
+
+function statusBadge(status) {
+  if (!status) return '';
+  var s = status.toLowerCase().trim();
+  if (s === 'completed') return '<span class="status-badge chip-done">Completed</span>';
+  if (s === 'in progress') return '<span class="status-badge chip-progress">In Progress</span>';
+  if (s === 'not started') return '<span class="status-badge chip-not-started">Not Started</span>';
+  return '<span class="status-badge chip-pending">' + status + '</span>';
+}
+
+function renderImplTable(tableId, headers, phases) {
+  var table = document.getElementById(tableId);
+  var html = '<thead><tr>';
+  headers.forEach(function(h) { html += '<th>' + h + '</th>'; });
+  html += '</tr></thead><tbody>';
+
+  var doneCount = 0, progressCount = 0, notStartedCount = 0;
+
+  phases.forEach(function(phase) {
+    if (phase.title) {
+      html += '<tr class="phase-row"><td colspan="' + headers.length + '"><span class="phase-icon" style="background:' + (phase.color || '#5856d6') + '">' + (phase.icon || '') + '</span>' + phase.title + '</td></tr>';
+    }
+    phase.items.forEach(function(item) {
+      html += '<tr>';
+      item.forEach(function(cell, i) {
+        if (headers[i] === 'Status') {
+          html += '<td>' + statusBadge(cell) + '</td>';
+          var cl = (cell || '').toLowerCase().trim();
+          if (cl === 'completed') doneCount++;
+          else if (cl === 'in progress') progressCount++;
+          else if (cl === 'not started') notStartedCount++;
+        } else if (i === headers.indexOf('Description') || i === headers.indexOf('Task')) {
+          var name = cell;
+          var comment = '';
+          if (item.comment) { comment = item.comment; }
+          html += '<td><div class="task-name">' + name + '</div>' + (comment ? '<div class="comment">' + comment + '</div>' : '') + '</td>';
+        } else {
+          html += '<td>' + (cell || '') + '</td>';
+        }
+      });
+      html += '</tr>';
+    });
+  });
+  html += '</tbody>';
+  table.innerHTML = html;
+  return { done: doneCount, progress: progressCount, notStarted: notStartedCount };
+}
+
+// ═══════ CORE BANKING DATA ═══════
+var coreStats = renderImplTable('core-table', ['Timeframe', 'Description', 'Status', 'Assigned To', 'Comments'], [
+  { title: 'Implementation Summary', color: '#5856d6', icon: '1', items: [
+    ['', 'Completion of Implementation Summary', 'In Progress', 'Helix / Ria / TAB Bank', ''],
+  ]},
+  { title: 'Welcome Phase', color: '#007aff', icon: '2', items: [
+    ['2-3 days', 'Ria Relationship Manager Introduction & Welcome email', 'Completed', 'Helix / Ria', ''],
+    ['5-7 days', 'Provide Sandbox Credentials', 'Completed', 'Helix', ''],
+    ['5-10 days', 'Introduction Call Scheduled and Held', 'Completed', 'Helix / Ria / TAB Bank', ''],
+    ['5-10 days', 'Customer Support Portal Set Up and Training', 'In Progress', 'Helix / Ria', ''],
+    ['', 'Helix University Training Assigned', 'Completed', 'Helix / Ria', ''],
+    ['', 'Project Alignment Meeting (PAM) Scheduled', 'Not Started', 'Helix / Ria / TAB Bank', ''],
+    ['', 'Helix Solutions Blueprint Reviewed', 'Not Started', 'Helix / Ria / TAB Bank', 'Finalized blueprint needed before production build can begin'],
+    ['', 'Vendor Project Notifications (if necessary)', 'Not Started', 'Helix / Ria / TAB Bank', 'Initial notification to vendors based on contracted third party products'],
+    ['', 'TAB Bank Requirements Provided to Ria', 'In Progress', 'TAB Bank / Ria', ''],
+    ['~1-2 day meeting', 'PAM Meeting Held', 'Not Started', 'Helix / Ria / TAB Bank', ''],
+  ]},
+  { title: 'Sandbox Build & Testing', color: '#34c759', icon: '3', items: [
+    ['8-12 weeks', 'Ria Begins Helix Program Build in Sandbox', 'In Progress', 'Ria', 'Sandbox testing runs throughout entire implementation'],
+    ['', 'Establish meeting cadence between project teams', 'Completed', 'Helix / Ria / TAB Bank', ''],
+    ['', 'Sandbox Testing Scenarios provided to Ria', 'Not Started', 'Helix / Ria', ''],
+    ['30 days', 'Schedule and Complete Technical Call with Ria', 'Not Started', 'Ria / Helix', 'Can be scheduled into month two'],
+    ['', 'Socure Technical and Certification Process Meeting', 'Not Started', 'Helix / Ria / TAB Bank / Socure', 'Socure flow review, API questions, certification process'],
+  ]},
+  { title: 'Pre-Production Requirements', color: '#ff9500', icon: '4', items: [
+    ['', 'TAB Bank Requirements Progress Check In', 'Not Started', 'Ria / TAB Bank', ''],
+    ['', 'Helix Solutions Blueprint Finalized - Ria', 'Not Started', 'Helix / Ria', ''],
+    ['', 'Helix Solutions Blueprint Finalized - TAB Bank', 'Not Started', 'Helix / TAB Bank', ''],
+    ['', 'GL Mapping Document Finalized - TAB Bank', 'Not Started', 'Helix / TAB Bank', 'Compliments the Program Accounts tab in the Solutions Blueprint'],
+    ['', 'Disclosures Provided by TAB Bank', 'Not Started', 'Ria / TAB Bank', ''],
+    ['', 'Deposit Ops Awareness Email', 'Not Started', 'Helix', ''],
+    ['', 'Complete Sandbox Testing Requirements', 'Not Started', 'Ria', ''],
+    ['1 week', 'Sandbox Test Requirements Reviewed by Helix and TAB Bank', 'Not Started', 'Helix / TAB Bank', ''],
+    ['', 'Alpha Bank Requirement Final Review', 'Not Started', 'Ria / TAB Bank', ''],
+    ['', 'Production Readiness Meeting Held', 'Not Started', 'Helix / Ria / TAB Bank', ''],
+  ]},
+  { title: 'Production Readiness Review', color: '#5856d6', icon: '5', items: [
+    ['', 'TAB Bank Requirements Progress Check In', '', '', ''],
+    ['', 'Production Solutions Blueprint - Final Configuration Review', '', '', ''],
+    ['', 'Fraud/Risk Readiness Discussion', '', '', ''],
+    ['', 'Review of Features Not Slated for GA Release', '', '', ''],
+    ['', 'Flow of Funds Review', '', '', ''],
+    ['', 'Ria App Demo', '', '', ''],
+  ]},
+  { title: 'Production Environment Build', color: '#ff3b30', icon: '6', items: [
+    ['7-10 days', 'Helix Production Environment Built and Configured', 'Not Started', 'Helix', ''],
+    ['', 'IP Addresses Whitelisted', '', 'Helix', ''],
+    ['', 'Create Monthly Statements', '', 'Helix', ''],
+    ['', 'Create Program Reserve Accounts', '', 'Helix', ''],
+    ['', 'AML/BSA Vendor Files Set Up', '', 'Helix', ''],
+    ['', 'Bank Disclosures Added to Helix', 'Not Started', 'Helix', ''],
+    ['', 'TAB Bank Requirements for Alpha Completed', 'Not Started', 'Ria / TAB Bank', ''],
+    ['', 'Bank of Record Approves Sharing of Production Credentials', 'Not Started', 'TAB Bank', ''],
+    ['~5 days', 'Complete Production Credential Checklist', 'Not Started', 'Helix', ''],
+    ['1-2 days', 'Production Credentials & Alpha Testing Requirements Sent to Ria', 'Not Started', 'Helix / Ria', ''],
+  ]},
+  { title: 'Alpha Testing', color: '#ff9500', icon: '7', items: [
+    ['6 weeks', 'Alpha Testing Begins', 'Not Started', 'Helix / Ria / TAB Bank', '~10 internal employees as testers (TAB Bank determines count)'],
+    ['', 'TAB Bank Requirements for Beta Reviewed', 'Not Started', 'Ria / TAB Bank', ''],
+    ['4 weeks', 'Socure Certification Completed & Approved', 'Not Started', 'Helix / Ria / TAB Bank / Socure', ''],
+    ['', 'Alpha Testing Requirements Completed', 'Not Started', 'Ria', ''],
+    ['1 week', 'Alpha Testing Requirements Reviewed by Helix and TAB Bank', 'Not Started', 'Helix / TAB Bank', ''],
+    ['', 'TAB Bank Requirements for Beta Completed', 'Not Started', 'Ria / TAB Bank', ''],
+    ['', 'TAB Bank Requirements for GA Reviewed', 'Not Started', '', ''],
+  ]},
+  { title: 'Beta & GA Launch', color: '#34c759', icon: '8', items: [
+    ['~6 weeks', 'Beta Testing Begins', 'Not Started', 'Helix / Ria / TAB Bank', ''],
+    ['', 'TAB Bank Requirements for GA Completed', 'Not Started', 'Ria / TAB Bank', ''],
+    ['', 'TAB Bank Approval for Ria to Enter GA', 'Not Started', 'TAB Bank', ''],
+    ['', 'GA Launch', 'Not Started', 'Ria', ''],
+  ]},
+]);
+
+// ═══════ DEBIT CARD DATA ═══════
+var debitStats = renderImplTable('debit-table', ['Timeframe', 'Description', 'Status', 'Assigned To', 'Comments'], [
+  { title: 'Debit Card Setup', color: '#007aff', icon: '1', items: [
+    ['', 'Project Request to VISA DPS', '', 'Q2', 'BIN, client phone number, card qualifiers, contactless or contact only, network info'],
+    ['', 'Sandbox Testing Documentation Provided', '', '', ''],
+    ['', 'Card Design Proof Approvals', '', 'CPI / Client / BOR', ''],
+    ['', 'Card Carrier Proof Approvals', '', 'CPI / Client / BOR', ''],
+    ['Up to 16 weeks', 'CPI Custom Card and Carrier Order', '', 'CPI / Client / BOR', 'Longest lead-time item in the program'],
+    ['', 'Build Documentation Completed', '', 'VDPS', ''],
+    ['', 'VISA DPS Setup', '', 'VDPS', ''],
+    ['', 'Ensure VROL Org is Established', '', 'Q2', ''],
+    ['', 'VISA DPS Certification', '', 'VDPS', ''],
+    ['', 'VISA DPS Program Install', '', 'VDPS', ''],
+    ['', 'Provide Centrix DTS PM Awareness of Install Date', '', 'Q2', ''],
+    ['', 'Complete the Production Checklist', '', 'Q2', ''],
+    ['', 'Network Install', '', 'VDPS', ''],
+    ['', 'Card Manufacturer Setup', '', 'CPI / BOR / Q2', ''],
+    ['', 'Helix Debit Card Setup (Solutions Blueprint)', '', 'Q2 / BOR', ''],
+    ['', 'PAN Allocation', '', 'Q2 / CPI', ''],
+    ['', 'CPI Portal Setup', '', 'CPI / Client', ''],
+    ['', 'CPI Minimum Threshold Notification List Established', '', 'CPI / Client', 'Weekly inventory level emails'],
+    ['', 'BOR Sign Up for CAMs Alert', '', 'BOR', 'Required for new BIN add'],
+  ]},
+  { title: 'Training', color: '#5856d6', icon: '2', items: [
+    ['', 'BIN Configurations', '', 'Q2', ''],
+    ['', 'Order / Activation Flow', '', 'Q2', ''],
+    ['', 'Hotlisting / Reissuance', '', 'Q2', ''],
+    ['', 'Debit Card 101', '', 'Q2', ''],
+    ['', 'Debit Card 201', '', 'Q2', ''],
+    ['', 'Mobile Wallets', '', 'Q2', ''],
+    ['', 'Disputes', '', 'Q2', ''],
+    ['', 'Falcon / Fraud Rules', '', 'Q2', ''],
+    ['', 'CPI Portal Training', '', 'CPI', ''],
+  ]},
+  { title: 'Approvals', color: '#ff9500', icon: '3', items: [
+    ['', 'Policy, Procedure, Process', '', 'BOR', ''],
+    ['', 'Agreements Executed', '', 'BOR', ''],
+    ['', 'Program Approval', '', 'BOR', ''],
+  ]},
+  { title: 'Testing & Launch', color: '#34c759', icon: '4', items: [
+    ['', 'Provide Client\'s Dedicated Falcon Number', '', 'Q2 / BOR / Client', ''],
+    ['', 'Alpha Testing', '', 'Client', ''],
+    ['', 'Alpha Test Case Completion', '', 'Q2 / BOR / Client', ''],
+    ['', 'Alpha Test Case Review', '', 'Client', ''],
+    ['', 'Beta Phase', '', 'Client', ''],
+    ['', 'Beta Test Case Completion', '', 'Q2 / BOR / Client', ''],
+    ['', 'Beta Test Case Review', '', 'Client', ''],
+    ['', 'Full Rollout', '', '', ''],
+  ]},
+]);
+
+// ═══════ ENSENTA DATA ═══════
+var ensentaStats = renderImplTable('ensenta-table', ['Timeframe', 'Description', 'Status', 'Assigned To', 'Comments'], [
+  { title: 'Requirements & Agreements', color: '#007aff', icon: '1', items: [
+    ['', 'Q2 mRDC Contract Complete', '', 'Q2 / Client', ''],
+    ['', 'BOR Requirements Met', '', 'BOR / Client', ''],
+  ]},
+  { title: 'New BOR Integration', color: '#5856d6', icon: '2', items: [
+    ['', 'Bank of Record Kick Off Call', '', '', ''],
+    ['', 'mRDC Setup Form Call', '', '', ''],
+    ['', 'EZ Admin Access / Training', '', '', ''],
+    ['', 'Risk Review Meeting', '', '', ''],
+    ['', 'mRDC Setup Form Complete', '', '', ''],
+    ['', 'Fraud Monitoring Vendor Identified', '', '', 'Identifying early allows Helix to configure mRDC-specific files'],
+    ['', 'Image Cash Letter', '', '', 'Permission for Ensenta to send files to Helix vs the Bank'],
+  ]},
+  { title: 'Client Integration Phase', color: '#ff9500', icon: '3', items: [
+    ['6-8 weeks', 'Client Integration Phase', '', '', ''],
+    ['', 'Kick Off Call', '', 'Ensenta / Q2 / Client / BOR', ''],
+    ['', 'API Documentation Shared with Client', '', 'Ensenta / Q2 / Client', 'Ensenta provides direct access to developer portal'],
+    ['', 'Certificate Request Shared with Client', '', 'Ensenta / Q2 / Client', ''],
+    ['', 'Establish Weekly Technical Working Sessions', '', 'Ensenta / Q2 / Client', ''],
+    ['', 'Certificate Request Completed', '', 'Ensenta / Client', ''],
+    ['', 'Review UAT Logs - Successful Connection', '', 'Ensenta / Client', ''],
+    ['', 'Test Scenarios for Certification', '', 'Ensenta / Client', ''],
+  ]},
+  { title: 'Certification', color: '#34c759', icon: '4', items: [
+    ['', 'Client Ready for Certification', '', 'Ensenta / Client', ''],
+    ['', 'Preliminary Field by Field Analysis', '', 'Ensenta / Client', ''],
+    ['', 'Review UAT Logs', '', 'Ensenta / Client', ''],
+    ['', 'Client Test App', '', 'Ensenta / Client', ''],
+    ['', 'Certification Meeting', '', 'Ensenta / Client', ''],
+    ['', 'Ensenta Functionality Verification', '', 'Ensenta / Client', ''],
+    ['', 'Certification Check List', '', 'Ensenta / Client', ''],
+    ['', 'Production Certification Complete', '', 'Ensenta / Client', ''],
+    ['', 'Notification of Completion to Client and Q2', '', 'Ensenta / Client', ''],
+  ]},
+  { title: 'Implementation & Testing', color: '#ff3b30', icon: '5', items: [
+    ['', 'SFTP Setup - Sandbox', '', 'Q2', 'Can be set up during Integration Phase'],
+    ['', 'SFTP Setup - Production', '', 'Q2', 'Can be set up during Integration Phase'],
+    ['', 'Job Processor Creation - Sandbox', '', 'Q2 / Ensenta', ''],
+    ['', 'Job Processor Creation - Production', '', 'Q2 / Ensenta', ''],
+    ['', 'SFTP Credentials Sent to Ensenta', '', 'Q2 / Ensenta', ''],
+    ['', 'Balancing / Recon Discussion', '', 'Q2 Deposit Ops / Bank', 'Ensure bank can operate all mRDC reconciliation processes'],
+    ['1-2 weeks', 'Fedline Connection Enabled for Checks', '', 'Q2 / BOR / Ensenta', 'Only required for new BOR implementation'],
+    ['2-3 weeks', 'UAT Environment Creation (FTP Push Form)', '', 'Ensenta', 'Earliest 10 business days after certification'],
+    ['3 days', 'UAT EZ Admin Credentials Provided to Bank', '', 'Ensenta / BOR', ''],
+    ['', 'UAT Partner ID Provided to Client', '', 'Ensenta', ''],
+    ['2-3 weeks', 'Testing Begins - Helix Sandbox (End to End)', '', 'Client / BOR / Q2', ''],
+    ['5 days', 'Adjust Partner ID to Point to Production', '', 'Ensenta / Client', ''],
+    ['3 days', 'Production EZ Admin Credentials to Bank', '', 'Ensenta / BOR', '2 users free; additional users have added pricing'],
+    ['3 weeks', 'Limited Production Testing Begins', '', 'Client / BOR / Q2', 'Client employee testing only; must complete all scenarios before GA'],
+    ['', 'GA Launch', '', 'Client / BOR', ''],
+  ]},
+]);
+
+// ═══════ MANUAL PROVISIONING DATA ═══════
+var manualStats = renderImplTable('manual-prov-table', ['Timeframe', 'Description', 'Status', 'Assigned To', 'Comments'], [
+  { title: 'Bank Requirements & Agreements', color: '#007aff', icon: '1', items: [
+    ['', 'Apple Agreement (Issuer Terms & Conditions)', '', 'BOR', 'Agreements at the bank level'],
+    ['', 'VDEP 3.0 Agreement', '', 'BOR', ''],
+    ['', 'Samsung VDEP Agreement', '', 'BOR', ''],
+    ['', 'Google Pay Agreement', '', 'BOR', ''],
+  ]},
+  { title: 'Initial Requirements', color: '#5856d6', icon: '2', items: [
+    ['', 'VDPS BIN Installation Project Must Be Completed', '', 'Q2 / VDPS', ''],
+    ['', 'BOR Approval for Client to Begin Implementation', '', 'BOR', ''],
+    ['', 'Q2 Sales Order Presented - Manual Provisioning', '', 'Q2 / Client', ''],
+    ['', 'Kick Off Call Scheduled', '', 'Q2 / Client / BOR', ''],
+    ['', 'Provide Client Wallet\'s Implementation Guide', '', 'Q2', ''],
+    ['', 'Apple Card Program Addendum / Third Party Program Form', '', 'Client / BOR', ''],
+    ['~1 week SLA', 'Apple Pay Program Approval Form Submitted', '', 'Q2 / BOR', 'Visa SLA is at least ~1 week'],
+    ['', 'Apple Pay Program Approval Received from Apple', '', 'Apple / VDPS', ''],
+  ]},
+  { title: 'Data Collection', color: '#ff9500', icon: '3', items: [
+    ['', 'Q2 Submits Formal Project Request to VDPS', '', 'Q2 / VDPS', ''],
+    ['', 'Card Art / Metadata Collection', '', 'Client / Q2', ''],
+    ['', 'Obtain Production PANs for Validation Testing', '', 'Q2', ''],
+    ['', 'Card Art / Metadata Review & Approval from BOR', '', 'BOR', ''],
+    ['', 'Card Art / Metadata Submission to VDPS', '', 'Q2', ''],
+    ['', 'T&Cs and Privacy Policy Review (BOR & Client)', '', 'BOR / Client', 'Sample T&Cs from Visa DPS contain OTP language guidance'],
+  ]},
+  { title: 'VDPS Configuration', color: '#34c759', icon: '4', items: [
+    ['', 'Review BIN List for Production', '', 'VDPS', ''],
+    ['', 'Yellow Path Call Center Support VRU Installation', '', 'DPS', ''],
+    ['', 'Push Token Notification Requirement', '', 'Q2 / Client', 'Visa and Apple require customer notification when card is provisioned'],
+    ['', 'VDPS Configuration Complete', '', 'VDPS', ''],
+    ['', 'Q2 Provides Client with Testing Scenarios for Production', '', 'Q2', ''],
+  ]},
+  { title: 'Testing & Launch', color: '#ff3b30', icon: '5', items: [
+    ['', 'Review Apple Release Schedule', '', 'Q2 / Client', ''],
+    ['~2 weeks', 'Whitelisted PAN Testing & OTP Testing of Apple Pay', '', 'Q2 / BOR / Client', ''],
+    ['~2 weeks', 'Whitelisted PAN Testing & OTP Testing of Google & Samsung Pay', '', 'Q2 / BOR / Client', ''],
+    ['', 'BOR Approval of Apple Wallet Testing', '', 'BOR / Client', ''],
+    ['', 'Submit Apple FI Approval Form to VDPS', '', 'Q2 / VDPS', ''],
+    ['', 'Approval Received from Apple for Launch Date', '', 'Apple / VDPS', ''],
+    ['', 'BOR Approval of Google and Samsung Wallet Testing', '', 'BOR', ''],
+    ['2 days', 'Provide Notice to VDPS - Remove Whitelisting', '', 'Client / BOR / VDPS', ''],
+    ['', 'Commercial Launch - All Wallets', '', 'Client', ''],
+  ]},
+]);
+
+// ═══════ IN-APP PROVISIONING DATA ═══════
+var inappStats = renderImplTable('inapp-prov-table', ['Description', 'Status', 'Assigned To', 'Comments'], [
+  { title: 'Prerequisites & Visa DPS Setup', color: '#007aff', icon: '1', items: [
+    ['Client must have completed the manual provisioning project', '', 'Client / Q2 / BOR', ''],
+    ['Client requests approval from Q2 and BOR for in-app provisioning service', '', 'Q2 / Client', ''],
+    ['Q2 Client Experience Manager provides sales order', '', 'Q2', ''],
+    ['Q2 Implementation team submits project request to Visa DPS', '', 'VDPS', ''],
+  ]},
+  { title: 'Visa DPS Project Milestones', color: '#5856d6', icon: '2', items: [
+    ['Ensure BIN enabled for Tokenization (from Manual Provisioning)', '', 'Visa DPS', ''],
+    ['Green Path Enablement - Production Only', '', 'Visa DPS', 'No additional authentication needed (Visa DPS trusts client knows customer)'],
+    ['Visa Executive Sponsor Bank Agreement Form', '', 'Bank / Q2', 'SLA at least 15 days; can have multiple BINs per agreement'],
+  ]},
+  { title: 'Client Development & Testing', color: '#ff9500', icon: '3', items: [
+    ['Q2 schedules Kick Off with Client', '', '', ''],
+    ['Client requests access to SDKs from mobile wallet providers', '', 'Client / Wallet Provider', ''],
+    ['Q2 provides technical documentation for client review', '', 'Client', ''],
+    ['Q2 enables In-App service in sandbox and verifies APIs', '', 'Q2', ''],
+    ['Client application initiates call to mobile wallet API (get payload)', '', 'Client / Wallet Provider SDK', ''],
+    ['Client calls Helix API with payload + Helix card ID', '', 'Client / Q2', ''],
+    ['Helix sends payload + PAN to Visa API', '', 'Q2', 'Helix hardcodes PANs for sandbox testing'],
+    ['Visa returns encrypted payload to Helix, then to client', '', 'Visa / Q2', ''],
+    ['Client provisions card using encrypted payload', '', 'Client / Wallet Provider SDK', ''],
+    ['Q2 sends real-time event notification (card provisioned)', '', 'Q2', 'Same RTE as manual provisioning'],
+    ['Client sends alert to customer (card added to digital wallet)', '', '', ''],
+  ]},
+  { title: 'Production & Launch', color: '#34c759', icon: '4', items: [
+    ['Client and Q2 certify sandbox testing was sufficient', '', 'Q2 / Client / BOR', ''],
+    ['BOR approval required to move into production', '', 'BOR', ''],
+    ['Q2 enables all applicable wallets in production (Samsung, Google, Apple)', '', 'Q2', ''],
+    ['Limited production testing with small internal user base', '', '', 'Client must control access through front end'],
+    ['In-app screenshot of card in each digital wallet', '', 'Client', ''],
+    ['Screenshot of alert sent to customer', '', 'Client', ''],
+    ['Complete all transaction testing from manual provisioning effort', '', 'Client', ''],
+    ['Q2 and BOR sign off on all tests', '', 'BOR / Q2', ''],
+    ['BOR approval to scale program', '', 'BOR', ''],
+    ['General Audience Release', '', 'Client', ''],
+  ]},
+]);
+
+// ═══════ DIGITAL ISSUANCE DATA ═══════
+var digitalStats = renderImplTable('digital-table', ['Description', 'Status', 'Assigned To', 'Comments'], [
+  { title: 'Prerequisites & Setup', color: '#007aff', icon: '1', items: [
+    ['Q2 Client Experience Manager provides sales order to Client', '', 'Q2 / Client', ''],
+    ['DI Flag Enabled at Visa DPS', '', 'VDPS', 'If not completed, separate project plan needed with DPS'],
+    ['Q2 schedules project kickoff and reviews plan', '', '', ''],
+    ['DI Flag Enabled in Sandbox (IsCreateDualIssuanceSinglePAN = True)', '', 'Q2', ''],
+  ]},
+  { title: 'Testing & Coding', color: '#ff9500', icon: '2', items: [
+    ['Instant Issuance Testing and Coding Begins', '', 'Client', ''],
+    ['Client makes Helix API call to initiate card order (card/initiate)', '', 'Client', ''],
+    ['Digital and physical card orders initiated simultaneously - Q2 generates PAN', '', 'Client', 'Is digital only flag should NEVER be set to true'],
+    ['Visa provisions API to tokenize single PAN for digital', '', 'Client', ''],
+    ['Q2 sends skeleton card record for Single PAN to DPS & places physical card order', '', 'Client', ''],
+    ['Visa DPS Card Activation API to activate single PAN for eCommerce', '', 'Client', ''],
+    ['Client makes Helix API call to set cardholder PIN', '', 'Client', ''],
+    ['Client initiates tokenization provisioning call', '', 'Client', 'See In-App project plan for details'],
+    ['Q2 makes VisaNet tokenization provisioning call', '', 'Client', ''],
+  ]},
+  { title: 'Production & Launch', color: '#34c759', icon: '3', items: [
+    ['BOR Approval to move into production', '', 'BOR', ''],
+    ['DI Flag Enabled in Production (IsCreateDualIssuanceSinglePAN = True)', '', 'Q2', ''],
+    ['Q2 reviews testing and certifies code completion', '', 'Q2 / Client', ''],
+    ['Client provides screenshots of digital card creation flow', '', 'Client', ''],
+    ['BOR Approval for launch', '', 'BOR', ''],
+    ['BOR implements fraud monitoring rules for rollout', '', 'BOR', ''],
+  ]},
+]);
+
+// ═══════ FALCON FRAUD DATA ═══════
+var falconStats = renderImplTable('falcon-table', ['Timeframe', 'Description', 'Status', 'Assigned To', 'Comments'], [
+  { title: 'Configuration & Setup', color: '#007aff', icon: '1', items: [
+    ['', 'Kick Off', '', '', ''],
+    ['1 week', 'Customizable Configurations from Client (3 fields)', '', 'Client', 'Provide to Helix PM to submit to Visa DPS'],
+    ['1 week', 'Identify Employees with Debit Cards for Testing', '', 'Client', 'Provide cardholder name and customer ID to Helix PM'],
+    ['15 business days', 'DPS Configure Customizable Fields and Enable Feature', '', 'VDPS', ''],
+    ['5-7 business days', 'Ticket Submitted to Send Manual AP File to Enroll Test Cards', '', 'Helix', ''],
+  ]},
+  { title: 'Testing', color: '#ff9500', icon: '2', items: [
+    ['', 'Testing Kickoff Call (if needed)', '', 'Helix / Client', ''],
+    ['1-2 business days', 'Create Falcon Rule for Test Cards (next transaction trigger)', '', 'Helix / VDPS', ''],
+    ['', 'Fraud Text Testing', '', 'Client', 'Test with 1 tester first, validate text received, then complete all remaining tests'],
+    ['', 'Testing Sign Off', '', 'Client / Helix / BOR', ''],
+  ]},
+  { title: 'Enablement', color: '#34c759', icon: '3', items: [
+    ['5-7 business days', 'Enable Feature Flag in Helix + Run Script for Previous Cardholders', '', 'Helix', 'Request 5-7 days prior to target date'],
+    ['1 business day', 'Helix Sends AP File to Update Enrollment Status', '', 'Helix / VDPS', ''],
+    ['1 business day', 'Fraud Text Enabled for Program', '', 'Helix', ''],
+    ['', 'Share Admin UPM Permission with Client (and Bank)', '', 'Helix', 'Required to view Opt In/Opt Out status'],
+  ]},
+]);
+
+// ═══════ CORE TEST SCENARIOS ═══════
+(function() {
+  var table = document.getElementById('core-test-table');
+  var html = '<thead><tr><th style="width:50px">Test #</th><th style="width:180px">Category</th><th>Test Scenario</th><th style="width:80px">Pass/Fail</th></tr></thead><tbody>';
+  var tests = [
+    { section: 'Account Registration' },
+    { num: 1, desc: 'Successful Registration', scenario: 'Input valid customer information' },
+    { section: 'Personal Information Changes' },
+    { num: 3, desc: 'Change Address', scenario: 'Upload address verification documents' },
+    { num: 4, desc: 'Customer Name Change', scenario: 'Upload name verification documents' },
+    { section: 'Funding Source Verification' },
+    { num: 5, desc: 'External Funding with 3rd Party (Plaid)', scenario: 'Pass external account and routing number verified through Plaid' },
+    { num: 6, desc: 'Micro Deposits on Helix', scenario: 'Utilize Helix microdeposits to verify an external funding source' },
+    { num: 7, desc: 'Funding Source Replacement', scenario: 'Change of funding source. If limit is 2, change funding source two times within 90 days of ACH transactions' },
+    { section: 'ACH - ODFI' },
+    { num: 8, desc: 'Initiate Deposit Request', scenario: 'Pull funds from External Account via Helix. Verify deposit is successful with correct hold time' },
+    { num: 9, desc: 'Initiate Withdrawal Request', scenario: 'Push funds to External Account via Helix. Verify successful withdrawal' },
+    { num: 10, desc: 'Receive a Return from External Account', scenario: 'Create false External Account (all "1" account number). Request pull - causes return after settlement' },
+    { section: 'ACH - RDFI' },
+    { num: 11, desc: 'ACH-RDFI', scenario: '' },
+    { num: 12, desc: 'Direct Deposit from Unknown External Account', scenario: 'Push funds into Helix account using routing/account number. Verify no hold time applied' },
+    { num: 13, desc: 'Withdrawal from Unknown External Account', scenario: 'Pull funds from Helix account. Verify successful withdrawal' },
+    { num: 14, desc: 'Returned Withdrawal', scenario: 'Lock Helix account, attempt pull. Should return R16 (Account Frozen)' },
+    { num: 15, desc: 'Returned Deposit', scenario: 'Close Helix account, attempt push. Should return R02 (Account Closed)' },
+    { section: 'Miscellaneous' },
+    { num: 16, desc: 'Generate/Retrieve Monthly Statements', scenario: 'Verify logo and disclosures appear as expected' },
+    { num: 17, desc: 'Internal Transfer to Customer Account', scenario: 'Complete internal transfer from Helix program reserve account to customer account' },
+  ];
+  tests.forEach(function(t) {
+    if (t.section) {
+      html += '<tr class="test-section"><td colspan="4">' + t.section + '</td></tr>';
+    } else {
+      html += '<tr><td class="test-num">' + t.num + '</td><td style="font-weight:600;color:#1d1d1f">' + t.desc + '</td><td>' + t.scenario + '</td><td></td></tr>';
+    }
+  });
+  html += '</tbody>';
+  table.innerHTML = html;
+})();
+
+// ═══════ DEBIT CARD TEST SCENARIOS ═══════
+(function() {
+  var table = document.getElementById('debit-test-table');
+  var html = '<thead><tr><th style="width:50px">Test #</th><th style="width:180px">Category</th><th>Test Scenario</th><th style="width:80px">Pass/Fail</th></tr></thead><tbody>';
+  var tests = [
+    { section: 'Card Activities' },
+    { num: 1, desc: 'Inactive Card - Signature Purchase', scenario: 'Attempt signature purchase with funds on card. Verify any purchase attempt fails' },
+    { num: 2, desc: 'Inactive Card - MOTO Transaction', scenario: 'Attempt MOTO transaction with funds on card. Verify any purchase attempt fails' },
+    { section: 'Successful Card Transactions' },
+    { num: 3, desc: 'Active Card - Signature Purchase', scenario: 'Attempt retail signature purchase with sufficient funds (low amounts). Verify success' },
+    { num: 4, desc: 'Active Card - PIN Transaction', scenario: 'Attempt PIN purchase with sufficient funds (low amounts). Verify success' },
+    { num: 5, desc: 'Online Transaction', scenario: 'Attempt online purchase with sufficient balance; ship to/bill to same as registered address' },
+    { num: 6, desc: 'Gas Station', scenario: 'Attempt purchase inside with sufficient balance. Verify approved' },
+    { num: 7, desc: 'Pay at the Pump', scenario: 'Attempt gas purchase - pay at the pump' },
+    { num: 8, desc: 'Transaction with a Tip', scenario: 'Restaurant/bar purchase with sufficient balance to cover bill plus at least 20% tolerance' },
+    { section: 'Declined Card Transactions' },
+    { num: 9, desc: 'Online Purchase - Decline (NSF)', scenario: 'Purchase attempt with insufficient balance' },
+    { num: 10, desc: 'Online Purchase - Decline (Over Limit)', scenario: 'Attempt online purchase with sufficient balance; purchase over daily limit' },
+    { num: 11, desc: 'Online Purchase - Decline (Wrong CVV)', scenario: 'Purchase attempt with sufficient balance and within limits. Input incorrect CVV' },
+    { num: 12, desc: 'NSF - Signature Purchase', scenario: 'Attempt retail signature purchase with insufficient balance. Partial auth may apply' },
+    { num: 13, desc: 'NSF - PIN Transaction', scenario: 'Attempt retail PIN purchase with insufficient balance. Partial auth may apply' },
+    { num: 14, desc: 'Transaction with a Tip - Decline', scenario: 'Restaurant purchase with insufficient balance to cover bill plus 20% tolerance' },
+    { num: 15, desc: 'Locked Card', scenario: 'Lock debit card. Attempt purchase with sufficient balance. Should be declined' },
+    { num: 16, desc: 'Hotlisted Card', scenario: 'Hotlist debit card (irreversible, new card needed). Attempt purchase. Should be declined' },
+    { section: 'ATM' },
+    { num: 17, desc: 'ATM - Balance Inquiry', scenario: 'Attempt ATM balance inquiry' },
+    { num: 18, desc: 'ATM - Withdrawal', scenario: 'Attempt ATM withdrawal with sufficient balance. Verify success' },
+    { num: 19, desc: 'ATM - Decline (NSF)', scenario: 'Attempt ATM withdrawal with insufficient balance. Verify declined' },
+    { num: 20, desc: 'ATM - Decline (Over Limit)', scenario: 'Attempt ATM withdrawal over daily limit' },
+    { section: 'Returns' },
+    { num: 21, desc: 'Active Card - Return', scenario: 'Attempt retail return. Verify transaction is successful' },
+  ];
+  tests.forEach(function(t) {
+    if (t.section) {
+      html += '<tr class="test-section"><td colspan="4">' + t.section + '</td></tr>';
+    } else {
+      html += '<tr><td class="test-num">' + t.num + '</td><td style="font-weight:600;color:#1d1d1f">' + t.desc + '</td><td>' + t.scenario + '</td><td></td></tr>';
+    }
+  });
+  html += '</tbody>';
+  table.innerHTML = html;
+})();
+
+// ═══════ STATUS COUNTS ═══════
+var allStats = [coreStats, debitStats, ensentaStats, manualStats, inappStats, digitalStats, falconStats];
+var totalDone = 0, totalProgress = 0, totalNotStarted = 0;
+allStats.forEach(function(s) {
+  totalDone += s.done;
+  totalProgress += s.progress;
+  totalNotStarted += s.notStarted;
+});
+var total = totalDone + totalProgress + totalNotStarted;
+document.getElementById('status-count').innerHTML = totalDone + '/' + total + ' <small>tasks tracked</small>';
+document.getElementById('done-count').textContent = totalDone + ' tasks completed';
+document.getElementById('progress-count').textContent = totalProgress + ' tasks in progress';
+document.getElementById('notstarted-count').textContent = totalNotStarted + ' tasks not started';
+</script>
+</body>
+</html>
