@@ -1,0 +1,1244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>US Wallet - Comprehensive Project Plan</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', Helvetica, Arial, sans-serif; background: #f2f2f7; color: #1d1d1f; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+
+  .header { background: #ffffff; padding: 32px 40px 0; border-bottom: 1px solid rgba(0,0,0,0.06); }
+  .header-top { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; }
+  .header h1 { font-size: 28px; font-weight: 700; letter-spacing: -0.02em; }
+  .header p { font-size: 14px; color: #86868b; margin-top: 4px; }
+  .header-date { background: #f2f2f7; padding: 7px 16px; border-radius: 20px; font-size: 12px; color: #86868b; font-weight: 500; white-space: nowrap; }
+  .phase-banner { display: inline-flex; align-items: center; gap: 10px; margin-top: 16px; background: #f2f2f7; padding: 10px 20px; border-radius: 14px; }
+  .phase-dot { width: 8px; height: 8px; border-radius: 50%; background: #007aff; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+  .phase-banner span { font-size: 13px; color: #86868b; font-weight: 500; }
+  .phase-banner strong { color: #1d1d1f; }
+
+  .tabs { display: flex; gap: 0; margin-top: 20px; overflow-x: auto; }
+  .tab { padding: 12px 20px; font-size: 13px; font-weight: 600; color: #86868b; cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; transition: all 0.2s; }
+  .tab:hover { color: #1d1d1f; }
+  .tab.active { color: #007aff; border-bottom-color: #007aff; }
+
+  .container { max-width: 1600px; margin: 0 auto; padding: 24px 40px 40px; }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin-bottom: 28px; }
+  .card { background: #fff; border-radius: 16px; padding: 22px; }
+  .card h3 { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 10px; }
+  .card.indigo h3 { color: #5856d6; }
+  .card.blue h3 { color: #007aff; }
+  .card.red h3 { color: #ff3b30; }
+  .card.green h3 { color: #34c759; }
+  .card.orange h3 { color: #ff9500; }
+  .card .big-num { font-size: 34px; font-weight: 700; letter-spacing: -0.02em; }
+  .card .big-num small { font-size: 16px; font-weight: 400; color: #86868b; }
+  .card ul { list-style: none; margin-top: 12px; }
+  .card ul li { font-size: 13px; padding: 5px 0; display: flex; align-items: center; gap: 8px; color: #3a3a3c; }
+
+  .chip { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 6px; font-size: 10px; font-weight: 600; letter-spacing: 0.02em; white-space: nowrap; flex-shrink: 0; }
+  .chip-done { background: rgba(52,199,89,0.12); color: #248a3d; }
+  .chip-progress { background: rgba(0,122,255,0.12); color: #007aff; }
+  .chip-pending { background: rgba(255,149,0,0.12); color: #ff9500; }
+  .chip-not-started { background: rgba(142,142,147,0.12); color: #8e8e93; }
+  .chip-blocked { background: rgba(255,59,48,0.12); color: #ff3b30; }
+  .chip-ria { background: rgba(88,86,214,0.12); color: #5856d6; }
+
+  .status-dot { width: 7px; height: 7px; border-radius: 50%; display: inline-block; flex-shrink: 0; }
+  .dot-green { background: #34c759; }
+  .dot-blue { background: #007aff; }
+  .dot-gray { background: #8e8e93; }
+  .dot-red { background: #ff3b30; }
+  .dot-amber { background: #ff9500; }
+
+  .track { display: none; }
+  .track.active { display: block; }
+  .section { margin-bottom: 32px; }
+  .section-title { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; margin-bottom: 14px; display: flex; align-items: center; gap: 12px; }
+  .section-title .count { background: #e5e5ea; color: #636366; padding: 4px 12px; border-radius: 8px; font-size: 12px; font-weight: 500; }
+
+  .info-box { background: rgba(0,122,255,0.06); border-radius: 12px; padding: 14px; margin-bottom: 20px; }
+  .info-box p { font-size: 13px; color: #007aff; line-height: 1.6; }
+  .warn-box { background: rgba(255,59,48,0.06); border-radius: 12px; padding: 14px; margin-bottom: 20px; }
+  .warn-box p { font-size: 13px; color: #ff3b30; line-height: 1.6; }
+  .success-box { background: rgba(52,199,89,0.06); border-radius: 12px; padding: 14px; margin-bottom: 20px; }
+  .success-box p { font-size: 13px; color: #34c759; line-height: 1.6; }
+
+  /* GANTT */
+  .gantt-wrapper { background: #fff; border-radius: 16px; overflow: hidden; margin-bottom: 20px; }
+  .gantt-header-row { display: grid; border-bottom: 1px solid #e5e5ea; background: #fff; position: sticky; top: 0; z-index: 2; }
+  .gantt-header-row .gh-label { padding: 12px 16px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: #86868b; min-width: 0; }
+  .gantt-header-row .gh-month { padding: 12px 0; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: #86868b; text-align: center; border-left: 1px solid #f2f2f7; }
+  .gantt-header-row .gh-month.now { color: #007aff; background: rgba(0,122,255,0.04); }
+
+  .gantt-phase { display: grid; align-items: center; background: #f2f2f7; border-bottom: 1px solid #e5e5ea; }
+  .gantt-phase-label { padding: 8px 16px; font-size: 12px; font-weight: 700; color: #1d1d1f; grid-column: 1 / -1; display: flex; align-items: center; gap: 8px; }
+  .gantt-phase-label .pi { width: 20px; height: 20px; border-radius: 6px; display: inline-flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 700; color: white; }
+
+  .gantt-row { display: grid; align-items: center; border-bottom: 1px solid rgba(0,0,0,0.03); transition: background 0.15s; min-height: 44px; }
+  .gantt-row:hover { background: #f9f9fb; }
+  .gantt-row:last-child { border-bottom: none; }
+  .gr-task { padding: 8px 16px; font-size: 12px; font-weight: 600; color: #1d1d1f; line-height: 1.4; }
+  .gr-task .owner-tag { font-size: 10px; font-weight: 500; color: #86868b; display: block; margin-top: 2px; }
+  .gr-task .ria-tag { color: #5856d6; font-weight: 600; }
+  .gr-due { padding: 4px 16px; font-size: 11px; color: #86868b; white-space: nowrap; }
+  .gr-due.overdue { color: #ff3b30; font-weight: 600; }
+  .gr-status { padding: 4px 8px; }
+  .gr-months { display: contents; }
+  .gr-cell { border-left: 1px solid #f2f2f7; position: relative; min-height: 44px; }
+  .gr-cell.now-col { background: rgba(0,122,255,0.03); }
+
+  .gantt-bar { position: absolute; top: 50%; transform: translateY(-50%); height: 22px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: white; letter-spacing: 0.02em; min-width: 8px; z-index: 1; }
+  .gantt-bar.done { background: #34c759; }
+  .gantt-bar.progress { background: #007aff; }
+  .gantt-bar.upcoming { background: #e5e5ea; color: #636366; }
+  .gantt-bar.blocked { background: #ff3b30; }
+  .gantt-bar.ria-action { background: #5856d6; }
+  .gantt-milestone { position: absolute; top: 50%; transform: translateY(-50%) rotate(45deg); width: 10px; height: 10px; border-radius: 2px; z-index: 1; }
+  .gantt-milestone.done { background: #34c759; }
+  .gantt-milestone.upcoming { background: #ff9500; }
+
+  /* Task table */
+  .task-table { width: 100%; border-collapse: separate; border-spacing: 0; background: #fff; border-radius: 16px; overflow: hidden; }
+  .task-table thead th { background: #fff; padding: 12px 16px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: #86868b; text-align: left; border-bottom: 1px solid #e5e5ea; white-space: nowrap; }
+  .task-table tbody tr { transition: background 0.15s; }
+  .task-table tbody tr:hover { background: #f2f2f7; }
+  .task-table tbody tr:last-child td { border-bottom: none; }
+  .task-table td { padding: 10px 16px; font-size: 13px; vertical-align: top; border-bottom: 1px solid rgba(0,0,0,0.04); color: #3a3a3c; line-height: 1.5; }
+  .task-table .task-name { font-weight: 600; color: #1d1d1f; }
+  .task-table .phase-divider td { background: #f2f2f7; font-weight: 700; color: #1d1d1f; padding: 8px 16px; font-size: 12px; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 16px; padding: 14px 20px; background: #fff; border-radius: 12px; margin-bottom: 20px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #3a3a3c; }
+  .legend-item .swatch { width: 14px; height: 14px; border-radius: 4px; }
+
+  .btn { display: inline-flex; align-items: center; gap: 6px; padding: 10px 20px; border-radius: 12px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
+  .btn-primary { background: #007aff; color: white; }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-secondary { background: #f2f2f7; color: #1d1d1f; }
+  .btn-secondary:hover { background: #e5e5ea; }
+
+  .print-btn { position: fixed; bottom: 24px; right: 24px; background: #007aff; color: white; border: none; padding: 12px 24px; border-radius: 14px; font-size: 13px; font-weight: 600; cursor: pointer; z-index: 50; box-shadow: 0 4px 12px rgba(0,122,255,0.3); }
+  .print-btn:hover { opacity: 0.85; }
+
+  .epic-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; margin-bottom: 28px; }
+  .epic-card { background: #fff; border-radius: 16px; padding: 20px; border-left: 4px solid #e5e5ea; }
+  .epic-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+  .epic-card .epic-id { font-size: 11px; font-weight: 600; color: #86868b; margin-bottom: 8px; }
+  .epic-card .epic-timeline { font-size: 12px; color: #007aff; font-weight: 600; margin-bottom: 10px; }
+  .epic-card ul { list-style: none; }
+  .epic-card ul li { font-size: 12px; padding: 3px 0; color: #3a3a3c; display: flex; align-items: flex-start; gap: 6px; }
+  .epic-card ul li::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: #c7c7cc; flex-shrink: 0; margin-top: 6px; }
+
+  .csv-controls { display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; align-items: center; }
+
+  @media print {
+    body { background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .header { padding: 12px 16px 0; }
+    .container { padding: 12px; background: white; }
+    .print-btn { display: none; }
+    .track { display: block !important; page-break-before: always; }
+    .tabs { display: none; }
+    .card { background: #f2f2f7; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <h1>US Wallet - Comprehensive Project Plan</h1>
+      <p>Ria Money Transfer x TAB Bank - 23 Epics, Jira-Ready Tickets, GA Launch October 2026</p>
+    </div>
+    <div class="header-date" id="meeting-date"></div>
+  </div>
+  <div class="phase-banner">
+    <div class="phase-dot"></div>
+    <span>Current Phase: <strong>Months 1-3 - Sandbox Build, Dev &amp; Certifications</strong> | Alpha: Jun-Aug | Beta: Sep | GA: Oct</span>
+  </div>
+  <div class="tabs" id="tabs">
+    <div class="tab active" data-track="overview">Overview</div>
+    <div class="tab" data-track="digital">Digital App Dev</div>
+    <div class="tab" data-track="bm">B&amp;M / FX Online</div>
+    <div class="tab" data-track="backend">Backend / Helix</div>
+    <div class="tab" data-track="compliance">Compliance &amp; Legal</div>
+    <div class="tab" data-track="operations">Operations</div>
+    <div class="tab" data-track="jira">Jira Export</div>
+  </div>
+</div>
+
+<div class="container">
+
+<!-- OVERVIEW -->
+<div class="track active" id="track-overview">
+  <div class="info-box">
+    <p><strong>Timeline Constraint:</strong> ALL core development must be complete by <strong>May 31, 2026</strong> to enter Alpha testing in June. Dev window = April-May (2 months). Secondary features can extend to June 15 but must not block Alpha. October GA launch is non-negotiable.</p>
+  </div>
+
+  <div class="cards">
+    <div class="card indigo">
+      <h3>Program Timeline</h3>
+      <div class="big-num">8 <small>months</small></div>
+      <ul>
+        <li><span class="chip chip-progress">MONTH 1-3</span> Mar-May: Sandbox, Dev, Certifications</li>
+        <li><span class="chip chip-not-started">MONTH 4-6</span> Jun-Aug: Alpha Testing (~10 testers)</li>
+        <li><span class="chip chip-not-started">MONTH 7</span> Sep: Beta (Friends &amp; Family)</li>
+        <li><span class="chip chip-not-started">MONTH 8</span> Oct: GA Launch</li>
+      </ul>
+    </div>
+
+    <div class="card red">
+      <h3>Critical Path Items</h3>
+      <div class="big-num" style="font-size:20px;color:#ff3b30">16 wks</div>
+      <ul>
+        <li><span class="chip chip-blocked">16 WKS</span> CPI custom card order - must start NOW</li>
+        <li><span class="chip chip-blocked">8-12 WKS</span> Helix sandbox build - in progress</li>
+        <li><span class="chip chip-pending">MAY 31</span> Core dev deadline for Alpha readiness</li>
+        <li><span class="chip chip-pending">LEGAL</span> TAB Bank consumer agreements pending</li>
+      </ul>
+    </div>
+
+    <div class="card blue">
+      <h3>Epic Breakdown</h3>
+      <div class="big-num">23 <small>epics</small></div>
+      <ul>
+        <li><span class="chip chip-progress">11</span> Digital App Development (OneApp)</li>
+        <li><span class="chip chip-progress">1</span> B&amp;M / FX Online Development</li>
+        <li><span class="chip chip-not-started">3</span> Backend &amp; Integrations</li>
+        <li><span class="chip chip-not-started">3</span> Compliance &amp; Legal</li>
+        <li><span class="chip chip-not-started">5</span> Operations &amp; Support</li>
+      </ul>
+    </div>
+
+    <div class="card green">
+      <h3>Key Milestones</h3>
+      <div class="big-num" style="font-size:20px">Oct 31</div>
+      <ul>
+        <li><span class="status-dot dot-blue"></span> May 31 - Core dev complete</li>
+        <li><span class="status-dot dot-amber"></span> Jun 1 - Alpha testing begins</li>
+        <li><span class="status-dot dot-amber"></span> Sep 1 - Beta launch</li>
+        <li><span class="status-dot dot-green"></span> Oct 31 - GA Launch</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- MASTER GANTT -->
+  <div class="section">
+    <div class="section-title">Master Program Gantt <span class="count">All 23 Epics</span></div>
+    <div class="legend">
+      <div class="legend-item"><div class="swatch" style="background:#34c759"></div> Completed</div>
+      <div class="legend-item"><div class="swatch" style="background:#007aff"></div> In Progress</div>
+      <div class="legend-item"><div class="swatch" style="background:#5856d6"></div> Ria Dev Required</div>
+      <div class="legend-item"><div class="swatch" style="background:#ff3b30"></div> Blocked / Critical</div>
+      <div class="legend-item"><div class="swatch" style="background:#e5e5ea"></div> Not Started</div>
+      <div class="legend-item"><div class="swatch" style="background:#ff9500;width:10px;height:10px;border-radius:2px;transform:rotate(45deg)"></div> Milestone</div>
+    </div>
+    <div id="master-gantt"></div>
+  </div>
+
+  <!-- EPIC CARDS -->
+  <div class="section">
+    <div class="section-title">Epic Overview <span class="count">23 Epics</span></div>
+    <div class="epic-grid" id="epic-cards"></div>
+  </div>
+</div>
+
+<!-- DIGITAL APP DEV -->
+<div class="track" id="track-digital">
+  <div class="info-box">
+    <p><strong>Digital App Development (OneApp)</strong> - 11 epics covering all customer-facing mobile features. Core features (EP-01, 03, 08) must be complete by May 31. Extended features (EP-04, 05, 06, 07, 09, 10, 11, 17) can extend to June 15-30 but must not block Alpha.</p>
+  </div>
+  <div class="section">
+    <div class="section-title">Digital App Gantt <span class="count">11 Epics</span></div>
+    <div id="digital-gantt"></div>
+  </div>
+  <div class="section">
+    <div class="section-title">Digital App Tasks <span class="count">All Sub-tasks</span></div>
+    <div id="digital-table"></div>
+  </div>
+</div>
+
+<!-- B&M / FX ONLINE -->
+<div class="track" id="track-bm">
+  <div class="info-box">
+    <p><strong>B&amp;M / FX Online Development</strong> - In-store registration and transaction flows built on FX Online platform. Includes customer lookup, KYC collection, cash deposits/withdrawals, and receipt printing.</p>
+  </div>
+  <div class="section">
+    <div class="section-title">B&amp;M / FX Online Gantt <span class="count">EP-02</span></div>
+    <div id="bm-gantt"></div>
+  </div>
+  <div class="section">
+    <div class="section-title">B&amp;M Tasks <span class="count">All Sub-tasks</span></div>
+    <div id="bm-table"></div>
+  </div>
+</div>
+
+<!-- BACKEND / HELIX -->
+<div class="track" id="track-backend">
+  <div class="info-box">
+    <p><strong>Backend &amp; Integration</strong> - Helix core banking APIs, debit card program (CPI + Visa DPS), and mobile wallet provisioning. Helix sandbox build is ongoing (8-12 weeks). CPI card order is 16-week critical path.</p>
+  </div>
+  <div class="section">
+    <div class="section-title">Backend / Helix Gantt <span class="count">3 Epics</span></div>
+    <div id="backend-gantt"></div>
+  </div>
+  <div class="section">
+    <div class="section-title">Backend Tasks <span class="count">All Sub-tasks</span></div>
+    <div id="backend-table"></div>
+  </div>
+</div>
+
+<!-- COMPLIANCE & LEGAL -->
+<div class="track" id="track-compliance">
+  <div class="info-box">
+    <p><strong>Compliance &amp; Legal</strong> - KYC/AML setup, fraud prevention, vendor contracts. TAB Bank consumer agreements awaiting Hope legal review. CPI contract under legal review.</p>
+  </div>
+  <div class="section">
+    <div class="section-title">Compliance &amp; Legal Gantt <span class="count">3 Epics</span></div>
+    <div id="compliance-gantt"></div>
+  </div>
+  <div class="section">
+    <div class="section-title">Compliance Tasks <span class="count">All Sub-tasks</span></div>
+    <div id="compliance-table"></div>
+  </div>
+</div>
+
+<!-- OPERATIONS -->
+<div class="track" id="track-operations">
+  <div class="info-box">
+    <p><strong>Operations &amp; Support</strong> - Chargebacks, customer care (Zendesk/IVR), analytics (Segment), finance/fund flows, and marketing/launch activities.</p>
+  </div>
+  <div class="section">
+    <div class="section-title">Operations Gantt <span class="count">5 Epics</span></div>
+    <div id="ops-gantt"></div>
+  </div>
+  <div class="section">
+    <div class="section-title">Operations Tasks <span class="count">All Sub-tasks</span></div>
+    <div id="ops-table"></div>
+  </div>
+</div>
+
+<!-- JIRA EXPORT -->
+<div class="track" id="track-jira">
+  <div class="info-box">
+    <p><strong>Jira Export</strong> - Full task list formatted for Jira bulk import. Click "Export CSV" to download, then import via Jira > System > External System Import > CSV.</p>
+  </div>
+  <div class="csv-controls">
+    <button class="btn btn-primary" onclick="exportCSV()">Export CSV for Jira Import</button>
+    <button class="btn btn-secondary" onclick="exportCSV('digital')">Digital App Only</button>
+    <button class="btn btn-secondary" onclick="exportCSV('bm')">B&amp;M Only</button>
+    <button class="btn btn-secondary" onclick="exportCSV('backend')">Backend Only</button>
+    <button class="btn btn-secondary" onclick="exportCSV('compliance')">Compliance Only</button>
+    <button class="btn btn-secondary" onclick="exportCSV('operations')">Operations Only</button>
+    <span style="font-size:12px;color:#86868b" id="task-count"></span>
+  </div>
+  <div class="section">
+    <div id="jira-table"></div>
+  </div>
+</div>
+
+</div>
+
+<button class="print-btn" onclick="window.print()">Print / Save PDF</button>
+
+<script>
+document.getElementById('meeting-date').textContent = new Date().toLocaleDateString('en-US', {weekday:'long',year:'numeric',month:'long',day:'numeric'});
+
+// Tab nav
+document.querySelectorAll('.tab').forEach(function(tab) {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active')});
+    document.querySelectorAll('.track').forEach(function(t){t.classList.remove('active')});
+    tab.classList.add('active');
+    document.getElementById('track-'+tab.dataset.track).classList.add('active');
+  });
+});
+
+// Months: Mar=0, Apr=1, May=2, Jun=3, Jul=4, Aug=5, Sep=6, Oct=7
+var MONTHS = ['Mar 26','Apr 26','May 26','Jun 26','Jul 26','Aug 26','Sep 26','Oct 26'];
+var NOW_MONTH = 1; // April = index 1
+
+// =========== GANTT RENDERER ===========
+function renderGantt(containerId, phases) {
+  var el = document.getElementById(containerId);
+  if (!el) return;
+  var cols = '320px 90px 80px' + ' 1fr'.repeat(8);
+  var html = '<div class="gantt-wrapper"><div class="gantt-header-row" style="display:grid;grid-template-columns:'+cols+'">';
+  html += '<div class="gh-label">Task</div><div class="gh-label">Due Date</div><div class="gh-label">Status</div>';
+  MONTHS.forEach(function(m,i) {
+    html += '<div class="gh-month'+(i===NOW_MONTH?' now':'')+'">'+m+'</div>';
+  });
+  html += '</div>';
+
+  phases.forEach(function(phase) {
+    html += '<div class="gantt-phase" style="display:grid;grid-template-columns:'+cols+'"><div class="gantt-phase-label" style="grid-column:1/-1"><span class="pi" style="background:'+phase.color+'">'+phase.icon+'</span>'+phase.title+'</div></div>';
+
+    phase.items.forEach(function(item) {
+      var statusChip = '';
+      var s = (item.status||'').toLowerCase();
+      if (s==='done') statusChip='<span class="chip chip-done">Done</span>';
+      else if (s==='in progress') statusChip='<span class="chip chip-progress">Active</span>';
+      else if (s==='blocked') statusChip='<span class="chip chip-blocked">Blocked</span>';
+      else if (s==='not started') statusChip='<span class="chip chip-not-started">Pending</span>';
+      else statusChip='<span class="chip chip-not-started">TBD</span>';
+
+      var ownerTag = '';
+      if (item.owner) {
+        var isRia = item.owner.toLowerCase().indexOf('ria')>=0 || item.owner.toLowerCase().indexOf('client')>=0;
+        ownerTag = '<span class="owner-tag '+(isRia?'ria-tag':'')+'">'+(isRia?'RIA: ':'')+item.owner+'</span>';
+      }
+
+      var dueCls = '';
+      if (item.due && item.status !== 'done') {
+        var dueMonth = item.dueMonth || 99;
+        if (dueMonth < NOW_MONTH) dueCls = ' overdue';
+      }
+
+      html += '<div class="gantt-row" style="display:grid;grid-template-columns:'+cols+'">';
+      html += '<div class="gr-task">'+item.task+ownerTag+'</div>';
+      html += '<div class="gr-due'+dueCls+'">'+(item.due||'')+'</div>';
+      html += '<div class="gr-status">'+statusChip+'</div>';
+
+      for (var m=0; m<8; m++) {
+        var isNow = m===NOW_MONTH;
+        html += '<div class="gr-cell'+(isNow?' now-col':'')+'">';
+        if (item.milestone && item.startMonth===m) {
+          var msCls = item.status==='done'?'done':'upcoming';
+          html += '<div class="gantt-milestone '+msCls+'" style="left:calc(50% - 5px)"></div>';
+        }
+        if (!item.milestone && item.startMonth!==undefined && item.endMonth!==undefined) {
+          if (m >= item.startMonth && m <= item.endMonth) {
+            var barCls = 'upcoming';
+            if (item.status==='done') barCls='done';
+            else if (item.status==='in progress') barCls='progress';
+            else if (item.status==='blocked') barCls='blocked';
+            if (item.riaAction) barCls='ria-action';
+
+            var isStart = m===item.startMonth;
+            var isEnd = m===item.endMonth;
+            var left = isStart?'4px':'0';
+            var right = isEnd?'4px':'0';
+            var br = (isStart?'6px':'0')+' '+(isEnd?'6px':'0')+' '+(isEnd?'6px':'0')+' '+(isStart?'6px':'0');
+
+            html += '<div class="gantt-bar '+barCls+'" style="left:'+left+';right:'+right+';border-radius:'+br+'">';
+            if (isStart && item.endMonth-item.startMonth >= 1) html += item.barLabel||'';
+            html += '</div>';
+          }
+        }
+        html += '</div>';
+      }
+      html += '</div>';
+    });
+  });
+  html += '</div>';
+  el.innerHTML = html;
+}
+
+// =========== TASK TABLE RENDERER ===========
+function renderTaskTable(containerId, tasks) {
+  var el = document.getElementById(containerId);
+  if (!el) return;
+  var html = '<table class="task-table"><thead><tr><th>#</th><th>Task</th><th>Owner</th><th>Start</th><th>Due Date</th><th>Duration</th><th>Status</th><th>Notes</th></tr></thead><tbody>';
+  var n = 0;
+  tasks.forEach(function(t) {
+    if (t.phase) {
+      html += '<tr class="phase-divider"><td colspan="8">'+t.phase+'</td></tr>';
+      return;
+    }
+    n++;
+    var statusChip = '';
+    var s = (t.status||'').toLowerCase();
+    if (s==='done') statusChip='<span class="chip chip-done">Done</span>';
+    else if (s==='in progress') statusChip='<span class="chip chip-progress">Active</span>';
+    else if (s==='blocked') statusChip='<span class="chip chip-blocked">Blocked</span>';
+    else if (s==='not started') statusChip='<span class="chip chip-not-started">Pending</span>';
+    else statusChip='<span class="chip chip-not-started">TBD</span>';
+
+    var ownerHtml = t.owner || '';
+    if (ownerHtml && (ownerHtml.toLowerCase().indexOf('ria')>=0 || ownerHtml.toLowerCase().indexOf('client')>=0)) {
+      ownerHtml = '<strong style="color:#5856d6">'+ownerHtml+'</strong>';
+    }
+
+    html += '<tr><td style="color:#86868b;font-weight:700;width:30px">'+n+'</td>';
+    html += '<td class="task-name">'+t.task+'</td>';
+    html += '<td style="font-size:12px;white-space:nowrap">'+ownerHtml+'</td>';
+    html += '<td style="font-size:12px;white-space:nowrap">'+(t.start||'')+'</td>';
+    html += '<td style="font-size:12px;white-space:nowrap;'+(t.status!=='done'&&t.dueMonth!==undefined&&t.dueMonth<NOW_MONTH?'color:#ff3b30;font-weight:600':'')+'">'+(t.due||'')+'</td>';
+    html += '<td style="font-size:12px;white-space:nowrap;color:#86868b">'+(t.duration||'')+'</td>';
+    html += '<td>'+statusChip+'</td>';
+    html += '<td style="font-size:12px;color:#86868b">'+(t.notes||'')+'</td></tr>';
+  });
+  html += '</tbody></table>';
+  el.innerHTML = html;
+}
+
+// =========================================================
+//  ALL EPIC DATA
+// =========================================================
+
+var ALL_TASKS = [];
+
+// Helper to push tasks with epic context
+function addTasks(epicId, epicName, workstream, tasks) {
+  tasks.forEach(function(t) {
+    if (!t.phase) {
+      t.epicId = epicId;
+      t.epicName = epicName;
+      t.workstream = workstream;
+    }
+    ALL_TASKS.push(t);
+  });
+}
+
+// =========================================================
+//  EP-01: Digital Registration
+// =========================================================
+var ep01Tasks = [
+  { phase: 'EP-01: Digital Registration' },
+  { task:'Profile data collection screens (OneApp)', owner:'Ria Dev', start:'Apr 1', due:'Apr 30', duration:'4 wks', status:'not started', dueMonth:1, notes:'Name, DOB, address, phone, email, SSN/ITIN' },
+  { task:'Veriff eKYC integration', owner:'Ria Dev', start:'Apr 1', due:'Apr 30', duration:'4 wks', status:'not started', dueMonth:1, notes:'Document verification + selfie match' },
+  { task:'SSN/ITIN conditional logic', owner:'Ria Dev', start:'Apr 15', due:'May 15', duration:'4 wks', status:'not started', dueMonth:2, notes:'Based on federal ID type' },
+  { task:'TAB Bank Terms of Use screen', owner:'Ria Dev', start:'Apr 15', due:'May 15', duration:'4 wks', status:'not started', dueMonth:2, notes:'4 docs with links: consumer agreement, debit card, e-comm, privacy' },
+  { task:'HawkAI sanction screening integration', owner:'Ria Dev', start:'Apr 15', due:'May 15', duration:'4 wks', status:'not started', dueMonth:2, notes:'Real-time screening on registration' },
+  { task:'Initial deposit - debit card via Adyen', owner:'Ria Dev', start:'May 1', due:'May 31', duration:'4 wks', status:'not started', dueMonth:2, notes:'Adyen payment gateway' },
+  { task:'Initial deposit - Apple Pay / Google Pay', owner:'Ria Dev', start:'May 1', due:'May 31', duration:'4 wks', status:'not started', dueMonth:2, notes:'Debit card only funding' },
+  { task:'Virtual card issuance & activation', owner:'Ria Dev', start:'May 1', due:'May 31', duration:'4 wks', status:'not started', dueMonth:2, notes:'Instant virtual card on registration' },
+  { task:'Personalized card request flow', owner:'Ria Dev', start:'May 1', due:'May 31', duration:'4 wks', status:'not started', dueMonth:2, notes:'Order physical personalized card' },
+  { task:'Savings account option', owner:'Ria Dev', start:'May 15', due:'Jun 15', duration:'4 wks', status:'not started', dueMonth:3, notes:'Optional during registration' },
+  { task:'Customer status management', owner:'Ria Dev', start:'May 1', due:'May 31', duration:'4 wks', status:'not started', dueMonth:2, notes:'Request > Compliance Hold > Active flow' },
+];
+addTasks('EP-01', 'Digital Registration', 'digital', ep01Tasks);
+
+// =========================================================
+//  EP-02: B&M Registration
+// =========================================================
+var ep02Tasks = [
+  { phase: 'EP-02: B&M Registration' },
+  { task:'Customer lookup (phone, ID, name, loyalty card)', owner:'Ria Dev (FX Online)', start:'Apr 1', due:'Apr 30', duration:'4 wks', status:'not started', dueMonth:1 },
+  { task:'Existing customer upgrade flow', owner:'Ria Dev (FX Online)', start:'Apr 1', due:'Apr 30', duration:'4 wks', status:'not started', dueMonth:1, notes:'Fill missing KYC fields' },
+  { task:'KYC field collection (mandatory + optional)', owner:'Ria Dev (FX Online)', start:'Apr 15', due:'May 15', duration:'4 wks', status:'not started', dueMonth:2, notes:'Per BRD section 2.3' },
+  { task:'Government-issued ID upload & verification', owner:'Ria Dev (FX Online)', start:'Apr 15', due:'May 15', duration:'4 wks', status:'not started', dueMonth:2, notes:'In-person verification by agent' },
+  { task:'TAB Bank Terms of Use on signature pad', owner:'Ria Dev (FX Online)', start:'May 1', due:'May 31', duration:'4 wks', status:'not started', dueMonth:2 },
+  { task:'Electronic Communication Disclosure', owner:'Ria Dev (FX Online)', start:'May 1', due:'May 31', duration:'4 wks', status:'not started', dueMonth:2 },
+  { task:'HawkAI sanction screening (B&M)', owner:'Ria Dev (FX Online)', start:'May 1', due:'May 31', duration:'4 wks', status:'not started', dueMonth:2 },
+  { task:'Initial deposit - cash only (Phase 1)', owner:'Ria Dev (FX Online)', start:'May 1', due:'May 31', duration:'4 wks', status:'not started', dueMonth:2 },
+  { task:'Non-personalized card linking to account', owner:'Ria Dev (FX Online)', start:'May 1', due:'May 31', duration:'4 wks', status:'not started', dueMonth:2 },
+  { task:'Card activation redirect (Ria app / IVR)', owner:'Ria Dev (FX Online)', start:'May 15', due:'May 31', duration:'2 wks', status:'not started', dueMonth:2 },
+  { task:'Direct deposit authorization form', owner:'Ria Dev (FX Online)', start:'May 15', due:'May 31', duration:'2 wks', status:'not started', dueMonth:2 },
+  { task:'Deposit receipt printing (thermal)', owner:'Ria Dev (FX Online)', start:'May 15', due:'May 31', duration:'2 wks', status:'not started', dueMonth:2 },
+];
+addTasks('EP-02', 'B&M Registration', 'bm', ep02Tasks);
+
+// =========================================================
+//  EP-03: Home & Dashboard
+// =========================================================
+var ep03Tasks = [
+  { phase: 'EP-03: Home & Dashboard' },
+  { task:'Account balance display (checking + savings)', owner:'Ria Dev', start:'Apr 1', due:'Apr 30', duration:'4 wks', status:'not started', dueMonth:1 },
+  { task:'Virtual card display', owner:'Ria Dev', start:'Apr 1', due:'Apr 30', duration:'4 wks', status:'not started', dueMonth:1 },
+  { task:'Physical card status indicator', owner:'Ria Dev', start:'Apr 15', due:'May 15', duration:'4 wks', status:'not started', dueMonth:2 },
+  { task:'Quick actions (Add Money, Withdraw, Send, Pay)', owner:'Ria Dev', start:'Apr 15', due:'May 15', duration:'4 wks', status:'not started', dueMonth:2 },
+  { task:'Recent transactions preview', owner:'Ria Dev', start:'Apr 15', due:'May 15', duration:'4 wks', status:'not started', dueMonth:2 },
+  { task:'Notification badge', owner:'Ria Dev', start:'May 1', due:'May 31', duration:'4 wks', status:'not started', dueMonth:2 },
+  { task:'Account status indicator', owner:'Ria Dev', start:'May 1', due:'May 31', duration:'4 wks', status:'not started', dueMonth:2 },
+  { task:'Downloadable bank forms', owner:'Ria Dev', start:'May 1', due:'May 31', duration:'4 wks', status:'not started', dueMonth:2, notes:'Deposit auth, 1099, statements' },
+];
+addTasks('EP-03', 'Home & Dashboard', 'digital', ep03Tasks);
+
+// =========================================================
+//  EP-04: Add Money / Deposits
+// =========================================================
+var ep04Tasks = [
+  { phase: 'EP-04: Add Money / Deposits' },
+  { task:'B&M cash deposit (FX Online teller flow)', owner:'Ria Dev (FX Online)', start:'Apr 15', due:'May 31', duration:'6 wks', status:'not started', dueMonth:2 },
+  { task:'Debit card deposit via Adyen (OneApp)', owner:'Ria Dev', start:'Apr 15', due:'May 31', duration:'6 wks', status:'not started', dueMonth:2 },
+  { task:'Apple Pay deposit (debit card only)', owner:'Ria Dev', start:'May 1', due:'Jun 15', duration:'6 wks', status:'not started', dueMonth:3 },
+  { task:'Google Pay deposit (debit card only)', owner:'Ria Dev', start:'May 1', due:'Jun 15', duration:'6 wks', status:'not started', dueMonth:3 },
+  { task:'mRDC deposit entry point (Ensenta SDK)', owner:'Ria Dev', start:'May 15', due:'Jun 15', duration:'4 wks', status:'not started', dueMonth:3, notes:'Links to EP-11' },
+  { task:'ACH direct deposit setup & routing info', owner:'Ria Dev', start:'Apr 15', due:'May 31', duration:'6 wks', status:'not started', dueMonth:2 },
+  { task:'P2P receive (wallet-to-wallet)', owner:'Ria Dev', start:'May 15', due:'Jun 15', duration:'4 wks', status:'not started', dueMonth:3, notes:'Links to EP-09' },
+  { task:'Inbound remittance to wallet', owner:'Ria Dev', start:'May 15', due:'Jun 15', duration:'4 wks', status:'not started', dueMonth:3 },
+  { task:'Wire transfer (domestic)', owner:'Ria Dev', start:'May 15', due:'Jun 15', duration:'4 wks', status:'not started', dueMonth:3 },
+  { task:'Fund flow: Reserve debit > Customer credit', owner:'Ria Dev', start:'Apr 15', due:'May 31', duration:'6 wks', status:'not started', dueMonth:2, notes:'Instant settlement' },
+  { task:'Deposit receipt generation (thermal)', owner:'Ria Dev', start:'May 1', due:'May 31', duration:'4 wks', status:'not started', dueMonth:2 },
+  { task:'Deposit confirmation screen', owner:'Ria Dev', start:'May 1', due:'May 31', duration:'4 wks', status:'not started', dueMonth:2 },
+];
+addTasks('EP-04', 'Add Money / Deposits', 'digital', ep04Tasks);
+
+// =========================================================
+//  EP-05: Cash Withdrawal / Cash Out
+// =========================================================
+var ep05Tasks = [
+  { phase: 'EP-05: Cash Withdrawal / Cash Out' },
+  { task:'In-app cash withdrawal initiation', owner:'Ria Dev', start:'Apr 15', due:'May 31', duration:'6 wks', status:'not started', dueMonth:2 },
+  { task:'Barcode generation for B&M redemption', owner:'Ria Dev', start:'May 1', due:'May 31', duration:'4 wks', status:'not started', dueMonth:2 },
+  { task:'B&M teller withdrawal processing', owner:'Ria Dev (FX Online)', start:'May 1', due:'Jun 15', duration:'6 wks', status:'not started', dueMonth:3 },
+  { task:'ACH scheduled transaction setup', owner:'Ria Dev', start:'May 1', due:'Jun 15', duration:'6 wks', status:'not started', dueMonth:3 },
+  { task:'P2P send (wallet-to-wallet + biometric)', owner:'Ria Dev', start:'May 15', due:'Jun 15', duration:'4 wks', status:'not started', dueMonth:3, notes:'Links to EP-09' },
+  { task:'Outbound remittance (wallet funding)', owner:'Ria Dev', start:'May 15', due:'Jun 15', duration:'4 wks', status:'not started', dueMonth:3 },
+  { task:'ATM withdrawal support', owner:'Ria Dev', start:'May 1', due:'Jun 15', duration:'6 wks', status:'not started', dueMonth:3, notes:'In-network / out-of-network' },
+  { task:'Direct debit setup', owner:'Ria Dev', start:'May 15', due:'Jun 15', duration:'4 wks', status:'not started', dueMonth:3, notes:'Bills, insurance, payments' },
+  { task:'Withdrawal fund flow: Customer debit > Reserve credit', owner:'Ria Dev', start:'Apr 15', due:'May 31', duration:'6 wks', status:'not started', dueMonth:2 },
+  { task:'Withdrawal receipt generation', owner:'Ria Dev', start:'May 1', due:'May 31', duration:'4 wks', status:'not started', dueMonth:2 },
+];
+addTasks('EP-05', 'Cash Withdrawal / Cash Out', 'digital', ep05Tasks);
+
+// =========================================================
+//  EP-06: Card Management
+// =========================================================
+var ep06Tasks = [
+  { phase: 'EP-06: Card Management' },
+  { task:'Virtual card display & copy details', owner:'Ria Dev', start:'Apr 15', due:'May 15', duration:'4 wks', status:'not started', dueMonth:2 },
+  { task:'Physical card activation (app + IVR)', owner:'Ria Dev', start:'Apr 15', due:'May 15', duration:'4 wks', status:'not started', dueMonth:2 },
+  { task:'PIN setup (4-digit, OneApp only)', owner:'Ria Dev', start:'May 1', due:'May 31', duration:'4 wks', status:'not started', dueMonth:2 },
+  { task:'Card lock / unlock toggle', owner:'Ria Dev', start:'May 1', due:'May 31', duration:'4 wks', status:'not started', dueMonth:2 },
+  { task:'Card hotlist (permanent block)', owner:'Ria Dev', start:'May 1', due:'May 31', duration:'4 wks', status:'not started', dueMonth:2 },
+  { task:'Card replacement request', owner:'Ria Dev', start:'May 1', due:'Jun 15', duration:'6 wks', status:'not started', dueMonth:3 },
+  { task:'Card controls (e-commerce, ATM, contactless)', owner:'Ria Dev', start:'May 15', due:'Jun 15', duration:'4 wks', status:'not started', dueMonth:3 },
+  { task:'Non-personalized to personalized upgrade', owner:'Ria Dev', start:'May 15', due:'Jun 15', duration:'4 wks', status:'not started', dueMonth:3 },
+  { task:'Card expiry notification', owner:'Ria Dev', start:'May 15', due:'Jun 15', duration:'4 wks', status:'not started', dueMonth:3 },
+  { task:'Mobile wallet provisioning (Apple/Google/Samsung)', owner:'Ria Dev', start:'Jun 1', due:'Jun 15', duration:'2 wks', status:'not started', dueMonth:3, notes:'Links to EP-19' },
+];
+addTasks('EP-06', 'Card Management', 'digital', ep06Tasks);
+
+// =========================================================
+//  EP-07: Account Management
+// =========================================================
+var ep07Tasks = [
+  { phase: 'EP-07: Account Management' },
+  { task:'Profile view & edit (name, address, phone, email)', owner:'Ria Dev', start:'Apr 15', due:'May 15', duration:'4 wks', status:'not started', dueMonth:2 },
+  { task:'Address change with document upload', owner:'Ria Dev', start:'May 1', due:'May 31', duration:'4 wks', status:'not started', dueMonth:2 },
+  { task:'Name change with document upload', owner:'Ria Dev', start:'May 1', due:'May 31', duration:'4 wks', status:'not started', dueMonth:2 },
+  { task:'Account status display', owner:'Ria Dev', start:'Apr 15', due:'May 15', duration:'4 wks', status:'not started', dueMonth:2 },
+  { task:'Account closure initiation', owner:'Ria Dev', start:'May 15', due:'Jun 15', duration:'4 wks', status:'not started', dueMonth:3 },
+  { task:'Fund disbursement on closure', owner:'Ria Dev', start:'May 15', due:'Jun 15', duration:'4 wks', status:'not started', dueMonth:3 },
+  { task:'Dormancy handling (12-mo checking / 18-mo savings)', owner:'Ria Dev', start:'May 15', due:'Jun 15', duration:'4 wks', status:'not started', dueMonth:3 },
+  { task:'Account limits display', owner:'Ria Dev', start:'May 1', due:'May 31', duration:'4 wks', status:'not started', dueMonth:2 },
+  { task:'Fee schedule visibility', owner:'Ria Dev', start:'May 1', due:'May 31', duration:'4 wks', status:'not started', dueMonth:2 },
+  { task:'ATM fee disclosure', owner:'Ria Dev', start:'May 1', due:'May 31', duration:'4 wks', status:'not started', dueMonth:2 },
+  { task:'Overdraft policy display', owner:'Ria Dev', start:'May 1', due:'May 31', duration:'4 wks', status:'not started', dueMonth:2 },
+];
+addTasks('EP-07', 'Account Management', 'digital', ep07Tasks);
+
+// =========================================================
+//  EP-08: Activity & Transaction History
+// =========================================================
+var ep08Tasks = [
+  { phase: 'EP-08: Activity & Transaction History' },
+  { task:'Transaction list (deposits, withdrawals, P2P, card, ACH)', owner:'Ria Dev', start:'Apr 15', due:'May 15', duration:'4 wks', status:'not started', dueMonth:2 },
+  { task:'Transaction detail view', owner:'Ria Dev', start:'Apr 15', due:'May 15', duration:'4 wks', status:'not started', dueMonth:2 },
+  { task:'Transaction search & filter (date, type, amount)', owner:'Ria Dev', start:'May 1', due:'May 31', duration:'4 wks', status:'not started', dueMonth:2 },
+  { task:'Transaction receipt view/download', owner:'Ria Dev', start:'May 1', due:'May 31', duration:'4 wks', status:'not started', dueMonth:2 },
+  { task:'Monthly statement view/download', owner:'Ria Dev', start:'May 1', due:'May 31', duration:'4 wks', status:'not started', dueMonth:2 },
+  { task:'Pending transactions display', owner:'Ria Dev', start:'May 1', due:'May 31', duration:'4 wks', status:'not started', dueMonth:2 },
+  { task:'Issue reporting per transaction (Zendesk)', owner:'Ria Dev', start:'May 15', due:'May 31', duration:'2 wks', status:'not started', dueMonth:2, notes:'Links to EP-16' },
+  { task:'Export transactions', owner:'Ria Dev', start:'May 15', due:'May 31', duration:'2 wks', status:'not started', dueMonth:2 },
+];
+addTasks('EP-08', 'Activity & Transaction History', 'digital', ep08Tasks);
+
+// =========================================================
+//  EP-09: P2P Transfers
+// =========================================================
+var ep09Tasks = [
+  { phase: 'EP-09: P2P Transfers' },
+  { task:'Recipient selection (active Ria Wallet users only)', owner:'Ria Dev', start:'May 15', due:'Jun 15', duration:'4 wks', status:'not started', dueMonth:3 },
+  { task:'Amount entry & transfer reason dropdown', owner:'Ria Dev', start:'May 15', due:'Jun 15', duration:'4 wks', status:'not started', dueMonth:3 },
+  { task:'Biometric authentication for submission', owner:'Ria Dev', start:'Jun 1', due:'Jun 30', duration:'4 wks', status:'not started', dueMonth:3 },
+  { task:'Transfer confirmation screen', owner:'Ria Dev', start:'Jun 1', due:'Jun 30', duration:'4 wks', status:'not started', dueMonth:3 },
+  { task:'Push notification to recipient', owner:'Ria Dev', start:'Jun 1', due:'Jun 30', duration:'4 wks', status:'not started', dueMonth:3 },
+  { task:'P2P transaction in activity history', owner:'Ria Dev', start:'Jun 1', due:'Jun 30', duration:'4 wks', status:'not started', dueMonth:3 },
+  { task:'P2P limits & controls', owner:'Ria Dev', start:'Jun 1', due:'Jun 30', duration:'4 wks', status:'not started', dueMonth:3 },
+  { task:'P2P fund flow (instant wallet-to-wallet)', owner:'Ria Dev', start:'Jun 1', due:'Jun 30', duration:'4 wks', status:'not started', dueMonth:3 },
+];
+addTasks('EP-09', 'P2P Transfers', 'digital', ep09Tasks);
+
+// =========================================================
+//  EP-10: Savings Account
+// =========================================================
+var ep10Tasks = [
+  { phase: 'EP-10: Savings Account' },
+  { task:'Savings account request flow (app only)', owner:'Ria Dev', start:'May 15', due:'Jun 15', duration:'4 wks', status:'not started', dueMonth:3 },
+  { task:'SSN/ITIN requirement enforcement', owner:'Ria Dev', start:'May 15', due:'Jun 15', duration:'4 wks', status:'not started', dueMonth:3 },
+  { task:'Interest rate disclosure screen', owner:'Ria Dev', start:'Jun 1', due:'Jun 30', duration:'4 wks', status:'not started', dueMonth:3 },
+  { task:'Transfer between checking and savings', owner:'Ria Dev', start:'Jun 1', due:'Jun 30', duration:'4 wks', status:'not started', dueMonth:3, notes:'Internal only' },
+  { task:'Interest accrual display', owner:'Ria Dev', start:'Jun 1', due:'Jun 30', duration:'4 wks', status:'not started', dueMonth:3 },
+  { task:'1099 tax form access', owner:'Ria Dev', start:'Jun 1', due:'Jun 30', duration:'4 wks', status:'not started', dueMonth:3 },
+  { task:'Savings account statement', owner:'Ria Dev', start:'Jun 1', due:'Jun 30', duration:'4 wks', status:'not started', dueMonth:3 },
+  { task:'Savings-specific limits', owner:'Ria Dev', start:'Jun 1', due:'Jun 30', duration:'4 wks', status:'not started', dueMonth:3 },
+];
+addTasks('EP-10', 'Savings Account', 'digital', ep10Tasks);
+
+// =========================================================
+//  EP-11: mRDC (Ensenta)
+// =========================================================
+var ep11Tasks = [
+  { phase: 'EP-11: mRDC (Ensenta Integration)' },
+  { task:'"Deposit Check" entry point in Add Money', owner:'Ria Dev', start:'May 15', due:'Jun 15', duration:'4 wks', status:'not started', dueMonth:3 },
+  { task:'Ensenta mRDC SDK integration', owner:'Ria Dev', start:'May 15', due:'Jun 30', duration:'6 wks', status:'not started', dueMonth:3 },
+  { task:'Camera capture (front + endorsed back)', owner:'Ria Dev', start:'Jun 1', due:'Jun 30', duration:'4 wks', status:'not started', dueMonth:3 },
+  { task:'Image quality validation (Ensenta)', owner:'Ria Dev', start:'Jun 1', due:'Jun 30', duration:'4 wks', status:'not started', dueMonth:3 },
+  { task:'Deposit details entry & account selection', owner:'Ria Dev', start:'Jun 1', due:'Jun 30', duration:'4 wks', status:'not started', dueMonth:3 },
+  { task:'Deposit submission to Ensenta', owner:'Ria Dev', start:'Jun 15', due:'Jul 15', duration:'4 wks', status:'not started', dueMonth:4 },
+  { task:'Confirmation with reference number', owner:'Ria Dev', start:'Jun 15', due:'Jul 15', duration:'4 wks', status:'not started', dueMonth:4 },
+  { task:'Deposit history with status indicators', owner:'Ria Dev', start:'Jun 15', due:'Jul 15', duration:'4 wks', status:'not started', dueMonth:4 },
+  { task:'Rejection handling with messaging', owner:'Ria Dev', start:'Jun 15', due:'Jul 15', duration:'4 wks', status:'not started', dueMonth:4 },
+  { task:'Funds availability disclosure', owner:'Ria Dev', start:'Jun 15', due:'Jul 15', duration:'4 wks', status:'not started', dueMonth:4 },
+  { task:'Back-office decision queue (Ensenta admin)', owner:'Ensenta/Ria', start:'Jul 1', due:'Jul 15', duration:'2 wks', status:'not started', dueMonth:4 },
+];
+addTasks('EP-11', 'mRDC (Ensenta)', 'digital', ep11Tasks);
+
+// =========================================================
+//  EP-17: Notifications & Alerts
+// =========================================================
+var ep17Tasks = [
+  { phase: 'EP-17: Notifications & Alerts' },
+  { task:'Push notifications (transaction, low balance, deposit)', owner:'Ria Dev', start:'May 15', due:'Jun 15', duration:'4 wks', status:'not started', dueMonth:3 },
+  { task:'Card expiry push notification', owner:'Ria Dev', start:'May 15', due:'Jun 15', duration:'4 wks', status:'not started', dueMonth:3 },
+  { task:'Email alerts setup', owner:'Ria Dev', start:'Jun 1', due:'Jun 30', duration:'4 wks', status:'not started', dueMonth:3 },
+  { task:'SMS alerts setup', owner:'Ria Dev', start:'Jun 1', due:'Jun 30', duration:'4 wks', status:'not started', dueMonth:3 },
+  { task:'Notification preference settings screen', owner:'Ria Dev', start:'Jun 1', due:'Jun 30', duration:'4 wks', status:'not started', dueMonth:3 },
+  { task:'P2P transfer notifications', owner:'Ria Dev', start:'Jun 1', due:'Jun 30', duration:'4 wks', status:'not started', dueMonth:3 },
+];
+addTasks('EP-17', 'Notifications & Alerts', 'digital', ep17Tasks);
+
+// =========================================================
+//  EP-12: Helix Core Banking Integration
+// =========================================================
+var ep12Tasks = [
+  { phase: 'EP-12: Helix Core Banking Integration' },
+  { task:'Sandbox access & Helix University', owner:'Helix/Ria', start:'Mar 25', due:'Apr 15', duration:'3 wks', status:'done', dueMonth:1 },
+  { task:'API documentation review & technical call', owner:'Ria Dev/Helix', start:'Apr 1', due:'May 15', duration:'6 wks', status:'in progress', dueMonth:2 },
+  { task:'Account creation APIs (DDA + Savings)', owner:'Ria Dev', start:'Apr 1', due:'May 31', duration:'8 wks', status:'in progress', dueMonth:2, notes:'Part of sandbox build' },
+  { task:'Customer profile sync (CoreAPI to Helix)', owner:'Ria Dev', start:'Apr 15', due:'May 31', duration:'6 wks', status:'not started', dueMonth:2 },
+  { task:'ACH/ledger interactions (Reserve programs)', owner:'Ria Dev', start:'Apr 15', due:'May 31', duration:'6 wks', status:'not started', dueMonth:2 },
+  { task:'Transaction processing APIs', owner:'Ria Dev', start:'Apr 15', due:'May 31', duration:'6 wks', status:'not started', dueMonth:2 },
+  { task:'Card management APIs (order, activate, lock, hotlist)', owner:'Ria Dev', start:'May 1', due:'May 31', duration:'4 wks', status:'not started', dueMonth:2 },
+  { task:'Real-time event (RTE) webhook handling', owner:'Ria Dev', start:'May 1', due:'May 31', duration:'4 wks', status:'not started', dueMonth:2 },
+  { task:'Solutions Blueprint review & finalization', owner:'Helix/Ria/TAB', start:'Apr 15', due:'May 31', duration:'6 wks', status:'not started', dueMonth:2 },
+  { task:'Sandbox testing (17 core + 21 debit scenarios)', owner:'Ria Dev', start:'May 1', due:'May 31', duration:'4 wks', status:'not started', dueMonth:2, notes:'Must complete before Alpha' },
+  { task:'Production credential setup', owner:'Helix', start:'Jun 15', due:'Jul 10', duration:'3 wks', status:'not started', dueMonth:4 },
+  { task:'Alpha testing support', owner:'Ria Dev/Helix', start:'Jun 1', due:'Aug 31', duration:'12 wks', status:'not started', dueMonth:5 },
+];
+addTasks('EP-12', 'Helix Core Banking', 'backend', ep12Tasks);
+
+// =========================================================
+//  EP-13: Debit Card Program (CPI + Visa DPS)
+// =========================================================
+var ep13Tasks = [
+  { phase: 'EP-13: Debit Card Program (CPI + Visa DPS)' },
+  { task:'Card design proofs (matt finish, orange core)', owner:'Ria/CPI', start:'Apr 1', due:'Apr 30', duration:'4 wks', status:'in progress', dueMonth:1, notes:'Design selected, awaiting final proof' },
+  { task:'CPI custom card order (16 weeks critical path)', owner:'CPI', start:'Apr 15', due:'Aug 15', duration:'16 wks', status:'not started', dueMonth:5, notes:'CRITICAL PATH - longest lead time!' },
+  { task:'Visa DPS BIN setup & certification', owner:'VDPS', start:'May 1', due:'Jun 30', duration:'8 wks', status:'not started', dueMonth:3 },
+  { task:'Visa DPS program install', owner:'VDPS', start:'Jun 15', due:'Jul 15', duration:'4 wks', status:'not started', dueMonth:4 },
+  { task:'Non-personalized card inventory system', owner:'Helix/Ria', start:'Jun 1', due:'Jul 31', duration:'8 wks', status:'not started', dueMonth:4 },
+  { task:'Card batch ordering (Maker-Checker)', owner:'Ria/CPI', start:'Jul 1', due:'Aug 15', duration:'6 wks', status:'not started', dueMonth:5 },
+  { task:'Inventory transfers between locations', owner:'Ria/CPI', start:'Jul 1', due:'Aug 31', duration:'8 wks', status:'not started', dueMonth:5 },
+  { task:'CPI portal setup & training', owner:'CPI/Ria', start:'Jul 1', due:'Jul 31', duration:'4 wks', status:'not started', dueMonth:4 },
+  { task:'BOR CAMs alert signup', owner:'TAB Bank', start:'Jul 1', due:'Jul 15', duration:'2 wks', status:'not started', dueMonth:4 },
+  { task:'Card testing (21 debit test scenarios)', owner:'Ria Dev', start:'Aug 1', due:'Sep 30', duration:'8 wks', status:'not started', dueMonth:6 },
+];
+addTasks('EP-13', 'Debit Card Program', 'backend', ep13Tasks);
+
+// =========================================================
+//  EP-19: Mobile Wallets
+// =========================================================
+var ep19Tasks = [
+  { phase: 'EP-19: Mobile Wallets (Apple/Google/Samsung Pay)' },
+  { task:'Bank agreements (Apple, Google, Samsung)', owner:'TAB Bank', start:'Jun 1', due:'Jul 15', duration:'6 wks', status:'not started', dueMonth:4 },
+  { task:'Manual provisioning setup', owner:'Q2/Ria', start:'Jul 1', due:'Aug 15', duration:'6 wks', status:'not started', dueMonth:5 },
+  { task:'VDPS configuration', owner:'VDPS', start:'Jul 15', due:'Aug 15', duration:'4 wks', status:'not started', dueMonth:5 },
+  { task:'Apple Pay testing (whitelisted PAN + OTP)', owner:'Ria Dev', start:'Aug 1', due:'Aug 31', duration:'4 wks', status:'not started', dueMonth:5 },
+  { task:'Google Pay testing', owner:'Ria Dev', start:'Aug 15', due:'Sep 15', duration:'4 wks', status:'not started', dueMonth:6 },
+  { task:'Samsung Pay testing', owner:'Ria Dev', start:'Aug 15', due:'Sep 15', duration:'4 wks', status:'not started', dueMonth:6 },
+  { task:'In-app provisioning SDK integration', owner:'Ria Dev', start:'Sep 1', due:'Sep 30', duration:'4 wks', status:'not started', dueMonth:6 },
+  { task:'Production enablement', owner:'Ria/TAB', start:'Oct 1', due:'Oct 15', duration:'2 wks', status:'not started', dueMonth:7 },
+];
+addTasks('EP-19', 'Mobile Wallets', 'backend', ep19Tasks);
+
+// =========================================================
+//  EP-14: KYC & Compliance
+// =========================================================
+var ep14Tasks = [
+  { phase: 'EP-14: KYC & Compliance' },
+  { task:'Veriff eKYC vendor integration spec', owner:'Ria/Veriff', start:'Apr 1', due:'Apr 30', duration:'4 wks', status:'not started', dueMonth:1 },
+  { task:'HawkAI sanction screening integration spec', owner:'Ria/HawkAI', start:'Apr 1', due:'Apr 30', duration:'4 wks', status:'not started', dueMonth:1 },
+  { task:'Verafin AML monitoring setup', owner:'TAB Bank/Verafin', start:'May 1', due:'Jul 31', duration:'12 wks', status:'not started', dueMonth:4 },
+  { task:'TAB Bank consumer agreement finalization', owner:'TAB Bank/Legal', start:'Apr 1', due:'May 31', duration:'8 wks', status:'in progress', dueMonth:2, notes:'Awaiting Hope legal review' },
+  { task:'Consumer debit card cardholder agreement', owner:'TAB Bank/Legal', start:'Apr 1', due:'May 31', duration:'8 wks', status:'not started', dueMonth:2 },
+  { task:'Electronic communication disclosure', owner:'TAB Bank/Legal', start:'Apr 15', due:'May 31', duration:'6 wks', status:'not started', dueMonth:2 },
+  { task:'Privacy policy alignment', owner:'TAB Bank/Legal', start:'Apr 15', due:'May 31', duration:'6 wks', status:'not started', dueMonth:2 },
+  { task:'Compliance review sessions (weekly)', owner:'Ria/TAB Bank', start:'Apr 1', due:'Aug 31', duration:'Ongoing', status:'in progress', dueMonth:5 },
+  { task:'CPI contract legal review', owner:'Ria Legal', start:'Apr 1', due:'Apr 30', duration:'4 wks', status:'in progress', dueMonth:1, notes:'Under legal review' },
+  { task:'Receipt template compliance review', owner:'Ria/TAB Bank', start:'Apr 15', due:'May 31', duration:'6 wks', status:'done', dueMonth:2, notes:'Completed' },
+];
+addTasks('EP-14', 'KYC & Compliance', 'compliance', ep14Tasks);
+
+// =========================================================
+//  EP-20: Fraud & Security
+// =========================================================
+var ep20Tasks = [
+  { phase: 'EP-20: Fraud & Security' },
+  { task:'Fraud rules/thresholds definition', owner:'Ria/TAB Bank', start:'May 1', due:'Jun 30', duration:'8 wks', status:'not started', dueMonth:3 },
+  { task:'HawkAI integration (real-time screening)', owner:'Ria Dev/HawkAI', start:'May 1', due:'Jun 30', duration:'8 wks', status:'not started', dueMonth:3 },
+  { task:'Verafin AML setup', owner:'TAB Bank/Verafin', start:'May 15', due:'Jul 31', duration:'10 wks', status:'not started', dueMonth:4 },
+  { task:'Falcon fraud text alerts (Visa DPS)', owner:'Helix/VDPS', start:'Aug 1', due:'Sep 30', duration:'8 wks', status:'not started', dueMonth:6, notes:'See Helix plan for details' },
+  { task:'Review workflows setup', owner:'Ria/TAB Bank', start:'Jun 1', due:'Jul 31', duration:'8 wks', status:'not started', dueMonth:4 },
+  { task:'SLA definitions', owner:'Ria/TAB Bank', start:'Jun 1', due:'Jun 30', duration:'4 wks', status:'not started', dueMonth:3 },
+  { task:'PCI compliance validation with Helix', owner:'Ria Dev/Helix', start:'Jun 1', due:'Jul 31', duration:'8 wks', status:'not started', dueMonth:4 },
+  { task:'Encryption + logging validation', owner:'Ria Dev', start:'Jul 1', due:'Aug 31', duration:'8 wks', status:'not started', dueMonth:5 },
+  { task:'Role-based access control', owner:'Ria Dev', start:'Jul 1', due:'Sep 30', duration:'12 wks', status:'not started', dueMonth:6 },
+];
+addTasks('EP-20', 'Fraud & Security', 'compliance', ep20Tasks);
+
+// =========================================================
+//  EP-22: Vendor Contracts & Legal
+// =========================================================
+var ep22Tasks = [
+  { phase: 'EP-22: Vendor Contracts & Legal' },
+  { task:'CPI contract finalization', owner:'Ria Legal', start:'Mar 25', due:'Apr 30', duration:'5 wks', status:'in progress', dueMonth:1, notes:'Under legal review' },
+  { task:'TAB Bank consumer agreement', owner:'TAB Bank/Legal', start:'Mar 25', due:'May 31', duration:'9 wks', status:'in progress', dueMonth:2, notes:'Awaiting Hope legal review' },
+  { task:'Spanish translation quote for consumer docs', owner:'Ria', start:'Apr 15', due:'May 15', duration:'4 wks', status:'not started', dueMonth:2 },
+  { task:'Ensenta mRDC contract', owner:'Ria Legal/Ensenta', start:'Apr 1', due:'May 15', duration:'6 wks', status:'not started', dueMonth:2 },
+  { task:'Veriff contract', owner:'Ria Legal/Veriff', start:'Apr 1', due:'May 15', duration:'6 wks', status:'not started', dueMonth:2 },
+  { task:'HawkAI contract', owner:'Ria Legal/HawkAI', start:'Apr 1', due:'May 15', duration:'6 wks', status:'not started', dueMonth:2 },
+  { task:'Adyen contract', owner:'Ria Legal/Adyen', start:'Apr 1', due:'May 15', duration:'6 wks', status:'not started', dueMonth:2 },
+  { task:'Helix contract', owner:'Ria/Helix', start:'Mar 25', due:'Mar 31', duration:'1 wk', status:'done', dueMonth:0 },
+];
+addTasks('EP-22', 'Vendor Contracts & Legal', 'compliance', ep22Tasks);
+
+// =========================================================
+//  EP-15: Chargebacks & Disputes
+// =========================================================
+var ep15Tasks = [
+  { phase: 'EP-15: Chargebacks & Disputes' },
+  { task:'In-app fraud transaction reporting flow', owner:'Ria Dev', start:'Jun 1', due:'Jul 15', duration:'6 wks', status:'not started', dueMonth:4 },
+  { task:'Initial chargeback flow (Ria GL debit > customer credit)', owner:'Ria Dev', start:'Jun 15', due:'Jul 31', duration:'6 wks', status:'not started', dueMonth:4 },
+  { task:'Pre-arbitration claim handling', owner:'Ria Dev', start:'Jul 1', due:'Aug 15', duration:'6 wks', status:'not started', dueMonth:5 },
+  { task:'Below minimum threshold ($25) auto-handling', owner:'Ria Dev', start:'Jul 1', due:'Aug 15', duration:'6 wks', status:'not started', dueMonth:5 },
+  { task:'On-Us internal claim flow (Jira/Zendesk)', owner:'Ria Dev', start:'Jul 15', due:'Aug 31', duration:'6 wks', status:'not started', dueMonth:5 },
+  { task:'Visa settlement debit/credit flows', owner:'Ria Dev', start:'Jul 15', due:'Sep 15', duration:'8 wks', status:'not started', dueMonth:6 },
+  { task:'Customer notification letters', owner:'Ria Dev', start:'Aug 1', due:'Sep 15', duration:'6 wks', status:'not started', dueMonth:6, notes:'Provisional credit, denial letters' },
+  { task:'Centrix DTS integration for disputes', owner:'Ria Dev/Centrix', start:'Aug 1', due:'Sep 15', duration:'6 wks', status:'not started', dueMonth:6 },
+];
+addTasks('EP-15', 'Chargebacks & Disputes', 'operations', ep15Tasks);
+
+// =========================================================
+//  EP-16: Customer Care (Zendesk)
+// =========================================================
+var ep16Tasks = [
+  { phase: 'EP-16: Customer Care (Zendesk)' },
+  { task:'Zendesk workflow setup for wallet queries', owner:'Ria Ops', start:'May 15', due:'Jun 30', duration:'6 wks', status:'not started', dueMonth:3 },
+  { task:'Issue submission form (per transaction)', owner:'Ria Dev', start:'Jun 1', due:'Jul 15', duration:'6 wks', status:'not started', dueMonth:4 },
+  { task:'Issue reason dropdown configuration', owner:'Ria Ops', start:'Jun 1', due:'Jun 30', duration:'4 wks', status:'not started', dueMonth:3 },
+  { task:'IVR solution development', owner:'Ria Dev/Vendor', start:'Jun 1', due:'Aug 31', duration:'12 wks', status:'not started', dueMonth:5, notes:'Full scope not yet defined' },
+  { task:'Escalation path (IVR > live agent)', owner:'Ria Ops', start:'Jul 1', due:'Aug 31', duration:'8 wks', status:'not started', dueMonth:5 },
+  { task:'Card activation via IVR', owner:'Ria Dev/Vendor', start:'Jul 1', due:'Aug 31', duration:'8 wks', status:'not started', dueMonth:5 },
+  { task:'Agent training materials', owner:'Ria Ops', start:'Aug 1', due:'Sep 15', duration:'6 wks', status:'not started', dueMonth:6 },
+  { task:'SLA definitions', owner:'Ria Ops', start:'Jun 1', due:'Jun 30', duration:'4 wks', status:'not started', dueMonth:3 },
+  { task:'Zendesk to Centrix dispute flow', owner:'Ria Dev', start:'Aug 1', due:'Sep 15', duration:'6 wks', status:'not started', dueMonth:6 },
+];
+addTasks('EP-16', 'Customer Care (Zendesk)', 'operations', ep16Tasks);
+
+// =========================================================
+//  EP-18: Analytics & Segment
+// =========================================================
+var ep18Tasks = [
+  { phase: 'EP-18: Analytics & Segment' },
+  { task:'Segment event tracking setup', owner:'Ria Dev', start:'Jun 1', due:'Jul 15', duration:'6 wks', status:'not started', dueMonth:4 },
+  { task:'Transaction event schema definition', owner:'Ria Dev', start:'Jun 1', due:'Jul 15', duration:'6 wks', status:'not started', dueMonth:4 },
+  { task:'Customer interaction events (funnel tracking)', owner:'Ria Dev', start:'Jun 15', due:'Jul 31', duration:'6 wks', status:'not started', dueMonth:4 },
+  { task:'Analytics dashboard requirements', owner:'Ria PM', start:'Jun 15', due:'Jul 31', duration:'6 wks', status:'not started', dueMonth:4 },
+  { task:'KPI definitions', owner:'Ria PM', start:'Jun 1', due:'Jun 30', duration:'4 wks', status:'not started', dueMonth:3 },
+  { task:'Event feeds mapping', owner:'Ria Dev', start:'Jul 1', due:'Aug 15', duration:'6 wks', status:'not started', dueMonth:5 },
+  { task:'Reporting cadence setup', owner:'Ria PM', start:'Aug 1', due:'Aug 31', duration:'4 wks', status:'not started', dueMonth:5 },
+];
+addTasks('EP-18', 'Analytics & Segment', 'operations', ep18Tasks);
+
+// =========================================================
+//  EP-21: Finance & Fund Flows
+// =========================================================
+var ep21Tasks = [
+  { phase: 'EP-21: Finance & Fund Flows' },
+  { task:'Fund flow review with finance team', owner:'Ria Finance', start:'Apr 1', due:'May 15', duration:'6 wks', status:'in progress', dueMonth:2 },
+  { task:'Reserve account (BDDA) setup', owner:'TAB Bank/Helix', start:'Apr 15', due:'Jun 15', duration:'8 wks', status:'not started', dueMonth:3 },
+  { task:'Ledger + settlement model definition', owner:'Ria Finance/TAB', start:'Apr 15', due:'Jun 15', duration:'8 wks', status:'not started', dueMonth:3 },
+  { task:'Reconciliation ownership confirmation', owner:'Ria Finance/TAB', start:'May 1', due:'Jun 30', duration:'8 wks', status:'not started', dueMonth:3 },
+  { task:'GL mapping for chargebacks', owner:'Ria Finance', start:'May 15', due:'Jul 15', duration:'8 wks', status:'not started', dueMonth:4 },
+  { task:'Fee structure definition', owner:'Ria Finance/PM', start:'Apr 1', due:'May 31', duration:'8 wks', status:'not started', dueMonth:2 },
+  { task:'Pricing model finalization', owner:'Ria Finance/PM', start:'Apr 15', due:'Jun 15', duration:'8 wks', status:'not started', dueMonth:3 },
+  { task:'Revenue model (ATM fees, card fees, etc.)', owner:'Ria Finance', start:'May 1', due:'Jul 31', duration:'12 wks', status:'not started', dueMonth:4 },
+];
+addTasks('EP-21', 'Finance & Fund Flows', 'operations', ep21Tasks);
+
+// =========================================================
+//  EP-23: Marketing & Launch
+// =========================================================
+var ep23Tasks = [
+  { phase: 'EP-23: Marketing & Launch' },
+  { task:'Marketing strategy definition', owner:'Ria Marketing', start:'Jul 1', due:'Aug 15', duration:'6 wks', status:'not started', dueMonth:5 },
+  { task:'Launch timeline', owner:'Ria PM', start:'Jul 1', due:'Aug 15', duration:'6 wks', status:'not started', dueMonth:5 },
+  { task:'Customer communication plan', owner:'Ria Marketing', start:'Aug 1', due:'Sep 15', duration:'6 wks', status:'not started', dueMonth:6 },
+  { task:'B&M location training materials', owner:'Ria Ops', start:'Aug 1', due:'Sep 30', duration:'8 wks', status:'not started', dueMonth:6 },
+  { task:'Agent training program', owner:'Ria Ops', start:'Aug 15', due:'Sep 30', duration:'6 wks', status:'not started', dueMonth:6 },
+  { task:'Beta tester recruitment (friends & family)', owner:'Ria PM', start:'Aug 15', due:'Sep 15', duration:'4 wks', status:'not started', dueMonth:6 },
+  { task:'GA launch plan', owner:'Ria PM/Marketing', start:'Sep 1', due:'Oct 31', duration:'8 wks', status:'not started', dueMonth:7 },
+];
+addTasks('EP-23', 'Marketing & Launch', 'operations', ep23Tasks);
+
+// =========================================================
+//  RENDER MASTER GANTT
+// =========================================================
+renderGantt('master-gantt', [
+  { title: 'Digital Registration (EP-01)', color: '#5856d6', icon: '01', items: [
+    { task:'EP-01: Digital Registration', due:'May 31', dueMonth:2, status:'not started', startMonth:1, endMonth:2, barLabel:'Apr-May', riaAction:true },
+  ]},
+  { title: 'B&M Registration (EP-02)', color: '#5856d6', icon: '02', items: [
+    { task:'EP-02: B&M Registration (FX Online)', due:'May 31', dueMonth:2, status:'not started', startMonth:1, endMonth:2, barLabel:'Apr-May', riaAction:true },
+  ]},
+  { title: 'Home & Dashboard (EP-03)', color: '#5856d6', icon: '03', items: [
+    { task:'EP-03: Home & Dashboard', due:'May 31', dueMonth:2, status:'not started', startMonth:1, endMonth:2, barLabel:'Apr-May', riaAction:true },
+  ]},
+  { title: 'Add Money (EP-04)', color: '#007aff', icon: '04', items: [
+    { task:'EP-04: Add Money / Deposits', due:'Jun 15', dueMonth:3, status:'not started', startMonth:1, endMonth:3, barLabel:'Apr-Jun', riaAction:true },
+  ]},
+  { title: 'Withdrawal (EP-05)', color: '#007aff', icon: '05', items: [
+    { task:'EP-05: Cash Withdrawal / Cash Out', due:'Jun 15', dueMonth:3, status:'not started', startMonth:1, endMonth:3, barLabel:'Apr-Jun', riaAction:true },
+  ]},
+  { title: 'Card Management (EP-06)', color: '#007aff', icon: '06', items: [
+    { task:'EP-06: Card Management', due:'Jun 15', dueMonth:3, status:'not started', startMonth:1, endMonth:3, barLabel:'Apr-Jun', riaAction:true },
+  ]},
+  { title: 'Account Management (EP-07)', color: '#007aff', icon: '07', items: [
+    { task:'EP-07: Account Management', due:'Jun 15', dueMonth:3, status:'not started', startMonth:1, endMonth:3, barLabel:'Apr-Jun', riaAction:true },
+  ]},
+  { title: 'Activity & History (EP-08)', color: '#5856d6', icon: '08', items: [
+    { task:'EP-08: Activity & Transaction History', due:'May 31', dueMonth:2, status:'not started', startMonth:1, endMonth:2, barLabel:'Apr-May', riaAction:true },
+  ]},
+  { title: 'P2P Transfers (EP-09)', color: '#007aff', icon: '09', items: [
+    { task:'EP-09: P2P Transfers', due:'Jun 30', dueMonth:3, status:'not started', startMonth:2, endMonth:3, barLabel:'May-Jun' },
+  ]},
+  { title: 'Savings Account (EP-10)', color: '#007aff', icon: '10', items: [
+    { task:'EP-10: Savings Account', due:'Jun 30', dueMonth:3, status:'not started', startMonth:2, endMonth:3, barLabel:'May-Jun' },
+  ]},
+  { title: 'mRDC / Ensenta (EP-11)', color: '#0891b2', icon: '11', items: [
+    { task:'EP-11: mRDC (Ensenta Integration)', due:'Jul 15', dueMonth:4, status:'not started', startMonth:2, endMonth:4, barLabel:'May-Jul' },
+  ]},
+  { title: 'Helix Core Banking (EP-12)', color: '#ff9500', icon: '12', items: [
+    { task:'EP-12: Helix Core Banking Integration', due:'Aug 31', dueMonth:5, status:'in progress', startMonth:0, endMonth:5, barLabel:'Mar-Aug', riaAction:true },
+  ]},
+  { title: 'Debit Card Program (EP-13)', color: '#ff3b30', icon: '13', items: [
+    { task:'EP-13: CPI + Visa DPS', due:'Sep 30', dueMonth:6, status:'in progress', startMonth:1, endMonth:6, barLabel:'CRITICAL PATH' },
+  ]},
+  { title: 'KYC & Compliance (EP-14)', color: '#34c759', icon: '14', items: [
+    { task:'EP-14: KYC & Compliance', due:'Aug 31', dueMonth:5, status:'in progress', startMonth:1, endMonth:5, barLabel:'Apr-Aug' },
+  ]},
+  { title: 'Chargebacks (EP-15)', color: '#636366', icon: '15', items: [
+    { task:'EP-15: Chargebacks & Disputes', due:'Sep 15', dueMonth:6, status:'not started', startMonth:3, endMonth:6, barLabel:'Jun-Sep' },
+  ]},
+  { title: 'Customer Care (EP-16)', color: '#636366', icon: '16', items: [
+    { task:'EP-16: Customer Care (Zendesk)', due:'Sep 15', dueMonth:6, status:'not started', startMonth:2, endMonth:6, barLabel:'May-Sep' },
+  ]},
+  { title: 'Notifications (EP-17)', color: '#007aff', icon: '17', items: [
+    { task:'EP-17: Notifications & Alerts', due:'Jun 30', dueMonth:3, status:'not started', startMonth:2, endMonth:3, barLabel:'May-Jun' },
+  ]},
+  { title: 'Analytics (EP-18)', color: '#636366', icon: '18', items: [
+    { task:'EP-18: Analytics & Segment', due:'Aug 31', dueMonth:5, status:'not started', startMonth:3, endMonth:5, barLabel:'Jun-Aug' },
+  ]},
+  { title: 'Mobile Wallets (EP-19)', color: '#16a34a', icon: '19', items: [
+    { task:'EP-19: Mobile Wallets', due:'Sep 30', dueMonth:6, status:'not started', startMonth:3, endMonth:6, barLabel:'Jun-Sep' },
+  ]},
+  { title: 'Fraud & Security (EP-20)', color: '#ff3b30', icon: '20', items: [
+    { task:'EP-20: Fraud & Security', due:'Sep 30', dueMonth:6, status:'not started', startMonth:2, endMonth:6, barLabel:'May-Sep' },
+  ]},
+  { title: 'Finance & Fund Flows (EP-21)', color: '#ff9500', icon: '21', items: [
+    { task:'EP-21: Finance & Fund Flows', due:'Jul 31', dueMonth:4, status:'in progress', startMonth:1, endMonth:4, barLabel:'Apr-Jul' },
+  ]},
+  { title: 'Vendor Contracts (EP-22)', color: '#34c759', icon: '22', items: [
+    { task:'EP-22: Vendor Contracts & Legal', due:'May 31', dueMonth:2, status:'in progress', startMonth:0, endMonth:2, barLabel:'Mar-May' },
+  ]},
+  { title: 'Marketing & Launch (EP-23)', color: '#636366', icon: '23', items: [
+    { task:'EP-23: Marketing & Launch', due:'Oct 31', dueMonth:7, status:'not started', startMonth:4, endMonth:7, barLabel:'Jul-Oct' },
+  ]},
+  { title: 'Program Milestones', color: '#ff3b30', icon: '!', items: [
+    { task:'Core Dev Complete', due:'May 31', dueMonth:2, milestone:true, startMonth:2, status:'not started' },
+    { task:'Alpha Testing Begins', due:'Jun 1', dueMonth:3, milestone:true, startMonth:3, status:'not started' },
+    { task:'Beta Launch (Friends & Family)', due:'Sep 1', dueMonth:6, milestone:true, startMonth:6, status:'not started' },
+    { task:'GA Launch', due:'Oct 31', dueMonth:7, milestone:true, startMonth:7, status:'not started' },
+  ]},
+]);
+
+// =========================================================
+//  RENDER EPIC CARDS
+// =========================================================
+var epicDefs = [
+  { id:'EP-01', name:'Digital Registration', timeline:'Apr 1 - May 31', color:'#5856d6', count:11 },
+  { id:'EP-02', name:'B&M Registration', timeline:'Apr 1 - May 31', color:'#5856d6', count:12 },
+  { id:'EP-03', name:'Home & Dashboard', timeline:'Apr 1 - May 31', color:'#5856d6', count:8 },
+  { id:'EP-04', name:'Add Money / Deposits', timeline:'Apr 15 - Jun 15', color:'#007aff', count:12 },
+  { id:'EP-05', name:'Cash Withdrawal / Cash Out', timeline:'Apr 15 - Jun 15', color:'#007aff', count:10 },
+  { id:'EP-06', name:'Card Management', timeline:'Apr 15 - Jun 15', color:'#007aff', count:10 },
+  { id:'EP-07', name:'Account Management', timeline:'Apr 15 - Jun 15', color:'#007aff', count:11 },
+  { id:'EP-08', name:'Activity & Transaction History', timeline:'Apr 15 - May 31', color:'#5856d6', count:8 },
+  { id:'EP-09', name:'P2P Transfers', timeline:'May 15 - Jun 30', color:'#007aff', count:8 },
+  { id:'EP-10', name:'Savings Account', timeline:'May 15 - Jun 30', color:'#007aff', count:8 },
+  { id:'EP-11', name:'mRDC (Ensenta)', timeline:'May 15 - Jul 15', color:'#0891b2', count:11 },
+  { id:'EP-12', name:'Helix Core Banking', timeline:'Mar 25 - Aug 31', color:'#ff9500', count:12 },
+  { id:'EP-13', name:'Debit Card Program', timeline:'Apr 1 - Sep 30', color:'#ff3b30', count:10 },
+  { id:'EP-14', name:'KYC & Compliance', timeline:'Apr 1 - Aug 31', color:'#34c759', count:10 },
+  { id:'EP-15', name:'Chargebacks & Disputes', timeline:'Jun 1 - Sep 15', color:'#636366', count:8 },
+  { id:'EP-16', name:'Customer Care (Zendesk)', timeline:'May 15 - Sep 15', color:'#636366', count:9 },
+  { id:'EP-17', name:'Notifications & Alerts', timeline:'May 15 - Jun 30', color:'#007aff', count:6 },
+  { id:'EP-18', name:'Analytics & Segment', timeline:'Jun 1 - Aug 31', color:'#636366', count:7 },
+  { id:'EP-19', name:'Mobile Wallets', timeline:'Jun 1 - Sep 30', color:'#16a34a', count:8 },
+  { id:'EP-20', name:'Fraud & Security', timeline:'May 1 - Sep 30', color:'#ff3b30', count:9 },
+  { id:'EP-21', name:'Finance & Fund Flows', timeline:'Apr 1 - Jul 31', color:'#ff9500', count:8 },
+  { id:'EP-22', name:'Vendor Contracts & Legal', timeline:'Mar 25 - May 31', color:'#34c759', count:8 },
+  { id:'EP-23', name:'Marketing & Launch', timeline:'Jul 1 - Oct 31', color:'#636366', count:7 },
+];
+var epicHtml = '';
+epicDefs.forEach(function(e) {
+  epicHtml += '<div class="epic-card" style="border-left-color:'+e.color+'"><h4>'+e.name+'</h4><div class="epic-id">'+e.id+'</div><div class="epic-timeline">'+e.timeline+'</div><div style="font-size:12px;color:#86868b">'+e.count+' sub-tasks</div></div>';
+});
+document.getElementById('epic-cards').innerHTML = epicHtml;
+
+// =========================================================
+//  RENDER WORKSTREAM GANTTS
+// =========================================================
+
+// Digital App Dev Gantt
+renderGantt('digital-gantt', [
+  { title: 'EP-01: Digital Registration', color: '#5856d6', icon: '01', items: [
+    { task:'Profile data collection screens', due:'Apr 30', dueMonth:1, status:'not started', startMonth:1, endMonth:1, owner:'Ria Dev', riaAction:true },
+    { task:'Veriff eKYC integration', due:'Apr 30', dueMonth:1, status:'not started', startMonth:1, endMonth:1, owner:'Ria Dev', riaAction:true },
+    { task:'SSN/ITIN + TAB T&C + HawkAI', due:'May 15', dueMonth:2, status:'not started', startMonth:1, endMonth:2, owner:'Ria Dev', riaAction:true },
+    { task:'Initial deposits (debit, Apple/Google)', due:'May 31', dueMonth:2, status:'not started', startMonth:2, endMonth:2, owner:'Ria Dev', riaAction:true },
+    { task:'Virtual card issuance + status mgmt', due:'May 31', dueMonth:2, status:'not started', startMonth:2, endMonth:2, owner:'Ria Dev', riaAction:true },
+  ]},
+  { title: 'EP-03: Home & Dashboard', color: '#5856d6', icon: '03', items: [
+    { task:'Balance display + virtual card', due:'Apr 30', dueMonth:1, status:'not started', startMonth:1, endMonth:1, owner:'Ria Dev', riaAction:true },
+    { task:'Quick actions + recent txns', due:'May 15', dueMonth:2, status:'not started', startMonth:1, endMonth:2, owner:'Ria Dev', riaAction:true },
+    { task:'Notifications + forms', due:'May 31', dueMonth:2, status:'not started', startMonth:2, endMonth:2, owner:'Ria Dev', riaAction:true },
+  ]},
+  { title: 'EP-08: Activity & History', color: '#5856d6', icon: '08', items: [
+    { task:'Transaction list + detail view', due:'May 15', dueMonth:2, status:'not started', startMonth:1, endMonth:2, owner:'Ria Dev', riaAction:true },
+    { task:'Search, filter, statements, export', due:'May 31', dueMonth:2, status:'not started', startMonth:2, endMonth:2, owner:'Ria Dev', riaAction:true },
+  ]},
+  { title: 'EP-04: Add Money', color: '#007aff', icon: '04', items: [
+    { task:'Debit card + ACH deposits', due:'May 31', dueMonth:2, status:'not started', startMonth:1, endMonth:2, owner:'Ria Dev', riaAction:true },
+    { task:'Apple/Google Pay + mRDC + P2P', due:'Jun 15', dueMonth:3, status:'not started', startMonth:2, endMonth:3, owner:'Ria Dev', riaAction:true },
+  ]},
+  { title: 'EP-05: Cash Withdrawal', color: '#007aff', icon: '05', items: [
+    { task:'In-app withdrawal + barcode', due:'May 31', dueMonth:2, status:'not started', startMonth:1, endMonth:2, owner:'Ria Dev', riaAction:true },
+    { task:'ACH + P2P send + ATM', due:'Jun 15', dueMonth:3, status:'not started', startMonth:2, endMonth:3, owner:'Ria Dev', riaAction:true },
+  ]},
+  { title: 'EP-06: Card Management', color: '#007aff', icon: '06', items: [
+    { task:'Virtual card + activation + PIN', due:'May 15', dueMonth:2, status:'not started', startMonth:1, endMonth:2, owner:'Ria Dev', riaAction:true },
+    { task:'Lock/hotlist + controls + upgrade', due:'Jun 15', dueMonth:3, status:'not started', startMonth:2, endMonth:3, owner:'Ria Dev', riaAction:true },
+  ]},
+  { title: 'EP-07: Account Management', color: '#007aff', icon: '07', items: [
+    { task:'Profile + status + limits', due:'May 15', dueMonth:2, status:'not started', startMonth:1, endMonth:2, owner:'Ria Dev', riaAction:true },
+    { task:'Closure + dormancy + fees', due:'Jun 15', dueMonth:3, status:'not started', startMonth:2, endMonth:3, owner:'Ria Dev', riaAction:true },
+  ]},
+  { title: 'EP-09: P2P Transfers', color: '#0891b2', icon: '09', items: [
+    { task:'Recipient + amount + auth', due:'Jun 15', dueMonth:3, status:'not started', startMonth:2, endMonth:3, owner:'Ria Dev' },
+    { task:'Confirmation + notifications + limits', due:'Jun 30', dueMonth:3, status:'not started', startMonth:3, endMonth:3, owner:'Ria Dev' },
+  ]},
+  { title: 'EP-10: Savings Account', color: '#0891b2', icon: '10', items: [
+    { task:'Request flow + SSN requirement', due:'Jun 15', dueMonth:3, status:'not started', startMonth:2, endMonth:3, owner:'Ria Dev' },
+    { task:'Transfers + interest + statements', due:'Jun 30', dueMonth:3, status:'not started', startMonth:3, endMonth:3, owner:'Ria Dev' },
+  ]},
+  { title: 'EP-11: mRDC (Ensenta)', color: '#0891b2', icon: '11', items: [
+    { task:'Deposit Check entry + SDK', due:'Jun 30', dueMonth:3, status:'not started', startMonth:2, endMonth:3, owner:'Ria Dev' },
+    { task:'Camera + validation + submission', due:'Jul 15', dueMonth:4, status:'not started', startMonth:3, endMonth:4, owner:'Ria Dev' },
+  ]},
+  { title: 'EP-17: Notifications', color: '#007aff', icon: '17', items: [
+    { task:'Push + email + SMS alerts', due:'Jun 30', dueMonth:3, status:'not started', startMonth:2, endMonth:3, owner:'Ria Dev' },
+  ]},
+]);
+
+// Digital App Tasks
+var digitalTasks = [].concat(ep01Tasks, ep03Tasks, ep04Tasks, ep05Tasks, ep06Tasks, ep07Tasks, ep08Tasks, ep09Tasks, ep10Tasks, ep11Tasks, ep17Tasks);
+renderTaskTable('digital-table', digitalTasks);
+
+// B&M Gantt
+renderGantt('bm-gantt', [
+  { title: 'EP-02: B&M Registration', color: '#5856d6', icon: '02', items: [
+    { task:'Customer lookup + upgrade flow', due:'Apr 30', dueMonth:1, status:'not started', startMonth:1, endMonth:1, owner:'Ria Dev (FX Online)', riaAction:true },
+    { task:'KYC collection + ID verification', due:'May 15', dueMonth:2, status:'not started', startMonth:1, endMonth:2, owner:'Ria Dev (FX Online)', riaAction:true },
+    { task:'Terms + disclosures + screening', due:'May 31', dueMonth:2, status:'not started', startMonth:2, endMonth:2, owner:'Ria Dev (FX Online)', riaAction:true },
+    { task:'Cash deposit + card linking', due:'May 31', dueMonth:2, status:'not started', startMonth:2, endMonth:2, owner:'Ria Dev (FX Online)', riaAction:true },
+    { task:'Card activation + forms + receipts', due:'May 31', dueMonth:2, status:'not started', startMonth:2, endMonth:2, owner:'Ria Dev (FX Online)', riaAction:true },
+  ]},
+  { title: 'B&M Deposit/Withdrawal (from EP-04/05)', color: '#007aff', icon: 'BM', items: [
+    { task:'B&M cash deposit (FX Online teller)', due:'May 31', dueMonth:2, status:'not started', startMonth:1, endMonth:2, owner:'Ria Dev (FX Online)', riaAction:true },
+    { task:'B&M teller withdrawal processing', due:'Jun 15', dueMonth:3, status:'not started', startMonth:2, endMonth:3, owner:'Ria Dev (FX Online)', riaAction:true },
+  ]},
+]);
+renderTaskTable('bm-table', ep02Tasks);
+
+// Backend Gantt
+renderGantt('backend-gantt', [
+  { title: 'EP-12: Helix Core Banking', color: '#ff9500', icon: '12', items: [
+    { task:'Sandbox access + Helix University', due:'Apr 15', dueMonth:1, status:'done', startMonth:0, endMonth:0, owner:'Helix/Ria' },
+    { task:'API docs + technical calls', due:'May 15', dueMonth:2, status:'in progress', startMonth:1, endMonth:2, owner:'Ria Dev', riaAction:true },
+    { task:'Sandbox program build (all APIs)', due:'May 31', dueMonth:2, status:'in progress', startMonth:0, endMonth:2, barLabel:'8-12 wks', owner:'Ria Dev', riaAction:true },
+    { task:'Solutions Blueprint finalized', due:'May 31', dueMonth:2, status:'not started', startMonth:1, endMonth:2, owner:'Helix/Ria/TAB' },
+    { task:'Sandbox testing (38 scenarios)', due:'May 31', dueMonth:2, status:'not started', startMonth:2, endMonth:2, owner:'Ria Dev', riaAction:true },
+    { task:'Production credential setup', due:'Jul 10', dueMonth:4, status:'not started', startMonth:3, endMonth:4, barLabel:'3 wks', owner:'Helix' },
+    { task:'Alpha testing support', due:'Aug 31', dueMonth:5, status:'not started', startMonth:3, endMonth:5, barLabel:'Jun-Aug', owner:'Ria Dev/Helix', riaAction:true },
+  ]},
+  { title: 'EP-13: Debit Card (CPI + Visa DPS)', color: '#ff3b30', icon: '13', items: [
+    { task:'Card design proofs', due:'Apr 30', dueMonth:1, status:'in progress', startMonth:1, endMonth:1, owner:'Ria/CPI' },
+    { task:'CPI custom card order', due:'Aug 15', dueMonth:5, status:'not started', startMonth:1, endMonth:5, barLabel:'16 WEEKS', owner:'CPI' },
+    { task:'Visa DPS BIN + certification', due:'Jun 30', dueMonth:3, status:'not started', startMonth:2, endMonth:3, owner:'VDPS' },
+    { task:'Visa DPS program install', due:'Jul 15', dueMonth:4, status:'not started', startMonth:3, endMonth:4, owner:'VDPS' },
+    { task:'Inventory system + batch ordering', due:'Aug 31', dueMonth:5, status:'not started', startMonth:3, endMonth:5, owner:'Helix/Ria' },
+    { task:'Card testing (21 scenarios)', due:'Sep 30', dueMonth:6, status:'not started', startMonth:5, endMonth:6, barLabel:'Aug-Sep', owner:'Ria Dev', riaAction:true },
+  ]},
+  { title: 'EP-19: Mobile Wallets', color: '#16a34a', icon: '19', items: [
+    { task:'Bank agreements (Apple/Google/Samsung)', due:'Jul 15', dueMonth:4, status:'not started', startMonth:3, endMonth:4, owner:'TAB Bank' },
+    { task:'Manual provisioning setup', due:'Aug 15', dueMonth:5, status:'not started', startMonth:4, endMonth:5, owner:'Q2/Ria' },
+    { task:'Wallet testing (Apple/Google/Samsung)', due:'Sep 15', dueMonth:6, status:'not started', startMonth:5, endMonth:6, barLabel:'Aug-Sep', owner:'Ria Dev', riaAction:true },
+    { task:'In-app provisioning SDK', due:'Sep 30', dueMonth:6, status:'not started', startMonth:6, endMonth:6, owner:'Ria Dev', riaAction:true },
+    { task:'Production enablement', due:'Oct 15', dueMonth:7, status:'not started', startMonth:7, endMonth:7, owner:'Ria/TAB' },
+  ]},
+]);
+var backendTasks = [].concat(ep12Tasks, ep13Tasks, ep19Tasks);
+renderTaskTable('backend-table', backendTasks);
+
+// Compliance Gantt
+renderGantt('compliance-gantt', [
+  { title: 'EP-14: KYC & Compliance', color: '#34c759', icon: '14', items: [
+    { task:'Veriff + HawkAI integration specs', due:'Apr 30', dueMonth:1, status:'not started', startMonth:1, endMonth:1, owner:'Ria/Vendors' },
+    { task:'TAB Bank agreements (consumer, debit, e-comm)', due:'May 31', dueMonth:2, status:'in progress', startMonth:1, endMonth:2, owner:'TAB Bank/Legal' },
+    { task:'Verafin AML monitoring', due:'Jul 31', dueMonth:4, status:'not started', startMonth:2, endMonth:4, barLabel:'May-Jul', owner:'TAB Bank' },
+    { task:'Weekly compliance reviews', due:'Aug 31', dueMonth:5, status:'in progress', startMonth:1, endMonth:5, barLabel:'Ongoing', owner:'Ria/TAB' },
+  ]},
+  { title: 'EP-20: Fraud & Security', color: '#ff3b30', icon: '20', items: [
+    { task:'Fraud rules + HawkAI integration', due:'Jun 30', dueMonth:3, status:'not started', startMonth:2, endMonth:3, owner:'Ria/HawkAI' },
+    { task:'Verafin AML + review workflows', due:'Jul 31', dueMonth:4, status:'not started', startMonth:2, endMonth:4, owner:'TAB Bank' },
+    { task:'Falcon fraud text alerts', due:'Sep 30', dueMonth:6, status:'not started', startMonth:5, endMonth:6, owner:'Helix/VDPS' },
+    { task:'PCI + encryption + RBAC', due:'Sep 30', dueMonth:6, status:'not started', startMonth:3, endMonth:6, barLabel:'Jun-Sep', owner:'Ria Dev' },
+  ]},
+  { title: 'EP-22: Vendor Contracts & Legal', color: '#34c759', icon: '22', items: [
+    { task:'CPI contract finalization', due:'Apr 30', dueMonth:1, status:'in progress', startMonth:0, endMonth:1, owner:'Ria Legal' },
+    { task:'TAB Bank consumer agreement', due:'May 31', dueMonth:2, status:'in progress', startMonth:0, endMonth:2, owner:'TAB Bank/Legal' },
+    { task:'Vendor contracts (Ensenta, Veriff, HawkAI, Adyen)', due:'May 15', dueMonth:2, status:'not started', startMonth:1, endMonth:2, owner:'Ria Legal' },
+    { task:'Helix contract', due:'Mar 31', dueMonth:0, status:'done', startMonth:0, endMonth:0, owner:'Ria/Helix' },
+  ]},
+]);
+var complianceTasks = [].concat(ep14Tasks, ep20Tasks, ep22Tasks);
+renderTaskTable('compliance-table', complianceTasks);
+
+// Operations Gantt
+renderGantt('ops-gantt', [
+  { title: 'EP-15: Chargebacks & Disputes', color: '#636366', icon: '15', items: [
+    { task:'Fraud reporting + initial chargeback', due:'Jul 31', dueMonth:4, status:'not started', startMonth:3, endMonth:4, owner:'Ria Dev' },
+    { task:'Pre-arb + below-min + On-Us', due:'Aug 31', dueMonth:5, status:'not started', startMonth:4, endMonth:5, owner:'Ria Dev' },
+    { task:'Visa settlement + Centrix DTS', due:'Sep 15', dueMonth:6, status:'not started', startMonth:5, endMonth:6, owner:'Ria Dev/Centrix' },
+  ]},
+  { title: 'EP-16: Customer Care (Zendesk)', color: '#636366', icon: '16', items: [
+    { task:'Zendesk setup + issue forms', due:'Jun 30', dueMonth:3, status:'not started', startMonth:2, endMonth:3, owner:'Ria Ops' },
+    { task:'IVR solution development', due:'Aug 31', dueMonth:5, status:'not started', startMonth:3, endMonth:5, barLabel:'Jun-Aug', owner:'Ria Dev' },
+    { task:'Agent training + SLAs', due:'Sep 15', dueMonth:6, status:'not started', startMonth:5, endMonth:6, owner:'Ria Ops' },
+  ]},
+  { title: 'EP-18: Analytics & Segment', color: '#636366', icon: '18', items: [
+    { task:'Segment setup + event schemas', due:'Jul 15', dueMonth:4, status:'not started', startMonth:3, endMonth:4, owner:'Ria Dev' },
+    { task:'Dashboards + KPIs + reporting', due:'Aug 31', dueMonth:5, status:'not started', startMonth:4, endMonth:5, owner:'Ria PM' },
+  ]},
+  { title: 'EP-21: Finance & Fund Flows', color: '#ff9500', icon: '21', items: [
+    { task:'Fund flow review (in progress)', due:'May 15', dueMonth:2, status:'in progress', startMonth:1, endMonth:2, owner:'Ria Finance' },
+    { task:'Reserve account + ledger + reconciliation', due:'Jun 30', dueMonth:3, status:'not started', startMonth:1, endMonth:3, owner:'TAB Bank/Helix' },
+    { task:'Fee structure + pricing + revenue', due:'Jul 31', dueMonth:4, status:'not started', startMonth:1, endMonth:4, owner:'Ria Finance' },
+  ]},
+  { title: 'EP-23: Marketing & Launch', color: '#636366', icon: '23', items: [
+    { task:'Marketing strategy + launch timeline', due:'Aug 15', dueMonth:5, status:'not started', startMonth:4, endMonth:5, owner:'Ria Marketing' },
+    { task:'Training materials + agent program', due:'Sep 30', dueMonth:6, status:'not started', startMonth:5, endMonth:6, owner:'Ria Ops' },
+    { task:'Beta recruitment + GA plan', due:'Oct 31', dueMonth:7, status:'not started', startMonth:6, endMonth:7, owner:'Ria PM' },
+  ]},
+]);
+var opsTasks = [].concat(ep15Tasks, ep16Tasks, ep18Tasks, ep21Tasks, ep23Tasks);
+renderTaskTable('ops-table', opsTasks);
+
+// =========================================================
+//  JIRA EXPORT TABLE
+// =========================================================
+function renderJiraTable() {
+  var el = document.getElementById('jira-table');
+  var html = '<table class="task-table"><thead><tr><th>#</th><th>Epic</th><th>Task</th><th>Type</th><th>Priority</th><th>Start</th><th>Due</th><th>Status</th><th>Labels</th></tr></thead><tbody>';
+  var n = 0;
+  ALL_TASKS.forEach(function(t) {
+    if (t.phase) {
+      html += '<tr class="phase-divider"><td colspan="9">'+t.phase+'</td></tr>';
+      return;
+    }
+    n++;
+    var statusChip = '';
+    var s = (t.status||'').toLowerCase();
+    if (s==='done') statusChip='<span class="chip chip-done">Done</span>';
+    else if (s==='in progress') statusChip='<span class="chip chip-progress">Active</span>';
+    else if (s==='blocked') statusChip='<span class="chip chip-blocked">Blocked</span>';
+    else statusChip='<span class="chip chip-not-started">Pending</span>';
+
+    var priority = 'Medium';
+    if (t.notes && t.notes.toLowerCase().indexOf('critical')>=0) priority = 'Highest';
+    else if (t.dueMonth <= 2) priority = 'High';
+
+    html += '<tr><td style="color:#86868b;font-weight:700;width:30px">'+n+'</td>';
+    html += '<td style="font-size:12px;white-space:nowrap;color:#007aff;font-weight:600">'+(t.epicId||'')+'</td>';
+    html += '<td class="task-name">'+t.task+'</td>';
+    html += '<td style="font-size:12px">Story</td>';
+    html += '<td style="font-size:12px;font-weight:600;color:'+(priority==='Highest'?'#ff3b30':priority==='High'?'#ff9500':'#86868b')+'">'+priority+'</td>';
+    html += '<td style="font-size:12px;white-space:nowrap">'+(t.start||'')+'</td>';
+    html += '<td style="font-size:12px;white-space:nowrap">'+(t.due||'')+'</td>';
+    html += '<td>'+statusChip+'</td>';
+    html += '<td style="font-size:11px;color:#86868b">'+(t.workstream||'')+', '+(t.epicId||'')+'</td></tr>';
+  });
+  html += '</tbody></table>';
+  el.innerHTML = html;
+  document.getElementById('task-count').textContent = n + ' total tasks across 23 epics';
+}
+renderJiraTable();
+
+// =========================================================
+//  CSV EXPORT
+// =========================================================
+function exportCSV(filter) {
+  var rows = [['Summary','Issue Type','Priority','Epic Link','Start Date','Due Date','Status','Labels','Description']];
+  ALL_TASKS.forEach(function(t) {
+    if (t.phase) return;
+    if (filter && t.workstream !== filter) return;
+
+    var priority = 'Medium';
+    if (t.notes && t.notes.toLowerCase().indexOf('critical')>=0) priority = 'Highest';
+    else if (t.dueMonth <= 2) priority = 'High';
+
+    rows.push([
+      '"'+t.task.replace(/"/g,'""')+'"',
+      'Story',
+      priority,
+      '"'+(t.epicName||'')+'"',
+      t.start||'',
+      t.due||'',
+      t.status||'Not Started',
+      '"'+(t.workstream||'')+','+(t.epicId||'')+'"',
+      '"'+(t.notes||'').replace(/"/g,'""')+'"'
+    ]);
+  });
+
+  var csv = rows.map(function(r){return r.join(',')}).join('\n');
+  var blob = new Blob([csv], {type:'text/csv'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url;
+  a.download = 'us-wallet-project-plan'+(filter?'-'+filter:'')+'.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+</script>
+</body>
+</html>
