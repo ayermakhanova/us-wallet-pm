@@ -144,7 +144,7 @@
   </div>
   <div class="phase-banner">
     <div class="phase-dot"></div>
-    <span>Current Phase: <strong>Month 1 of 8 - Sandbox &amp; Requirements Finalization</strong></span>
+    <span>Current Phase: <strong>Month 2 of 8 - Sandbox Build &amp; Requirements Finalization</strong></span>
   </div>
 </div>
 
@@ -155,7 +155,7 @@
   <div class="cards">
     <div class="card indigo">
       <h3>Program Phase</h3>
-      <div class="big-num">Month 1 <small>of 8</small></div>
+      <div class="big-num">Month 2 <small>of 8</small></div>
       <ul>
         <li><span class="chip chip-done">DONE</span> Helix kick-off meeting</li>
         <li><span class="chip chip-done">DONE</span> Sandbox credentials received</li>
@@ -164,9 +164,11 @@
         <li><span class="chip chip-done">DONE</span> Helix portal trainings for Ria team</li>
         <li><span class="chip chip-done">DONE</span> Card plastic samples received - matt finish with orange core selected</li>
         <li><span class="chip chip-done">DONE</span> Digital &amp; B&amp;M receipt templates reviewed with bank</li>
-        <li><span class="chip chip-progress">IN REVIEW</span> CPI contract - under review with CPI legal</li>
+        <li><span class="chip chip-done">DONE</span> Ensenta mRDC kick-off meeting held (April 13)</li>
+        <li><span class="chip chip-done">DONE</span> Pricing &amp; fee structure discussion held (April 15)</li>
+        <li><span class="chip chip-progress">IN REVIEW</span> CPI contract - under review with CPI legal (16-week custom card order timeline pending)</li>
         <li><span class="chip chip-progress">IN PROGRESS</span> Requirements finalization (target: end of April)</li>
-        <li><span class="chip chip-pending">SCHEDULED</span> Pricing &amp; fee structure discussion - April 14</li>
+        <li><span class="chip chip-pending">SCHEDULED</span> Pricing &amp; fee structure follow-up - April 21</li>
       </ul>
     </div>
 
@@ -175,9 +177,9 @@
       <div class="big-num">4 <small>open items</small></div>
       <ul>
         <li><span class="chip chip-progress">IN REVIEW</span> CPI contract - under review with CPI legal team</li>
-        <li><span class="chip chip-pending">PENDING</span> Consumer agreement documents - awaiting legal review from Hope</li>
+        <li><span class="chip chip-progress">IN REVIEW</span> Consumer agreement documents - legal feedback provided, final review pending before sending to TAB Bank</li>
         <li><span class="chip chip-pending">PENDING</span> TAB savings account agreement</li>
-        <li><span class="chip chip-done">REVIEWED</span> Receipt templates reviewed with bank - awaiting Ria legal &amp; compliance approval</li>
+        <li><span class="chip chip-progress">IN REVIEW</span> Receipt templates - still under review</li>
       </ul>
     </div>
 
@@ -185,7 +187,7 @@
       <h3>Critical Blocker</h3>
       <div class="big-num" style="color:#ff3b30">CPI Contract</div>
       <div class="urgency-box">
-        <p><strong>Blocks:</strong> BIN setup, Card API integration, end-to-end card testing, and all downstream card issuance flows. Must be resolved to proceed with card program development.</p>
+        <p><strong>Blocks:</strong> BIN setup, Card API integration, end-to-end card testing, and all downstream card issuance flows. CPI custom card order alone takes <strong>16 weeks</strong> - every day of delay pushes the card delivery timeline. Must be resolved to proceed with card program development.</p>
       </div>
     </div>
 
@@ -211,7 +213,7 @@
         <div class="timeline-seg" style="flex:1;background:rgba(52,199,89,0.3);color:rgba(255,255,255,0.7)">GA</div>
       </div>
       <div class="timeline-months">
-        <span class="active">Mar 26</span><span>Apr 26</span><span>May 26</span><span>Jun 26</span><span>Jul 26</span><span>Aug 26</span><span>Sep 26</span><span>Oct 26</span>
+        <span>Mar 26</span><span class="active">Apr 26</span><span>May 26</span><span>Jun 26</span><span>Jul 26</span><span>Aug 26</span><span>Sep 26</span><span>Oct 26</span>
       </div>
       <div style="margin-top:20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px">
         <div style="font-size:12px;color:#3a3a3c;padding:10px 14px;background:#f2f2f7;border-radius:10px"><strong style="color:#5856d6">Months 1-3</strong><br>Sandbox build, certifications, bank requirements</div>
@@ -253,6 +255,8 @@
         <ul>
           <li><strong>Provider Call Integrations:</strong> Wrapped up provider calls for account creation and card registration</li>
           <li><strong>Helix Sandbox:</strong> Team has full access - actively working on integrations</li>
+          <li><strong>Card Activation:</strong> Testing card activation flow using card/verify endpoint</li>
+          <li><strong>Ensenta mRDC:</strong> Reviewing Ensenta documentation following kick-off meeting (April 13)</li>
           <li><strong>Core System Integration:</strong> CoreAPI &#8596; OneApp &#8596; FX Online &#8596; Back Office alignment</li>
           <li><strong>Card Program (CPI + Visa DPS):</strong> BIN config &amp; card issuance flow planning - <span class="chip chip-blocked">BLOCKED by CPI</span></li>
         </ul>
@@ -263,6 +267,7 @@
         <ul>
           <li>Complete provider calls for transactions and card management</li>
           <li>Review all remaining Helix endpoints</li>
+          <li>Complete Ensenta mRDC documentation review and begin integration planning</li>
           <li>Prepare CoreAPI orchestration layer for multi-system communication</li>
           <li>Unblock card program setup (CPI) for downstream integrations</li>
         </ul>
@@ -322,18 +327,24 @@
         </tr>
         <tr>
           <td>4</td>
-          <td><strong>Ensenta meeting</strong> - scheduled for next week</td>
+          <td><strong>Ensenta mRDC</strong> - kick-off meeting held April 13, team reviewing documentation</td>
           <td>Fahad Rehman</td>
-          <td><span class="chip chip-pending">SCHEDULED</span></td>
+          <td><span class="chip chip-progress">IN PROGRESS</span></td>
         </tr>
         <tr>
           <td>5</td>
+          <td><strong>Pricing &amp; fee structure follow-up</strong> - initial discussion held April 15, follow-up scheduled for April 21</td>
+          <td>Alonzo Venegas / Fahad Rehman</td>
+          <td><span class="chip chip-pending">SCHEDULED</span></td>
+        </tr>
+        <tr>
+          <td>6</td>
           <td><strong>Tech walkthrough with development teams</strong> - scheduled for next week</td>
           <td>Hardik Joshi / Chaitanya Telukuntla</td>
           <td><span class="chip chip-pending">SCHEDULED</span></td>
         </tr>
         <tr>
-          <td>6</td>
+          <td>7</td>
           <td><strong>Onboarding flows review</strong> - awaiting feedback from compliance and partners</td>
           <td>Matias Stephens / Arevik Sargsyan</td>
           <td><span class="chip chip-progress">MEDIUM</span></td>
@@ -348,7 +359,7 @@
 
 <script>
 // ═══════ DATE ═══════
-document.getElementById('meeting-date').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+document.getElementById('meeting-date').textContent = 'Thursday, April 16, 2026';
 
 // ═══════ WORKSTREAM DATA ═══════
 const workstreams = [
@@ -357,8 +368,9 @@ const workstreams = [
     owner: "Fahad Rehman",
     status: "on-track",
     progress: [
-      "CPI contract currently under review with CPI legal team",
-      "Non-personalized card flow shared with Helix this week - currently under review (defines card inventory process scope)",
+      "CPI contract currently under review with CPI legal team - 16-week custom card order timeline pending approval",
+      "Ensenta mRDC kick-off meeting held on April 13 - team is reviewing Ensenta documentation",
+      "Non-personalized card flow shared with Helix - currently under review",
       "Fund flow review still in progress",
       "Helix portal trainings completed",
       "Waiting for Spanish translation quote for consumer agreement documents"
@@ -367,8 +379,8 @@ const workstreams = [
       "CPI contract finalization"
     ],
     next: [
-      "Close CPI contract",
-      "Meeting with Ensenta scheduled for next week",
+      "Close CPI contract to initiate 16-week card order",
+      "Complete Ensenta documentation review and begin integration planning",
       "Finalize consumer agreement documents",
       "TAB Bank to provide savings account agreement"
     ]
@@ -395,7 +407,9 @@ const workstreams = [
     progress: [
       "Provider call integrations in progress",
       "Wrapped up provider calls for account creation and card registration",
-      "Team has full access to Helix Sandbox"
+      "Team has full access to Helix Sandbox",
+      "Reviewing Ensenta mRDC documentation following kick-off meeting",
+      "Testing card activation using card/verify endpoint"
     ],
     blockers: [
       "CPI contract - blocks BIN setup, Card API, card testing"
@@ -403,6 +417,7 @@ const workstreams = [
     next: [
       "Complete provider calls for transactions and card management",
       "Review all remaining Helix endpoints",
+      "Continue Ensenta integration documentation review",
       "Walkthrough with tech teams scheduled for next week"
     ]
   },
@@ -414,11 +429,11 @@ const workstreams = [
       "Card plastic samples received - matt finish with orange core selected",
       "Quote requested for 3D logo design",
       "Debit card project submitted to Visa DPS on 3/26",
-      "Debit card is now setup in Helix sandbox"
+      "Debit card is now setup in Helix sandbox",
+      "Pricing discussions in progress",
+      "High-level conversation with the Personalization/Fulfillment team in progress"
     ],
-    blockers: [
-      "Waiting for Visa branding requirements from CPI"
-    ],
+    blockers: [],
     next: [
       "3D logo design meeting scheduled",
       "Visa DPS to assign Implementation Manager",
