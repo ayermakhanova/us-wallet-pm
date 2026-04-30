@@ -201,7 +201,7 @@
         <li><span class="status-dot dot-green"></span> 9 workstreams on track, 4 not yet started</li>
         <li><span class="status-dot dot-green"></span> Customer Care now active - Sierra IVR integration kicked off</li>
         <li><span class="status-dot dot-amber"></span> CPI MSA closure remains primary dependency for card program</li>
-        <li><span class="status-dot dot-amber"></span> Visa DPS sandbox issue (Dual Issuance Single PAN) - under Q2 support</li>
+        <li><span class="status-dot dot-amber"></span> Helix sandbox: Dual Issuance Single PAN setting disabled - under Q2 support</li>
       </ul>
     </div>
   </div>
@@ -274,7 +274,7 @@
         <h4><span class="icon" style="background:#f59e0b">2</span> Current Tech Priorities</h4>
         <ul>
           <li>Complete Helix Solutions Blueprint for production environment</li>
-          <li>Resolve Visa DPS sandbox issue (Dual Issuance Single PAN setting) with Q2 support</li>
+          <li>Resolve Helix sandbox issue (Dual Issuance Single PAN setting disabled) with Q2 support</li>
           <li>Complete provider calls for transactions and card management</li>
           <li>Finalize Sierra IVR API contracts with digital and integration teams</li>
           <li>Begin Ensenta mRDC integration build using received feature list</li>
@@ -286,7 +286,7 @@
         <h4><span class="icon" style="background:#ef4444">!</span> Technical Blockers</h4>
         <ul>
           <li><strong>CPI MSA (Critical):</strong> With Ria legal &amp; Compliance - blocks BIN setup, Card API, end-to-end testing</li>
-          <li><strong>Visa DPS Sandbox:</strong> Dual Issuance Single PAN setting disabled - Q2 support investigating</li>
+          <li><strong>Helix Sandbox:</strong> Dual Issuance Single PAN setting disabled (Visa DPS connection runs through Helix) - Q2 support investigating</li>
           <li>Card issuance flow implementation pending CPI MSA closure</li>
         </ul>
       </div>
@@ -331,7 +331,7 @@
         </tr>
         <tr>
           <td>3</td>
-          <td><strong>Visa DPS sandbox issue</strong> - Dual Issuance Single PAN setting disabled; Q2 support investigating</td>
+          <td><strong>Helix sandbox setting</strong> - Dual Issuance Single PAN disabled (Visa DPS connection runs through Helix sandbox); Q2 support investigating</td>
           <td>Chaitanya Telukuntla / Q2 Support</td>
           <td><span class="chip chip-blocked">HIGH</span></td>
         </tr>
@@ -448,10 +448,10 @@ const workstreams = [
     ],
     blockers: [
       "CPI MSA - blocks BIN setup, Card API, card testing",
-      "Visa DPS sandbox: Dual Issuance Single PAN setting disabled - Q2 support investigating"
+      "Helix sandbox: Dual Issuance Single PAN setting disabled (Visa DPS runs through Helix) - Q2 support investigating"
     ],
     next: [
-      "Resolve Visa DPS sandbox issue with Q2 support",
+      "Resolve Helix sandbox setting with Q2 support",
       "Complete provider calls for remaining endpoints",
       "Sierra IVR API documentation session with integration team",
       "Card sequencing & logistics implementation (qualifier codes, batch labelling, proxy ID)",
