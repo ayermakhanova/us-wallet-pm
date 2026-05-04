@@ -6,7 +6,8 @@ import { StatusBadge } from "../shared/StatusBadge";
 import { PriorityIcon } from "../shared/PriorityIcon";
 import { ProgressBar } from "../shared/ProgressBar";
 import { FilterBar } from "../shared/FilterBar";
-import { JiraLink } from "../shared/JiraLink";
+import { JiraLink, getJiraUrl } from "../shared/JiraLink";
+import { ExternalLink } from "lucide-react";
 
 function EditableEpicName({ epicId, name }: { epicId: string; name: string }) {
   const { updateEpicName } = useStore();
@@ -47,16 +48,30 @@ function EditableTaskName({ taskId, name, onOpen }: { taskId: string; name: stri
   const { updateTaskName } = useStore();
   const [editing, setEditing] = useState(false);
   const [draft, setDraft] = useState(name);
+  const jiraUrl = getJiraUrl(taskId);
 
   if (!editing) {
     return (
       <div className="flex items-center gap-1 group/task">
-        <button
-          onClick={onOpen}
-          className="text-left text-sm hover:text-blue-600 transition-colors font-medium truncate"
-        >
-          {name}
-        </button>
+        {jiraUrl ? (
+          <a
+            href={jiraUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-left text-sm hover:text-blue-600 hover:underline transition-colors font-medium truncate inline-flex items-center gap-1"
+            title={`Open ${taskId} in Jira`}
+          >
+            {name}
+            <ExternalLink size={12} className="shrink-0 opacity-60" />
+          </a>
+        ) : (
+          <button
+            onClick={onOpen}
+            className="text-left text-sm hover:text-blue-600 transition-colors font-medium truncate"
+          >
+            {name}
+          </button>
+        )}
         <button
           onClick={(e) => { e.stopPropagation(); setDraft(name); setEditing(true); }}
           className="p-0.5 opacity-0 group-hover/task:opacity-40 hover:!opacity-100 transition-opacity shrink-0 hover:bg-slate-100 rounded"
@@ -182,7 +197,7 @@ export function ListView() {
                       {epic.tasks.map((task) => (
                         <tr key={task.id} className="hover:bg-blue-50/50 transition-colors group">
                           <td className="px-4 py-2.5">
-                            <span className="font-mono text-xs text-slate-400">{task.id}</span>
+                            <JiraLink id={task.id} className="font-mono text-xs text-slate-400" />
                           </td>
                           <td className="px-2 py-2.5">
                             <EditableTaskName taskId={task.id} name={task.name} onOpen={() => setSelectedTask(task.id)} />

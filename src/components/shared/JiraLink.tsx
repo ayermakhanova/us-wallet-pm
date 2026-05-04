@@ -1,7 +1,12 @@
 import { ExternalLink } from "lucide-react";
 
-const JIRA_WEB_URL = "https://euronet.atlassian.net";
-const JIRA_KEY_PATTERN = /^[A-Z][A-Z0-9_]+-\d+$/;
+export const JIRA_WEB_URL = "https://euronet.atlassian.net";
+export const JIRA_KEY_PATTERN = /^[A-Z][A-Z0-9_]+-\d+$/;
+
+/** Returns the Jira issue URL for an ID matching the Jira-key pattern, else null. */
+export function getJiraUrl(id: string): string | null {
+  return JIRA_KEY_PATTERN.test(id) ? `${JIRA_WEB_URL}/browse/${id}` : null;
+}
 
 interface JiraLinkProps {
   id: string;
