@@ -1,8 +1,34 @@
 import { create } from "zustand";
 import type { Epic, Task, Risk, Decision, TeamMember, Status, Priority, ViewType, Filters, Note } from "../types";
-import { initialEpics, initialRisks, initialDecisions, teamMembers as initialTeamMembers } from "../data/initialData";
+import { initialRisks, initialDecisions, teamMembers as initialTeamMembers } from "../data/initialData";
+import { workstreamLanes } from "../data/workstream-mapping";
 import { generateId } from "../lib/utils";
 import { arrayMove } from "@dnd-kit/sortable";
+
+/**
+ * Build placeholder dashboard Epics (one per workstream lane) from
+ * `workstream-mapping.ts`. Lanes with a Jira mapping get filled in by the
+ * sync; lanes without one stay as empty placeholders so the dashboard always
+ * shows the canonical 13 steering-deck workstreams.
+ */
+const placeholderEpicsFromLanes: Epic[] = workstreamLanes
+  .slice()
+  .sort((a, b) => a.order - b.order)
+  .map((lane) => ({
+    id: lane.id,
+    name: lane.name,
+    description: lane.jiraInitiativeKey
+      ? `Synced from Jira ${lane.jiraInitiativeKey}.`
+      : "No Jira Initiative mapped yet.",
+    status: "Not Started" as Status,
+    priority: "High" as Priority,
+    target: lane.target,
+    startMonth: 5,
+    endMonth: 9,
+    owner: lane.owner,
+    color: lane.color,
+    tasks: [],
+  }));
 
 interface AppState {
   epics: Epic[];
@@ -71,7 +97,7 @@ const defaultFilters: Filters = {
 };
 
 export const useStore = create<AppState>((set, get) => ({
-  epics: initialEpics,
+  epics: placeholderEpicsFromLanes,
   risks: initialRisks,
   decisions: initialDecisions,
   teamMembers: initialTeamMembers,
