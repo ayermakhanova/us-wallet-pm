@@ -15,6 +15,7 @@ interface AppState {
   selectedTaskId: string | null;
   sidebarOpen: boolean;
   expandedEpics: Set<string>;
+  lastSyncedAt: string | null;
 
   // View actions
   setView: (view: ViewType) => void;
@@ -54,6 +55,9 @@ interface AppState {
   // Team member actions
   updateTeamMemberRaci: (memberId: string, raci: "" | "R" | "A" | "C" | "I") => void;
 
+  // Jira sync
+  mergeSyncedEpics: (syncedLanes: Epic[], syncedAt: string) => void;
+
   // Filtered data getters
   getFilteredEpics: () => Epic[];
 }
@@ -77,6 +81,7 @@ export const useStore = create<AppState>((set, get) => ({
   selectedTaskId: null,
   sidebarOpen: true,
   expandedEpics: new Set<string>(),
+  lastSyncedAt: null,
 
   setView: (view) => set({ currentView: view }),
   reorderViews: (activeId, overId) =>
@@ -245,6 +250,19 @@ export const useStore = create<AppState>((set, get) => ({
         m.id === memberId ? { ...m, raci } : m
       ),
     })),
+
+  mergeSyncedEpics: (syncedLanes, syncedAt) =>
+    set((s) => {
+      const existingIds = new Set(s.epics.map((e) => e.id));
+      const merged = s.epics.map((e) => {
+        const synced = syncedLanes.find((sl) => sl.id === e.id);
+        return synced ?? e;
+      });
+      for (const sl of syncedLanes) {
+        if (!existingIds.has(sl.id)) merged.push(sl);
+      }
+      return { epics: merged, lastSyncedAt: syncedAt };
+    }),
 
   getFilteredEpics: () => {
     const { epics, filters } = get();

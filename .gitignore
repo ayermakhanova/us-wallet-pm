@@ -12,6 +12,12 @@ dist
 dist-ssr
 *.local
 
+# Local env (do NOT check in real Atlassian tokens)
+.env
+.env.local
+*.env
+!.env.example
+
 # Helper scripts (local dev only)
 run-*.ps1
 read-doc*

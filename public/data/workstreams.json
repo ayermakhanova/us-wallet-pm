@@ -1,0 +1,75 @@
+[
+  {
+    "id": "vendor-mgmt",
+    "name": "Vendor Management & Program Commercials",
+    "status": "In Progress",
+    "priority": "High",
+    "target": "Q3 2026",
+    "startMonth": 5,
+    "endMonth": 9,
+    "owner": "Fahad Rehman",
+    "color": "#2563eb",
+    "tasks": [
+      {
+        "id": "RPMO-2273",
+        "epicId": "vendor-mgmt",
+        "name": "Wallet | TAB Bank - Sponsorship & Commercial Agreement (US)",
+        "status": "In Progress",
+        "priority": "High",
+        "owner": "Fahad Rehman",
+        "tags": ["jira:RPMO-2273"],
+        "notes": [],
+        "createdDate": "2026-05-04",
+        "updatedDate": "2026-05-04"
+      },
+      {
+        "id": "RPMO-2274",
+        "epicId": "vendor-mgmt",
+        "name": "Wallet | Helix / Q2 - Commercial & Support (US)",
+        "status": "In Progress",
+        "priority": "High",
+        "owner": "Fahad Rehman",
+        "tags": ["jira:RPMO-2274"],
+        "notes": [],
+        "createdDate": "2026-05-04",
+        "updatedDate": "2026-05-04"
+      },
+      {
+        "id": "RPMO-2275",
+        "epicId": "vendor-mgmt",
+        "name": "Wallet | CPI - Card Bureau Contract & Custom Card Order (US)",
+        "status": "In Progress",
+        "priority": "Medium",
+        "owner": "Fahad Rehman",
+        "tags": ["jira:RPMO-2275"],
+        "notes": [],
+        "createdDate": "2026-05-04",
+        "updatedDate": "2026-05-04"
+      },
+      {
+        "id": "RPMO-2276",
+        "epicId": "vendor-mgmt",
+        "name": "Wallet | Ensenta - mRDC Vendor Onboarding (US)",
+        "status": "In Progress",
+        "priority": "Medium",
+        "owner": "Fahad Rehman",
+        "tags": ["jira:RPMO-2276"],
+        "notes": [],
+        "createdDate": "2026-05-04",
+        "updatedDate": "2026-05-04"
+      },
+      {
+        "id": "RPMO-2277",
+        "epicId": "vendor-mgmt",
+        "name": "Wallet | Visa DPS - Sponsorship & Implementation Setup (US)",
+        "status": "In Progress",
+        "priority": "Medium",
+        "owner": "Fahad Rehman",
+        "tags": ["jira:RPMO-2277"],
+        "notes": [],
+        "createdDate": "2026-05-04",
+        "updatedDate": "2026-05-04"
+      }
+    ]
+  }
+]

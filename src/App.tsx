@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Layout } from "./components/layout/Layout";
 import { SummaryView } from "./components/views/SummaryView";
 import { ListView } from "./components/views/ListView";
@@ -10,6 +11,7 @@ import { DecisionLog } from "./components/views/DecisionLog";
 import { ReportsView } from "./components/views/ReportsView";
 import { IframeView } from "./components/views/IframeView";
 import { useStore } from "./store/useStore";
+import { loadJiraData } from "./lib/jira-loader";
 
 function ViewRouter() {
   const currentView = useStore((s) => s.currentView);
@@ -31,6 +33,16 @@ function ViewRouter() {
 }
 
 export default function App() {
+  const mergeSyncedEpics = useStore((s) => s.mergeSyncedEpics);
+
+  useEffect(() => {
+    loadJiraData().then((result) => {
+      if (result) {
+        mergeSyncedEpics(result.lanes, result.meta.syncedAt);
+      }
+    });
+  }, [mergeSyncedEpics]);
+
   return (
     <Layout>
       <ViewRouter />
