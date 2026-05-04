@@ -4,6 +4,7 @@ import { getProgramStats, getEpicProgress, statusColors } from "../../lib/utils"
 import { ProgressBar } from "../shared/ProgressBar";
 import { StatusBadge } from "../shared/StatusBadge";
 import { PriorityIcon } from "../shared/PriorityIcon";
+import { JiraLink } from "../shared/JiraLink";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
 
 const PIE_COLORS = ["#22c55e", "#3b82f6", "#ef4444", "#94a3b8", "#a855f7"];
@@ -138,7 +139,7 @@ export function SummaryView() {
                 className="bg-white rounded-lg px-3 py-2 border border-red-100 cursor-pointer hover:border-red-300 transition-colors"
               >
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-mono text-red-400">{task.id}</span>
+                  <JiraLink id={task.id} className="text-xs font-mono text-red-400" />
                   <span className="text-sm font-medium">{task.name}</span>
                 </div>
                 {task.blockerReason && <p className="text-xs text-red-500 mt-1">{task.blockerReason}</p>}
@@ -161,7 +162,7 @@ export function SummaryView() {
               className="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors"
             >
               <PriorityIcon priority={task.priority} />
-              <span className="text-xs font-mono text-slate-400">{task.id}</span>
+              <JiraLink id={task.id} className="text-xs font-mono text-slate-400" />
               <span className="text-sm flex-1 truncate">{task.name}</span>
               <StatusBadge status={task.status} />
               <span className="text-xs text-slate-500">{task.owner}</span>

@@ -6,6 +6,7 @@ import { StatusBadge } from "../shared/StatusBadge";
 import { PriorityIcon } from "../shared/PriorityIcon";
 import { ProgressBar } from "../shared/ProgressBar";
 import { FilterBar } from "../shared/FilterBar";
+import { JiraLink } from "../shared/JiraLink";
 
 function EditableEpicName({ epicId, name }: { epicId: string; name: string }) {
   const { updateEpicName } = useStore();
